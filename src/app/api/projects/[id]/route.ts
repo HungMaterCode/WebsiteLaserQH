@@ -6,8 +6,9 @@ import { authOptions } from '@/lib/auth';
 // PATCH update project
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const session = await getServerSession(authOptions);
   
   if (!session) {
@@ -17,7 +18,7 @@ export async function PATCH(
   try {
     const data = await request.json();
     const project = await prisma.project.update({
-      where: { id: params.id },
+      where: { id },
       data,
     });
     return NextResponse.json(project);
@@ -30,8 +31,9 @@ export async function PATCH(
 // DELETE project
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   const session = await getServerSession(authOptions);
   
   if (!session) {
@@ -40,7 +42,7 @@ export async function DELETE(
 
   try {
     await prisma.project.delete({
-      where: { id: params.id },
+      where: { id },
     });
     return NextResponse.json({ message: 'Project deleted successfully' });
   } catch (error) {
