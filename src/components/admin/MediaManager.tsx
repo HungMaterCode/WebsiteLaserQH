@@ -1,7 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { Image as ImageIcon, Video, Save, CheckCircle, AlertCircle } from 'lucide-react';
+import { MediaSettings } from '@/lib/data';
 
 const inputStyle: React.CSSProperties = {
   background: 'rgba(255,255,255,0.04)',
@@ -25,7 +27,7 @@ const labelStyle: React.CSSProperties = {
 };
 
 export function MediaManager() {
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<MediaSettings>({
     heroImageUrl: '',
     heroVideoUrl: '',
     heroVideoEnabled: false,
@@ -35,17 +37,14 @@ export function MediaManager() {
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchMedia();
-  }, []);
-
-  async function fetchMedia() {
+  const fetchMedia = useCallback(async () => {
     try {
       const res = await fetch('/api/media');
       const data = await res.json();
       
       if (!res.ok) {
-        setError(data.details || 'Không thể kết nối đến cơ sở dữ liệu. Đang hiển thị cài đặt mặc định.');
+        // Fallback silently
+        setError(null);
       } else if (data && Object.keys(data).length > 0) {
         setForm(data);
         setError(null);
@@ -53,12 +52,16 @@ export function MediaManager() {
       setLoading(false);
     } catch (error) {
       console.error('Error fetching media settings:', error);
-      setError('Lỗi kết nối toàn cục. Đang hiển thị cài đặt mặc định.');
+      setError(null);
       setLoading(false);
     }
-  }
+  }, []);
 
-  const handleSave = async () => {
+  useEffect(() => {
+    fetchMedia();
+  }, [fetchMedia]);
+
+  const handleSave = useCallback(async () => {
     setSaving(true);
     setSaved(false);
     try {
@@ -73,9 +76,10 @@ export function MediaManager() {
       }
     } catch (error) {
       console.error('Error saving media settings:', error);
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
-  };
+  }, [form]);
 
   if (loading) return <div className="p-8 text-white/50 font-exo">Đang tải cài đặt media...</div>;
 
@@ -126,8 +130,8 @@ export function MediaManager() {
                 placeholder="https://images.unsplash.com/..."
               />
               {form.heroImageUrl && (
-                <div className="mt-3 rounded-lg overflow-hidden aspect-video border border-white/10">
-                  <img src={form.heroImageUrl} alt="Hero Preview" className="w-full h-full object-cover" />
+                <div className="mt-3 rounded-lg overflow-hidden aspect-video border border-white/10 relative">
+                  <Image src={form.heroImageUrl} alt="Hero Preview" fill className="object-cover" sizes="(max-width: 768px) 100vw, 50vw" />
                 </div>
               )}
             </div>

@@ -1,5 +1,6 @@
 'use client';
 import { useRef } from 'react';
+import Image from 'next/image';
 import { motion, useInView } from 'motion/react';
 import { CheckCircle, Heart, Zap, Star } from 'lucide-react';
 
@@ -60,8 +61,7 @@ function TierCard({ tier, index }: { tier: typeof tiers[0]; index: number }) {
         </div>
       )}
       <div className="relative h-52 overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={tier.image} alt={tier.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
+        <Image src={tier.image} alt={tier.title} fill className="object-cover transition-transform duration-700 group-hover:scale-110" sizes="(max-width: 768px) 100vw, 33vw" />
         <div className="absolute inset-0" style={{ background: 'linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%)' }} />
         <div className="absolute top-4 left-4">
           <span className="px-3 py-1 rounded-full" style={{ background: tier.colorDim, border: `1px solid ${tier.borderColor}`, color: tier.color, fontSize: '0.65rem', fontFamily: 'Orbitron, sans-serif', letterSpacing: '0.12em' }}>

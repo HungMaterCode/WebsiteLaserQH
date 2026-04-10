@@ -1,5 +1,7 @@
 'use client';
+
 import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import { motion } from 'motion/react';
 import { ChevronDown } from 'lucide-react';
 import { defaultMediaSettings, defaultSiteSettings } from '@/lib/data';
@@ -144,12 +146,14 @@ export function HeroSection() {
             <source src={mediaSettings.heroVideoUrl} type="video/mp4" />
           </video>
         ) : (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={mediaSettings.heroImageUrl}
             alt="Concert laser show"
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover"
             style={{ opacity: 0.3 }}
+            priority
+            sizes="100vw"
           />
         )}
 

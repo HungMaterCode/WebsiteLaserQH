@@ -127,3 +127,25 @@ enum Category {
   medium
   mega
 }
+
+enum PostStatus {
+  draft
+  published
+}
+
+model Post {
+  id          String     @id @default(cuid())
+  title       String
+  slug        String     @unique
+  excerpt     String     @db.Text
+  content     String     @db.Text
+  coverImage  String
+  publishedAt DateTime   @default(now())
+  author      String     @default("Admin")
+  status      PostStatus @default(draft)
+  tags        String[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@map("posts")
+}

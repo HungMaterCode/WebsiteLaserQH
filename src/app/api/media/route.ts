@@ -2,15 +2,17 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { defaultMediaSettings } from '@/lib/data';
 
 export async function GET() {
   try {
     const settings = await prisma.mediaSetting.findUnique({
       where: { id: 'global' },
     });
-    return NextResponse.json(settings?.data || {});
+    return NextResponse.json(settings?.data || defaultMediaSettings);
   } catch (error) {
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error('Database error in media GET:', error);
+    return NextResponse.json(defaultMediaSettings || {});
   }
 }
 
@@ -26,7 +28,7 @@ export async function PATCH(request: Request) {
       create: { id: 'global', data },
     });
     return NextResponse.json(settings.data);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

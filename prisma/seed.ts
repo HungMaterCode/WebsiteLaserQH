@@ -1,4 +1,3 @@
-// @ts-nocheck
 import * as dotenv from 'dotenv';
 dotenv.config();
 import { PrismaClient } from '@prisma/client';
@@ -9,6 +8,12 @@ const connectionString = process.env.DATABASE_URL;
 const pool = new Pool({ connectionString });
 const adapter = new PrismaNeon(pool);
 const prisma = new PrismaClient({ adapter });
+
+interface EquipmentItem {
+  name: string;
+  quantity: string;
+  specs: string;
+}
 
 const portfolioProjects = [
   {
@@ -167,7 +172,7 @@ async function main() {
           thumbnailImage: project.thumbnailImage,
           description: project.description,
           fullDescription: project.fullDescription,
-          equipment: project.equipment as any,
+          equipment: project.equipment as EquipmentItem[],
           gallery: project.gallery,
           highlight: project.highlight,
           client: project.client,
