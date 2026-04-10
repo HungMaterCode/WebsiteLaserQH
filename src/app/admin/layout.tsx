@@ -3,12 +3,12 @@
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useEffect } from 'react';
-import { LogOut, Shield, ExternalLink } from 'lucide-react';
+import { LogOut, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import { Logo } from '@/components/Logo';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
 

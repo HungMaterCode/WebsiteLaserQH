@@ -1,21 +1,30 @@
 'use client';
 
 import { useState } from 'react';
-import { LayoutDashboard, FileText, Image, Settings } from 'lucide-react';
+import { LayoutDashboard, FileText, Image as ImageIcon, Settings, BookOpen, LucideIcon } from 'lucide-react';
 import { PostsManager } from '@/components/admin/PostsManager';
+import { BlogPostManager } from '@/components/admin/BlogPostManager';
 import { MediaManager } from '@/components/admin/MediaManager';
 import { SiteSettingsManager } from '@/components/admin/SiteSettingsManager';
 import { OverviewTab } from '@/components/admin/OverviewTab';
 
-type AdminTab = 'overview' | 'posts' | 'media' | 'settings';
+type AdminTab = 'overview' | 'projects' | 'blog' | 'media' | 'settings';
+
+interface NavItem {
+  id: AdminTab;
+  label: string;
+  icon: LucideIcon;
+  color: string;
+}
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<AdminTab>('overview');
 
-  const navItems: { id: AdminTab; label: string; icon: any; color: string }[] = [
+  const navItems: NavItem[] = [
     { id: 'overview', label: 'Tổng Quan', icon: LayoutDashboard, color: '#00FF88' },
-    { id: 'posts', label: 'Bài Đăng', icon: FileText, color: '#00FF88' },
-    { id: 'media', label: 'Media & Hình Ảnh', icon: Image, color: '#00FF88' },
+    { id: 'projects', label: 'Dự Án', icon: FileText, color: '#00FF88' },
+    { id: 'blog', label: 'Bài Viết', icon: BookOpen, color: '#00FF88' },
+    { id: 'media', label: 'Media & Hình Ảnh', icon: ImageIcon, color: '#00FF88' },
     { id: 'settings', label: 'Cài Đặt', icon: Settings, color: '#00FF88' },
   ];
 
@@ -105,7 +114,8 @@ export default function AdminPage() {
       >
         <div className="max-w-5xl mx-auto text-white">
           {activeTab === 'overview' && <OverviewTab />}
-          {activeTab === 'posts' && <PostsManager />}
+          {activeTab === 'projects' && <PostsManager />}
+          {activeTab === 'blog' && <BlogPostManager />}
           {activeTab === 'media' && <MediaManager />}
           {activeTab === 'settings' && <SiteSettingsManager />}
         </div>

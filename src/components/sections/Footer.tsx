@@ -1,4 +1,4 @@
-import { Zap, Phone, MapPin, Mail, User, Info, CreditCard } from 'lucide-react';
+import { Zap } from 'lucide-react';
 import Link from 'next/link';
 import { defaultSiteSettings } from '@/lib/data';
 

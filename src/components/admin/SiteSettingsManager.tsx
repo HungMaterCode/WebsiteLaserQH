@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Settings, Save, CheckCircle, Globe, Phone, MapPin, Mail, Hash, User } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { Save, CheckCircle, Globe, Phone, Hash } from 'lucide-react';
+import { SiteSettings, defaultSiteSettings } from '@/lib/data';
 
 const inputStyle: React.CSSProperties = {
   background: 'rgba(255,255,255,0.04)',
@@ -25,28 +26,12 @@ const labelStyle: React.CSSProperties = {
 };
 
 export function SiteSettingsManager() {
-  const [form, setForm] = useState({
-    messengerLink: '',
-    zaloLink: '',
-    facebookLink: '',
-    phone: '',
-    address: '',
-    companyName: '',
-    directorName: '',
-    directorPhone: '',
-    taxCode: '',
-    bankAccount: '',
-    companyEmail: '',
-  });
+  const [form, setForm] = useState<SiteSettings>(defaultSiteSettings);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  useEffect(() => {
-    fetchSettings();
-  }, []);
-
-  async function fetchSettings() {
+  const fetchSettings = useCallback(async () => {
     try {
       const res = await fetch('/api/settings');
       const data = await res.json();
@@ -56,10 +41,15 @@ export function SiteSettingsManager() {
       setLoading(false);
     } catch (error) {
       console.error('Error fetching settings:', error);
+      setLoading(false);
     }
-  }
+  }, []);
 
-  const handleSave = async () => {
+  useEffect(() => {
+    fetchSettings();
+  }, [fetchSettings]);
+
+  const handleSave = useCallback(async () => {
     setSaving(true);
     setSaved(false);
     try {
@@ -74,9 +64,10 @@ export function SiteSettingsManager() {
       }
     } catch (error) {
       console.error('Error saving settings:', error);
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
-  };
+  }, [form]);
 
   if (loading) return <div>Đang tải cài đặt hệ thống...</div>;
 

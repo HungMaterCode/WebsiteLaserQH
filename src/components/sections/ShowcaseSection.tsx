@@ -1,5 +1,6 @@
 'use client';
 import { useState, useRef } from 'react';
+import Image from 'next/image';
 import { motion, useInView } from 'motion/react';
 import Link from 'next/link';
 import { portfolioProjects } from '@/lib/data';
@@ -75,8 +76,7 @@ export function ShowcaseSection() {
               >
                 {/* Image Top Half */}
                 <div className="relative aspect-[4/3] overflow-hidden bg-[#0A0F1A]">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={project.thumbnailImage} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" loading="lazy" />
+                  <Image src={project.thumbnailImage} alt={project.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
                   
                   {/* Category Badge */}
                   <div className="absolute top-4 left-4 px-3.5 py-1 rounded-full text-[0.6rem] font-bold font-orbitron tracking-widest z-10 backdrop-blur-md" 

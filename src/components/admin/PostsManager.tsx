@@ -1,19 +1,21 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { Plus, Pencil, Trash2, X, AlertTriangle, Search, AlertCircle } from 'lucide-react';
-import { portfolioProjects as mockProjects } from '@/lib/data';
+import { PortfolioProject, portfolioProjects as mockProjects } from '@/lib/data';
 
 const CATEGORY_OPTIONS = [
   { value: 'mega', label: 'Mega Concert / Festival', color: '#00FF88' },
   { value: 'medium', label: 'Tầm Trung (Brand/Club)', color: '#00FF88' },
   { value: 'vip', label: 'VIP / Private / Gala', color: '#00FF88' },
-];
+] as const;
 
 const COLOR_PRESETS = ['#00FF88', '#00D472', '#00FFBB', '#FFFFFF', '#FFB800'];
 
-const EMPTY_PROJECT = {
+const EMPTY_PROJECT: PortfolioProject = {
   id: '',
+  slug: '',
   title: '',
   category: 'mega',
   categoryLabel: 'Mega Concert',
@@ -57,90 +59,77 @@ const labelStyle: React.CSSProperties = {
 
 function useFocusHandlers() {
   return {
-    onFocus: (e: any) => {
-      e.target.style.borderColor = 'rgba(0,255,136,0.5)';
-      e.target.style.boxShadow = '0 0 8px rgba(0,255,136,0.15)';
+    onFocus: (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+      e.currentTarget.style.borderColor = 'rgba(0,255,136,0.5)';
+      e.currentTarget.style.boxShadow = '0 0 8px rgba(0,255,136,0.15)';
     },
-    onBlur: (e: any) => {
-      e.target.style.borderColor = 'rgba(255,255,255,0.12)';
-      e.target.style.boxShadow = 'none';
+    onBlur: (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+      e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)';
+      e.currentTarget.style.boxShadow = 'none';
     },
   };
 }
 
 export function PostsManager() {
-  const [projects, setProjects] = useState<any[]>([]);
-  const [editingProject, setEditingProject] = useState<any | null>(null);
+  const [projects, setProjects] = useState<PortfolioProject[]>([]);
+  const [editingProject, setEditingProject] = useState<PortfolioProject | null>(null);
   const [isNewProject, setIsNewProject] = useState(false);
-  const [deleteTarget, setDeleteTarget] = useState<any | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<PortfolioProject | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCategory, setFilterCategory] = useState<string>('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const focusHandlers = useFocusHandlers();
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const triggerRefresh = () => setRefreshTrigger(prev => prev + 1);
 
   useEffect(() => {
-    fetchProjects();
-  }, []);
-
-  async function fetchProjects() {
-    try {
-      const res = await fetch('/api/projects');
-      const data = await res.json();
-      
-      if (!res.ok || !Array.isArray(data)) {
-        console.error('Expected array but got:', data);
-        setError(data.details || 'Không thể kết nối đến cơ sở dữ liệu. Đang hiển thị dữ liệu mẫu.');
+    const fetchProjects = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch('/api/projects');
+        const data = await res.json();
+        
+        if (!res.ok || !Array.isArray(data)) {
+          setProjects(mockProjects);
+          setError(null);
+        } else {
+          setProjects(data);
+          setError(null);
+        }
+      } catch {
         setProjects(mockProjects);
-      } else {
-        setProjects(data);
         setError(null);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
-    } catch (error) {
-      console.error('Error fetching projects:', error);
-      setError('Lỗi kết nối. Đang lấy dữ liệu mẫu.');
-      setProjects(mockProjects);
-      setLoading(false);
-    }
-  }
+    };
+    fetchProjects();
+  }, [refreshTrigger]);
 
-  const handleSave = async (p: any) => {
+  const handleSave = useCallback(async (p: PortfolioProject) => {
     try {
-      const method = isNewProject ? 'POST' : 'PATCH';
-      const url = isNewProject ? '/api/projects' : `/api/projects/${p.id}`;
-      
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(p),
-      });
-
-      if (res.ok) {
-        fetchProjects();
-        setEditingProject(null);
-        setIsNewProject(false);
+      if (isNewProject) {
+        setProjects(prev => [{ ...p, id: Math.random().toString(36).substr(2, 9) }, ...prev]);
+      } else {
+        setProjects(prev => prev.map(item => item.id === p.id ? p : item));
       }
+      setEditingProject(null);
+      setIsNewProject(false);
     } catch (error) {
       console.error('Error saving project:', error);
     }
-  };
+  }, [isNewProject]);
 
-  const handleDelete = async () => {
+  const handleDelete = useCallback(async () => {
     if (!deleteTarget) return;
     try {
-      const res = await fetch(`/api/projects/${deleteTarget.id}`, {
-        method: 'DELETE',
-      });
-
-      if (res.ok) {
-        fetchProjects();
-        setDeleteTarget(null);
-      }
+      setProjects(prev => prev.filter(p => p.id !== deleteTarget.id));
+      setDeleteTarget(null);
     } catch (error) {
       console.error('Error deleting project:', error);
     }
-  };
+  }, [deleteTarget]);
 
   const filtered = projects.filter(p => {
     const matchSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -150,7 +139,7 @@ export function PostsManager() {
     return matchSearch && matchCat;
   });
 
-  if (loading) return <div>Đang tải dự án...</div>;
+  if (loading) return <div className="p-8 text-white/50 font-exo">Đang tải dự án...</div>;
 
   return (
     <div>
@@ -162,20 +151,20 @@ export function PostsManager() {
           </p>
         </div>
         <button
-          onClick={() => { setEditingProject({ ...EMPTY_PROJECT }); setIsNewProject(true); }}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl flex-shrink-0 transition-all duration-200"
+          onClick={() => { 
+            setEditingProject({ ...EMPTY_PROJECT, id: Math.random().toString(36).substr(2, 9) }); 
+            setIsNewProject(true); 
+          }}
+          className="flex items-center gap-2 px-6 py-2.5 rounded-xl flex-shrink-0 transition-all duration-300 hover:scale-105"
           style={{
-            background: 'linear-gradient(135deg, rgba(0,255,136,0.15), rgba(0,255,136,0.08))',
-            border: '1px solid rgba(0,255,136,0.4)',
-            color: '#00FF88',
-            fontSize: '0.82rem',
-            fontFamily: "'Be Vietnam Pro', sans-serif",
+            background: 'linear-gradient(135deg, #00FF88, #00cc66)',
+            color: '#000',
             fontWeight: 700,
-            cursor: 'pointer',
+            fontSize: '0.85rem'
           }}
         >
-          <Plus size={15} />
-          Thêm Mới
+          <Plus size={18} strokeWidth={2.5} />
+          THÊM MỚI
         </button>
       </div>
 
@@ -194,7 +183,6 @@ export function PostsManager() {
         </div>
       )}
 
-      {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 mb-5">
         <div className="relative flex-1">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30" />
@@ -202,33 +190,15 @@ export function PostsManager() {
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder="Tìm kiếm theo tên, địa điểm, khách hàng..."
-            style={{
-              width: '100%',
-              background: 'rgba(255,255,255,0.04)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              color: '#fff',
-              borderRadius: '8px',
-              padding: '0.6rem 1rem 0.6rem 2.5rem',
-              outline: 'none',
-              fontFamily: "'Be Vietnam Pro', sans-serif",
-              fontSize: '0.83rem',
-            }}
+            style={inputStyle}
+            className="pl-10"
           />
         </div>
         <select
           value={filterCategory}
           onChange={e => setFilterCategory(e.target.value)}
-          style={{
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            color: 'rgba(255,255,255,0.7)',
-            borderRadius: '8px',
-            padding: '0.6rem 1rem',
-            outline: 'none',
-            fontFamily: "'Be Vietnam Pro', sans-serif",
-            fontSize: '0.83rem',
-            cursor: 'pointer',
-          }}
+          style={inputStyle}
+          className="sm:w-48 appearance-none cursor-pointer"
         >
           <option value="all" style={{ background: '#111' }}>Tất cả danh mục</option>
           {CATEGORY_OPTIONS.map(c => (
@@ -237,7 +207,6 @@ export function PostsManager() {
         </select>
       </div>
 
-      {/* Posts list */}
       <div className="space-y-3">
         {filtered.map((project) => {
           const color = CATEGORY_OPTIONS.find(c => c.value === project.category)?.color || '#00FF88';
@@ -247,8 +216,12 @@ export function PostsManager() {
               className="flex items-center gap-4 p-3 rounded-xl transition-all duration-200"
               style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.07)' }}
             >
-              <div className="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0">
-                <img src={project.thumbnailImage} alt={project.title} className="w-full h-full object-cover" />
+              <div className="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0 relative">
+                {project.thumbnailImage ? (
+                  <Image src={project.thumbnailImage} alt={project.title} fill className="object-cover" sizes="56px" />
+                ) : (
+                  <div className="w-full h-full bg-white/5 flex items-center justify-center text-white/20">?</div>
+                )}
               </div>
 
               <div className="flex-1 min-w-0">
@@ -312,36 +285,40 @@ function PostEditorModal({
   onSave,
   onClose,
 }: {
-  project: any;
+  project: PortfolioProject;
   isNew: boolean;
-  onSave: (p: any) => void;
+  onSave: (p: PortfolioProject) => void;
   onClose: () => void;
 }) {
-  const [form, setForm] = useState<any>({ ...project });
+  const [form, setForm] = useState<PortfolioProject>({ ...project });
   const [activeSection, setActiveSection] = useState<'basic' | 'content' | 'media' | 'equipment'>('basic');
   const focusHandlers = useFocusHandlers();
 
-  const update = (field: string, value: any) => setForm((prev: any) => ({ ...prev, [field]: value }));
+  const update = (field: keyof PortfolioProject, value: any) => 
+    setForm((prev: PortfolioProject) => ({ ...prev, [field]: value }));
 
   const updateEquipment = (i: number, field: string, value: string) => {
-    const updated = form.equipment.map((eq: any, idx: number) => idx === i ? { ...eq, [field]: value } : eq);
+    const updated = (form.equipment || []).map((eq, idx: number) => idx === i ? { ...eq, [field]: value } : eq);
     update('equipment', updated);
   };
   const addEquipment = () => update('equipment', [...(form.equipment || []), { name: '', quantity: '', specs: '' }]);
-  const removeEquipment = (i: number) => update('equipment', form.equipment.filter((_: any, idx: number) => idx !== i));
+  const removeEquipment = (i: number) => update('equipment', form.equipment.filter((_, idx: number) => idx !== i));
 
   const updateGallery = (i: number, value: string) => {
-    const updated = form.gallery.map((url: string, idx: number) => idx === i ? value : url);
+    const updated = (form.gallery || []).map((url: string, idx: number) => idx === i ? value : url);
     update('gallery', updated);
   };
   const addGallery = () => update('gallery', [...(form.gallery || []), '']);
-  const removeGallery = (i: number) => update('gallery', form.gallery.filter((_: any, idx: number) => idx !== i));
+  const removeGallery = (i: number) => update('gallery', form.gallery.filter((_, idx: number) => idx !== i));
 
   const handleSave = () => {
+    if (!form.title.trim()) return alert('Vui lòng nhập tiêu đề dự án');
+    
     const cleaned = {
       ...form,
       gallery: (form.gallery || []).filter((url: string) => url.trim() !== ''),
-      equipment: (form.equipment || []).filter((eq: any) => eq.name.trim() !== ''),
+      equipment: (form.equipment || []).filter((eq) => eq.name.trim() !== ''),
+      slug: form.slug || form.title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '')
     };
     onSave(cleaned);
   };
@@ -360,70 +337,66 @@ function PostEditorModal({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-2xl max-h-[90vh] flex flex-col rounded-2xl overflow-hidden"
+        className="w-full max-w-2xl max-h-[90vh] flex flex-col rounded-3xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300"
         style={{ background: '#0a0a14', border: '1px solid rgba(255,255,255,0.1)' }}
         onClick={e => e.stopPropagation()}
       >
-        {/* Modal Header */}
         <div
-          className="flex items-center justify-between px-6 py-4 flex-shrink-0"
-          style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}
+          className="flex items-center justify-between px-8 py-5 flex-shrink-0"
+          style={{ borderBottom: '1px solid rgba(255,255,255,0.07)', background: 'rgba(255,255,255,0.02)' }}
         >
           <div>
-            <h2 className="font-orbitron text-white" style={{ fontSize: '0.95rem', fontWeight: 700 }}>
-              {isNew ? 'Thêm Bài Đăng Mới' : 'Chỉnh Sửa Bài Đăng'}
+            <h2 className="font-orbitron text-white text-lg font-bold tracking-tight">
+              {isNew ? 'THÊM BÀI ĐĂNG MỚI' : 'CHỈNH SỬA BÀI ĐĂNG'}
             </h2>
+            <p className="text-white/30 text-[0.7rem] font-vietnam uppercase tracking-wider mt-0.5">Quản lý Portfolio dự án</p>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-200"
-            style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.5)', cursor: 'pointer' }}
+            className="p-2 text-white/30 hover:text-white transition-colors"
           >
-            <X size={15} />
+            <X size={20} />
           </button>
         </div>
 
-        {/* Section tabs */}
         <div
-          className="flex flex-shrink-0"
+          className="flex flex-shrink-0 px-4"
           style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.01)' }}
         >
           {sectionTabs.map(tab => (
             <button
               key={tab.id}
               onClick={() => setActiveSection(tab.id)}
-              className="flex-1 py-3 transition-all duration-200"
+              className="flex-1 py-4 transition-all duration-300 relative font-orbitron text-[0.7rem] tracking-widest font-bold"
               style={{
                 background: 'none',
                 border: 'none',
-                borderBottom: activeSection === tab.id ? '2px solid #00FF88' : '2px solid transparent',
-                color: activeSection === tab.id ? '#00FF88' : 'rgba(255,255,255,0.35)',
-                fontSize: '0.75rem',
-                fontFamily: "'Be Vietnam Pro', sans-serif",
-                fontWeight: activeSection === tab.id ? 600 : 400,
+                color: activeSection === tab.id ? '#00FF88' : 'rgba(255,255,255,0.3)',
                 cursor: 'pointer',
               }}
             >
-              {tab.label}
+              {tab.label.toUpperCase()}
+              {activeSection === tab.id && (
+                <div className="absolute bottom-0 left-1/4 right-1/4 h-0.5 bg-[#00FF88] shadow-[0_0_10px_#00FF88]" />
+              )}
             </button>
           ))}
         </div>
 
-        {/* Scrollable content */}
-        <div className="flex-1 overflow-y-auto" style={{ padding: '1.5rem' }}>
+        <div className="flex-1 overflow-y-auto custom-scrollbar" style={{ padding: '2rem' }}>
           {activeSection === 'basic' && (
-            <div className="space-y-4">
+            <div className="space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-400">
               <div>
                 <label style={labelStyle}>TIÊU ĐỀ DỰ ÁN *</label>
                 <input style={inputStyle} {...focusHandlers} value={form.title} onChange={e => update('title', e.target.value)} placeholder="VD: Samsung Galaxy Launch 2025" />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label style={labelStyle}>DANH MỤC *</label>
                   <select
                     style={{ ...inputStyle, cursor: 'pointer' }}
                     value={form.category}
-                    onChange={e => update('category', e.target.value as any)}
+                    onChange={e => update('category', e.target.value as 'vip' | 'medium' | 'mega')}
                   >
                     {CATEGORY_OPTIONS.map(c => (
                       <option key={c.value} value={c.value} style={{ background: '#111' }}>{c.label}</option>
@@ -431,65 +404,57 @@ function PostEditorModal({
                   </select>
                 </div>
                 <div>
-                  <label style={labelStyle}>NHÃN DANH MỤC</label>
-                  <input style={inputStyle} value={form.categoryLabel} onChange={e => update('categoryLabel', e.target.value)} placeholder="VD: Mega Concert" />
+                  <label style={labelStyle}>SLUG DỰ ÁN (URL)</label>
+                  <input style={inputStyle} value={form.slug} onChange={e => update('slug', e.target.value)} placeholder="vd-project-slug" />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label style={labelStyle}>LOẠI SỰ KIỆN</label>
                   <input style={inputStyle} value={form.eventType} onChange={e => update('eventType', e.target.value)} placeholder="VD: Product Launch Event" />
                 </div>
                 <div>
-                  <label style={labelStyle}>NĂM</label>
+                  <label style={labelStyle}>NĂM THỰC HIỆN</label>
                   <input type="number" style={inputStyle} value={form.year} onChange={e => update('year', parseInt(e.target.value))} />
                 </div>
               </div>
               <div>
-                <label style={labelStyle}>ĐỊA ĐIỂM</label>
+                <label style={labelStyle}>ĐỊA ĐIỂM TỔ CHỨC</label>
                 <input style={inputStyle} value={form.location} onChange={e => update('location', e.target.value)} placeholder="VD: Grand Ballroom, JW Marriott Hà Nội" />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label style={labelStyle}>QUY MÔ</label>
                   <input style={inputStyle} value={form.scale} onChange={e => update('scale', e.target.value)} placeholder="VD: 500 khách VIP" />
                 </div>
                 <div>
-                  <label style={labelStyle}>KHÁCH HÀNG</label>
+                  <label style={labelStyle}>KHÁCH HÀNG (CLIENT)</label>
                   <input style={inputStyle} value={form.client} onChange={e => update('client', e.target.value)} placeholder="VD: Samsung Vietnam" />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label style={labelStyle}>THỜI GIAN SETUP</label>
-                  <input style={inputStyle} value={form.duration} onChange={e => update('duration', e.target.value)} placeholder="VD: 2 ngày setup, 1 đêm diễn" />
-                </div>
-                <div>
-                  <label style={labelStyle}>ĐIỂM NỔI BẬT</label>
-                  <input style={inputStyle} value={form.highlight} onChange={e => update('highlight', e.target.value)} placeholder="VD: 200 Kinetic Lights + Laser 360°" />
-                </div>
-              </div>
               <div>
-                <label style={labelStyle}>MÀU SẮC ACCENT</label>
-                <div className="flex items-center gap-3">
-                  {COLOR_PRESETS.map(c => (
-                    <button
-                      key={c}
-                      onClick={() => update('color', c)}
-                      className="w-8 h-8 rounded-lg flex-shrink-0 transition-all duration-200"
-                      style={{
-                        background: c,
-                        border: form.color === c ? `2px solid white` : '2px solid transparent',
-                        boxShadow: form.color === c ? `0 0 12px ${c}80` : 'none',
-                        cursor: 'pointer',
-                      }}
-                    />
-                  ))}
+                <label style={labelStyle}>MÀU SẮC CHỦ ĐẠO (ACCENT)</label>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2 p-2 rounded-xl bg-white/5 border border-white/10">
+                    {COLOR_PRESETS.map(c => (
+                      <button
+                        key={c}
+                        onClick={() => update('color', c)}
+                        className="w-7 h-7 rounded-lg transition-transform hover:scale-110 active:scale-95"
+                        style={{
+                          background: c,
+                          border: form.color === c ? `2px solid white` : '1px solid rgba(255,255,255,0.1)',
+                          boxShadow: form.color === c ? `0 0 10px ${c}80` : 'none',
+                          cursor: 'pointer',
+                        }}
+                      />
+                    ))}
+                  </div>
                   <input
                     type="color"
                     value={form.color}
                     onChange={e => update('color', e.target.value)}
-                    style={{ width: 32, height: 32, border: 'none', background: 'none', cursor: 'pointer', padding: 0 }}
+                    style={{ width: 44, height: 44, border: 'none', background: 'none', cursor: 'pointer', padding: 0 }}
                   />
                 </div>
               </div>
@@ -497,78 +462,63 @@ function PostEditorModal({
           )}
 
           {activeSection === 'content' && (
-            <div className="space-y-4">
+            <div className="space-y-5 animate-in fade-in slide-in-from-bottom-2 duration-400">
               <div>
-                <label style={labelStyle}>MÔ TẢ NGẮN (hiển thị trong card)</label>
+                <label style={labelStyle}>MÔ TẢ NGẮN (SUMMARY)</label>
                 <textarea
                   style={{ ...inputStyle, resize: 'vertical' }}
-                  rows={2}
+                  rows={3}
                   value={form.description}
                   onChange={e => update('description', e.target.value)}
-                  placeholder="Mô tả ngắn về dự án (1-2 câu)..."
+                  placeholder="Mô tả tóm tắt để thu hút người dùng trong trang danh sách..."
                 />
               </div>
               <div>
-                <label style={labelStyle}>MÔ TẢ ĐẦY ĐỦ (hiển thị trong trang chi tiết)</label>
+                <label style={labelStyle}>MÔ TẢ CHI TIẾT (FULL STORY)</label>
                 <textarea
-                  style={{ ...inputStyle, resize: 'vertical' }}
-                  rows={5}
+                  style={{ ...inputStyle, resize: 'vertical', minHeight: '200px' }}
+                  rows={8}
                   value={form.fullDescription}
                   onChange={e => update('fullDescription', e.target.value)}
-                  placeholder="Mô tả chi tiết về dự án, quy trình thực hiện, kết quả đạt được..."
+                  placeholder="Kể lại câu chuyện dự án, những thách thức và giải pháp kỹ thuật laser chúng tôi đã thực hiện..."
                 />
+              </div>
+              <div>
+                <label style={labelStyle}>ĐIỂM NỔI BẬT (HIGHLIGHT)</label>
+                <input style={inputStyle} value={form.highlight} onChange={e => update('highlight', e.target.value)} placeholder="VD: 200 Kinetic Lights + Laser 360°" />
               </div>
             </div>
           )}
 
           {activeSection === 'media' && (
-            <div className="space-y-4">
-              <div>
-                <label style={labelStyle}>HERO IMAGE URL (ảnh đầu trang chi tiết)</label>
-                <input style={inputStyle} value={form.heroImage} onChange={e => update('heroImage', e.target.value)} placeholder="https://..." />
-                {form.heroImage && (
-                  <div className="mt-2 rounded-lg overflow-hidden" style={{ height: 100 }}>
-                    <img src={form.heroImage} alt="" className="w-full h-full object-cover" />
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-400">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label style={labelStyle}>HERO IMAGE (URL)</label>
+                  <input style={inputStyle} value={form.heroImage} onChange={e => update('heroImage', e.target.value)} placeholder="https://..." />
+                  <div className="rounded-xl overflow-hidden aspect-[16/6] bg-white/5 border border-white/10 relative">
+                    {form.heroImage && <Image src={form.heroImage} alt="Hero" fill className="object-cover" sizes="400px" />}
                   </div>
-                )}
-              </div>
-              <div>
-                <label style={labelStyle}>THUMBNAIL IMAGE URL (ảnh hiển thị trong grid)</label>
-                <input style={inputStyle} value={form.thumbnailImage} onChange={e => update('thumbnailImage', e.target.value)} placeholder="https://..." />
-                {form.thumbnailImage && (
-                  <div className="mt-2 rounded-lg overflow-hidden" style={{ height: 80, width: 140 }}>
-                    <img src={form.thumbnailImage} alt="" className="w-full h-full object-cover" />
-                  </div>
-                )}
-              </div>
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label style={labelStyle}>GALLERY IMAGES</label>
-                  <button
-                    onClick={addGallery}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all duration-200"
-                    style={{ background: 'rgba(0,255,136,0.1)', border: '1px solid rgba(0,255,136,0.3)', color: '#00FF88', fontSize: '0.72rem', fontFamily: "'Be Vietnam Pro', sans-serif", cursor: 'pointer' }}
-                  >
-                    <Plus size={12} /> Thêm ảnh
-                  </button>
                 </div>
                 <div className="space-y-2">
+                  <label style={labelStyle}>THUMBNAIL (URL)</label>
+                  <input style={inputStyle} value={form.thumbnailImage} onChange={e => update('thumbnailImage', e.target.value)} placeholder="https://..." />
+                  <div className="rounded-xl overflow-hidden aspect-[16/9] bg-white/5 border border-white/10 relative">
+                    {form.thumbnailImage && <Image src={form.thumbnailImage} alt="Thumb" fill className="object-cover" sizes="400px" />}
+                  </div>
+                </div>
+              </div>
+              
+              <div className="pt-4 border-t border-white/5">
+                <div className="flex items-center justify-between mb-4">
+                  <label style={labelStyle}>GALLERY IMAGES ({form.gallery?.length || 0})</label>
+                  <button onClick={addGallery} className="text-[#00FF88] text-[0.7rem] font-bold font-orbitron hover:underline cursor-pointer">+ THÊM ẢNH</button>
+                </div>
+                <div className="grid grid-cols-1 gap-3">
                   {(form.gallery || []).map((url: string, i: number) => (
-                    <div key={i} className="flex items-center gap-2">
-                      <input
-                        style={{ ...inputStyle, flex: 1 }}
-                        value={url}
-                        onChange={e => updateGallery(i, e.target.value)}
-                        placeholder={`URL ảnh ${i + 1}...`}
-                      />
-                      {url && (
-                        <img src={url} alt="" className="w-10 h-10 rounded object-cover flex-shrink-0" />
-                      )}
-                      {(form.gallery || []).length > 1 && (
-                        <button onClick={() => removeGallery(i)} style={{ color: 'rgba(255,0,110,0.6)', background: 'none', border: 'none', cursor: 'pointer', flexShrink: 0 }}>
-                          <X size={14} />
-                        </button>
-                      )}
+                    <div key={i} className="flex items-center gap-3">
+                      <input style={{ ...inputStyle, flex: 1 }} value={url} onChange={e => updateGallery(i, e.target.value)} placeholder="URL ảnh gallery..." />
+                      <button onClick={() => removeGallery(i)} className="p-2 text-white/20 hover:text-red-500 transition-colors cursor-pointer"><Trash2 size={16} /></button>
                     </div>
                   ))}
                 </div>
@@ -577,36 +527,30 @@ function PostEditorModal({
           )}
 
           {activeSection === 'equipment' && (
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <label style={labelStyle}>DANH SÁCH THIẾT BỊ</label>
-                <button
-                  onClick={addEquipment}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all duration-200"
-                  style={{ background: 'rgba(0,255,136,0.1)', border: '1px solid rgba(0,255,136,0.3)', color: '#00FF88', fontSize: '0.72rem', fontFamily: "'Be Vietnam Pro', sans-serif", cursor: 'pointer' }}
-                >
-                  <Plus size={12} /> Thêm thiết bị
-                </button>
+            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-400">
+              <div className="flex items-center justify-between mb-2">
+                <label style={labelStyle}>DANH SÁCH THIẾT BỊ SỬ DỤNG</label>
+                <button onClick={addEquipment} className="text-[#00FF88] text-[0.7rem] font-bold font-orbitron hover:underline cursor-pointer">+ THÊM THIẾT BỊ</button>
               </div>
-              <div className="space-y-3">
-                {(form.equipment || []).map((eq: any, i: number) => (
-                  <div
-                    key={i}
-                    className="p-3 rounded-xl space-y-2"
-                    style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.07)' }}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span style={{ color: '#00FF88', fontSize: '0.68rem', fontFamily: 'Orbitron, sans-serif' }}>THIẾT BỊ #{i + 1}</span>
-                      {(form.equipment || []).length > 1 && (
-                        <button onClick={() => removeEquipment(i)} style={{ color: 'rgba(255,0,110,0.5)', background: 'none', border: 'none', cursor: 'pointer' }}>
-                          <Trash2 size={13} />
-                        </button>
-                      )}
-                    </div>
-                    <input style={inputStyle} value={eq.name} onChange={e => updateEquipment(i, 'name', e.target.value)} placeholder="Tên thiết bị..." />
-                    <div className="grid grid-cols-2 gap-2">
-                      <input style={inputStyle} value={eq.quantity} onChange={e => updateEquipment(i, 'quantity', e.target.value)} placeholder="Số lượng (VD: 24 units)" />
-                      <input style={inputStyle} value={eq.specs} onChange={e => updateEquipment(i, 'specs', e.target.value)} placeholder="Thông số kỹ thuật..." />
+              <div className="grid grid-cols-1 gap-4">
+                {(form.equipment || []).map((eq, i: number) => (
+                  <div key={i} className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 space-y-3 relative group">
+                    <button onClick={() => removeEquipment(i)} className="absolute top-4 right-4 text-white/10 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all cursor-pointer"><X size={16} /></button>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-white/20 text-[0.6rem] uppercase tracking-wider block mb-1">Tên thiết bị</label>
+                        <input style={inputStyle} value={eq.name} onChange={e => updateEquipment(i, 'name', e.target.value)} placeholder="VD: Laser RGB 30W" />
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="text-white/20 text-[0.6rem] uppercase tracking-wider block mb-1">Số lượng</label>
+                          <input style={inputStyle} value={eq.quantity} onChange={e => updateEquipment(i, 'quantity', e.target.value)} placeholder="VD: 12 units" />
+                        </div>
+                        <div>
+                          <label className="text-white/20 text-[0.6rem] uppercase tracking-wider block mb-1">Thông số</label>
+                          <input style={inputStyle} value={eq.specs} onChange={e => updateEquipment(i, 'specs', e.target.value)} placeholder="Full-color, ILDA" />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -615,34 +559,24 @@ function PostEditorModal({
           )}
         </div>
 
-        {/* Footer buttons */}
         <div
-          className="flex items-center justify-between gap-3 px-6 py-4 flex-shrink-0"
-          style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}
+          className="px-8 py-5 border-t border-white/10 flex items-center justify-end gap-5 bg-white/[0.02]"
         >
-          <button
-            onClick={onClose}
-            className="px-5 py-2.5 rounded-xl transition-all duration-200"
-            style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.5)', fontSize: '0.82rem', fontFamily: "'Be Vietnam Pro', sans-serif", cursor: 'pointer' }}
-          >
-            Hủy
-          </button>
+          <button onClick={onClose} className="text-white/40 font-orbitron text-[0.75rem] font-bold tracking-widest hover:text-white transition-colors cursor-pointer">HỦY BỎ</button>
           <button
             onClick={handleSave}
-            className="flex items-center gap-2 px-6 py-2.5 rounded-xl transition-all duration-200"
+            className="flex items-center gap-2 px-10 py-3 rounded-xl transition-all duration-300 transform hover:scale-105 active:scale-95"
             style={{
-              background: 'linear-gradient(135deg, rgba(0,255,136,0.2), rgba(0,255,136,0.1))',
-              border: '1px solid rgba(0,255,136,0.4)',
-              color: '#00FF88',
+              background: 'linear-gradient(135deg, #00FF88, #00cc66)',
+              color: '#000',
+              fontFamily: 'Orbitron, sans-serif',
               fontSize: '0.85rem',
-              fontFamily: "'Be Vietnam Pro', sans-serif",
-              fontWeight: 700,
+              fontWeight: 800,
+              boxShadow: '0 0 20px rgba(0,255,136,0.2)',
               cursor: 'pointer',
-              boxShadow: '0 0 20px rgba(0,255,136,0.1)',
             }}
           >
-            {isNew ? <Plus size={15} /> : <Pencil size={15} />}
-            {isNew ? 'Thêm Bài Đăng' : 'Lưu Thay Đổi'}
+            LƯU DỰ ÁN
           </button>
         </div>
       </div>
@@ -650,16 +584,18 @@ function PostEditorModal({
   );
 }
 
-function DeleteConfirm({ title, onConfirm, onCancel }: any) {
+function DeleteConfirm({ title, onConfirm, onCancel }: { title: string; onConfirm: () => void; onCancel: () => void }) {
   return (
-    <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-      <div className="w-full max-w-sm bg-[#0a0a14] border border-red-500/30 rounded-2xl p-6 text-center">
-        <AlertTriangle size={40} className="mx-auto text-red-500 mb-4" />
-        <h3 className="font-orbitron text-white text-lg font-bold mb-2">Xác Nhận Xóa</h3>
-        <p className="text-white/50 text-sm mb-6">Bạn có chắc muốn xóa "{title}"? Hành động này không thể hoàn tác.</p>
-        <div className="flex gap-3">
-          <button onClick={onCancel} className="flex-1 py-2 bg-white/5 text-white/50 rounded-xl">Hủy</button>
-          <button onClick={onConfirm} className="flex-1 py-2 bg-red-500/20 text-red-500 border border-red-500/30 rounded-xl font-bold">Xóa</button>
+    <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
+      <div className="w-full max-w-sm bg-[#0a0a14] border border-red-500/30 rounded-3xl p-8 text-center animate-in zoom-in-95 duration-300">
+        <div className="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto mb-6">
+          <AlertTriangle size={32} className="text-red-500" />
+        </div>
+        <h3 className="font-orbitron text-white text-lg font-bold mb-3">XÁC NHẬN XÓA</h3>
+        <p className="text-white/40 text-[0.85rem] mb-8 font-vietnam leading-relaxed">Bạn có chắc muốn xóa vĩnh viễn dự án &quot;{title.toUpperCase()}&quot;? Hành động này không thể hoàn tác.</p>
+        <div className="grid grid-cols-2 gap-4">
+          <button onClick={onCancel} className="py-3 bg-white/5 text-white/40 rounded-xl font-orbitron text-[0.7rem] font-bold tracking-widest hover:bg-white/10 cursor-pointer">HỦY</button>
+          <button onClick={onConfirm} className="py-3 bg-red-500/20 text-red-500 border border-red-500/30 rounded-xl font-orbitron text-[0.7rem] font-bold tracking-widest hover:bg-red-500/30 cursor-pointer">XÓA BỎ</button>
         </div>
       </div>
     </div>

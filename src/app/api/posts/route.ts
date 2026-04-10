@@ -2,23 +2,22 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { portfolioProjects } from '@/lib/data';
 
-// GET all projects
+// GET all posts
 export async function GET() {
   try {
-    const projects = await prisma.project.findMany({
-      orderBy: { createdAt: 'desc' },
+    const posts = await prisma.post.findMany({
+      orderBy: { publishedAt: 'desc' },
     });
-    return NextResponse.json(projects);
+    return NextResponse.json(posts);
   } catch (error) {
-    console.error('Database error in projects GET:', error);
-    // Return mock data so the UI doesn't crash
-    return NextResponse.json(portfolioProjects || []);
+    console.error('Database error in posts GET:', error);
+    // Return empty array instead of 500 for development stability
+    return NextResponse.json([]);
   }
 }
 
-// POST create project
+// POST create post
 export async function POST(request: Request) {
   const session = await getServerSession(authOptions);
   
@@ -37,18 +36,17 @@ export async function POST(request: Request) {
       .trim().replace(/\s+/g, '-')
       .slice(0, 50);
 
-    const project = await prisma.project.create({
+    const post = await prisma.post.create({
       data: {
         ...data,
         slug,
-        equipment: data.equipment || [],
-        gallery: data.gallery || [],
+        tags: data.tags || [],
       },
     });
     
-    return NextResponse.json(project);
+    return NextResponse.json(post);
   } catch (error) {
-    console.error('Error creating project:', error);
+    console.error('Error creating post:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

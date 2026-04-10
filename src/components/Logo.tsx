@@ -1,5 +1,4 @@
 import { Zap } from 'lucide-react';
-import Link from 'next/link';
 
 interface LogoProps {
   className?: string;
