@@ -8,7 +8,7 @@ const Facebook = ({ size = 24, style = {} }) => (
     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
   </svg>
 );
-import { defaultSiteSettings } from '@/lib/data';
+import { SiteSettings } from '@/lib/data';
 
 const navLinks = [
   { href: '#flexibility', label: 'Quy Mô Sự Kiện' },
@@ -18,8 +18,7 @@ const navLinks = [
   { href: '#contact', label: 'Liên Hệ' },
 ];
 
-export function Navigation() {
-  const siteSettings = defaultSiteSettings;
+export function Navigation({ siteSettings }: { siteSettings: SiteSettings }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 

@@ -2,7 +2,7 @@
 import { useState, useRef } from 'react';
 import { motion, useInView } from 'motion/react';
 import Link from 'next/link';
-import { portfolioProjects } from '@/lib/data';
+import { PortfolioProject } from '@/lib/data';
 
 // Categories mapping to database structure
 const categories = [
@@ -12,14 +12,14 @@ const categories = [
   { id: 'vip', label: 'VIP / Private' },
 ];
 
-export function ShowcaseSection() {
+export function ShowcaseSection({ projects }: { projects: PortfolioProject[] }) {
   const [activeCategory, setActiveCategory] = useState('all');
   const titleRef = useRef(null);
   const titleInView = useInView(titleRef, { once: true, margin: '-50px' });
 
   const filteredProjects = activeCategory === 'all' 
-    ? portfolioProjects 
-    : portfolioProjects.filter(p => p.category === activeCategory);
+    ? projects 
+    : projects.filter((p: any) => p.category === activeCategory);
 
   return (
     <section id="showcase" className="relative py-24 px-4 sm:px-6" style={{ background: '#02050A' }}>

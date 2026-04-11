@@ -1,6 +1,6 @@
 import { Zap, Phone, MapPin, Mail, User, Info, CreditCard } from 'lucide-react';
 import Link from 'next/link';
-import { defaultSiteSettings } from '@/lib/data';
+import { SiteSettings } from '@/lib/data';
 
 // Custom Social Icons
 const FacebookIcon = ({ size = 18 }) => (
@@ -29,8 +29,7 @@ const services = [
   'Thiết Kế Concept'
 ];
 
-export function Footer() {
-  const siteSettings = defaultSiteSettings;
+export function Footer({ siteSettings }: { siteSettings: SiteSettings }) {
 
   return (
     <footer className="relative pt-20 pb-12 px-4 sm:px-6" style={{ background: '#000', borderTop: '1px solid rgba(0,255,136,0.15)' }}>

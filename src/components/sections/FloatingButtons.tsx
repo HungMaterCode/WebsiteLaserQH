@@ -1,8 +1,6 @@
-'use client';
-import { defaultSiteSettings } from '@/lib/data';
+import { SiteSettings } from '@/lib/data';
 
-export function FloatingButtons() {
-  const siteSettings = defaultSiteSettings;
+export function FloatingButtons({ siteSettings }: { siteSettings: SiteSettings }) {
 
   return (
     <>

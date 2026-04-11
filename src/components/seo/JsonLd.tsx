@@ -1,7 +1,6 @@
-import { defaultSiteSettings } from '@/lib/data';
+import { SiteSettings } from '@/lib/data';
 
-export function JsonLd() {
-  const settings = defaultSiteSettings;
+export function JsonLd({ siteSettings: settings }: { siteSettings: SiteSettings }) {
 
   const localBusinessSchema = {
     '@context': 'https://schema.org',
@@ -14,10 +13,7 @@ export function JsonLd() {
     email: settings.companyEmail,
     address: {
       '@type': 'PostalAddress',
-      streetAddress: '600/17 Quang Trung, KP7',
-      addressLocality: 'Phường Thông Tây Hội',
-      addressRegion: 'TP Hồ Chí Minh',
-      addressCountry: 'VN',
+      streetAddress: settings.address,
     },
     sameAs: [settings.facebookLink],
     priceRange: '$$',

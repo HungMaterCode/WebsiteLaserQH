@@ -2,7 +2,7 @@
 import { useRef, useState } from 'react';
 import { motion, useInView } from 'motion/react';
 import { Phone, MapPin, Building2, Send } from 'lucide-react';
-import { defaultSiteSettings } from '@/lib/data';
+import { SiteSettings } from '@/lib/data';
 
 // Icons for social
 const MessengerIcon = () => (
@@ -11,8 +11,7 @@ const MessengerIcon = () => (
   </svg>
 );
 
-export function ContactSection() {
-  const siteSettings = defaultSiteSettings;
+export function ContactSection({ siteSettings }: { siteSettings: SiteSettings }) {
   const titleRef = useRef(null);
   const titleInView = useInView(titleRef, { once: true, margin: '-50px' });
   
@@ -121,8 +120,7 @@ export function ContactSection() {
                 <div>
                   <h4 className="text-[0.7rem] font-orbitron uppercase tracking-widest mb-1.5" style={{ color: 'rgba(255,255,255,0.4)' }}>Trụ sở chính</h4>
                   <p className="text-white font-vietnam leading-relaxed text-[0.95rem]">
-                    600/17 Quang Trung, KP7, Phường<br/>
-                    Thông Tây Hội, TP Hồ Chí Minh, Việt Nam
+                    {siteSettings.address}
                   </p>
                 </div>
               </div>
@@ -134,11 +132,11 @@ export function ContactSection() {
                 <Building2 size={16} color="var(--neon-cyan)" />
                 <h4 className="text-[0.75rem] font-orbitron font-bold uppercase tracking-widest" style={{ color: 'var(--neon-cyan)' }}>THÔNG TIN CÔNG TY</h4>
               </div>
-              <h3 className="text-white font-bold font-vietnam text-[1.05rem] mb-4">CÔNG TY TNHH THƯƠNG MẠI VÀ DỊCH VỤ LASER QH</h3>
+              <h3 className="text-white font-bold font-vietnam text-[1.05rem] mb-4">{siteSettings.companyName}</h3>
               
               <div className="grid grid-cols-[100px_1fr] gap-y-3 gap-x-2 font-vietnam text-[0.85rem]">
                 <div className="text-gray-400">Địa chỉ:</div>
-                <div className="text-white leading-relaxed">600/17 Quang Trung, KP7, Phường Thông Tây Hội, TP Hồ Chí Minh, Việt Nam</div>
+                <div className="text-white leading-relaxed">{siteSettings.address}</div>
                 
                 <div className="text-gray-400">Đại diện:</div>
                 <div className="text-white">{siteSettings.directorName}</div>

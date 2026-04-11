@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { ChevronDown } from 'lucide-react';
-import { defaultMediaSettings, defaultSiteSettings } from '@/lib/data';
+import { SiteSettings, MediaSettings } from '@/lib/data';
 
 function LaserBeam({ style }: { style: React.CSSProperties }) {
   return (
@@ -112,10 +112,8 @@ function ParticleField() {
   );
 }
 
-export function HeroSection() {
+export function HeroSection({ siteSettings, mediaSettings }: { siteSettings: SiteSettings, mediaSettings: MediaSettings }) {
   const [loaded, setLoaded] = useState(false);
-  const mediaSettings = defaultMediaSettings;
-  const siteSettings = defaultSiteSettings;
 
   useEffect(() => {
     const timer = setTimeout(() => setLoaded(true), 100);
