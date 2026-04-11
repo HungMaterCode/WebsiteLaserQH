@@ -117,6 +117,21 @@ model Message {
   @@map("messages")
 }
 
+model posts {
+  id          String     @id
+  title       String
+  slug        String     @unique
+  excerpt     String
+  content     String
+  coverImage  String
+  publishedAt DateTime   @default(now())
+  author      String     @default("Admin")
+  status      PostStatus @default(draft)
+  tags        String[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime
+}
+
 enum Role {
   USER
   ADMIN
@@ -126,4 +141,9 @@ enum Category {
   vip
   medium
   mega
+}
+
+enum PostStatus {
+  draft
+  published
 }

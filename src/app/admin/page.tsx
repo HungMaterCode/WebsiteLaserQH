@@ -104,7 +104,7 @@ export default function AdminPage() {
         style={{ padding: '2rem 1.5rem', paddingBottom: '6rem' }}
       >
         <div className="max-w-5xl mx-auto text-white">
-          {activeTab === 'overview' && <OverviewTab />}
+          {activeTab === 'overview' && <OverviewTab onTabChange={setActiveTab} />}
           {activeTab === 'posts' && <PostsManager />}
           {activeTab === 'media' && <MediaManager />}
           {activeTab === 'settings' && <SiteSettingsManager />}
