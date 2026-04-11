@@ -21,7 +21,12 @@ function ServiceCard({ service, index }: { service: typeof services[0]; index: n
     <motion.div ref={ref} initial={{ opacity: 0, y: 40 }} animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : 40 }} transition={{ duration: 0.5, delay: (index % 3) * 0.1 }} className="group card-laser rounded-2xl overflow-hidden">
       <div className="relative h-44 overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={service.image} alt={service.title} className="w-full h-full object-cover transition-transform duration-600 group-hover:scale-110" loading="lazy" />
+        <img 
+          src={service.image || 'https://images.unsplash.com/photo-1772078822311-02f078eb34ed?w=800&q=80'} 
+          alt={service.title} 
+          className="w-full h-full object-cover transition-transform duration-600 group-hover:scale-110" 
+          loading="lazy" 
+        />
         <div className="absolute inset-0" style={{ background: 'linear-gradient(0deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.1) 100%)' }} />
         <div className="absolute top-3 left-3">
           <span style={{ background: service.colorDim, border: `1px solid ${service.color}40`, color: service.color, fontSize: '0.6rem', fontFamily: 'Orbitron, sans-serif', letterSpacing: '0.15em', padding: '3px 10px', borderRadius: '999px' }}>{service.tag}</span>

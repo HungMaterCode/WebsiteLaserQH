@@ -144,7 +144,7 @@ export function HeroSection({ siteSettings, mediaSettings }: { siteSettings: Sit
         ) : (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={mediaSettings.heroImageUrl}
+            src={mediaSettings.heroImageUrl || 'https://images.unsplash.com/photo-1760539619529-cfd85a2a9cfd?w=1920&q=80'}
             alt="Concert laser show"
             className="w-full h-full object-cover"
             style={{ opacity: 0.3 }}

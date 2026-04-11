@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Settings, Save, CheckCircle, Globe, Phone, MapPin, Mail, Hash, User } from 'lucide-react';
+import { Settings, Save, CheckCircle, Globe, Phone, MapPin, Mail, Hash, User, Plus, Trash2 } from 'lucide-react';
+import { Consultant } from '@/lib/data';
 
 const inputStyle: React.CSSProperties = {
   background: 'rgba(255,255,255,0.04)',
@@ -37,6 +38,9 @@ export function SiteSettingsManager() {
     taxCode: '',
     bankAccount: '',
     companyEmail: '',
+    consultantName: '',
+    consultants: [] as Consultant[],
+    directorRole: '',
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -51,7 +55,11 @@ export function SiteSettingsManager() {
       const res = await fetch('/api/settings');
       const data = await res.json();
       if (data && Object.keys(data).length > 0) {
-        setForm(data);
+        setForm(prev => ({ 
+          ...prev, 
+          ...data, 
+          consultants: data.consultants || [] 
+        }));
       }
       setLoading(false);
     } catch (error) {
@@ -76,6 +84,25 @@ export function SiteSettingsManager() {
       console.error('Error saving settings:', error);
     }
     setSaving(false);
+  };
+
+  const addConsultant = () => {
+    setForm({
+      ...form,
+      consultants: [...form.consultants, { name: '', phone: '' }]
+    });
+  };
+
+  const removeConsultant = (index: number) => {
+    const newConsultants = [...form.consultants];
+    newConsultants.splice(index, 1);
+    setForm({ ...form, consultants: newConsultants });
+  };
+
+  const updateConsultant = (index: number, field: keyof Consultant, value: string) => {
+    const newConsultants = [...form.consultants];
+    newConsultants[index] = { ...newConsultants[index], [field]: value };
+    setForm({ ...form, consultants: newConsultants });
   };
 
   if (loading) return <div>Đang tải cài đặt hệ thống...</div>;
@@ -105,10 +132,6 @@ export function SiteSettingsManager() {
           </div>
 
           <div className="space-y-4">
-            <div>
-              <label style={labelStyle}>SỐ ĐIỆN THOẠI HIỂN THỊ (*)</label>
-              <input style={inputStyle} value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} />
-            </div>
             <div>
               <label style={labelStyle}>EMAIL CÔNG TY</label>
               <input style={inputStyle} value={form.companyEmail} onChange={e => setForm({...form, companyEmail: e.target.value})} />
@@ -148,6 +171,66 @@ export function SiteSettingsManager() {
           </div>
         </div>
 
+        {/* Consultation info */}
+        <div 
+          className="p-6 rounded-2xl space-y-6"
+          style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}
+        >
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-[#00FF88]/10 border border-[#00FF88]/20">
+                <User size={20} className="text-[#00FF88]" />
+              </div>
+              <h3 className="font-orbitron text-white text-[0.85rem] font-bold">TƯ VẤN VÀ BÁO GIÁ</h3>
+            </div>
+            <button 
+              onClick={addConsultant}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#00FF88]/10 border border-[#00FF88]/20 text-[#00FF88] font-orbitron text-[0.65rem] font-bold hover:bg-[#00FF88]/20 transition-all"
+            >
+              <Plus size={14} /> THÊM
+            </button>
+          </div>
+
+          <div className="space-y-6">
+            {form.consultants.map((consultant, index) => (
+              <div key={index} className="p-4 rounded-xl space-y-4 relative group" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                <button 
+                  onClick={() => removeConsultant(index)}
+                  className="absolute top-2 right-2 p-1.5 rounded-lg text-white/20 hover:text-red-500 hover:bg-red-500/10 transition-all opacity-0 group-hover:opacity-100"
+                >
+                  <Trash2 size={14} />
+                </button>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label style={labelStyle}>TÊN NGƯỜI TƯ VẤN</label>
+                    <input 
+                      style={inputStyle} 
+                      value={consultant.name} 
+                      onChange={e => updateConsultant(index, 'name', e.target.value)} 
+                      placeholder="VD: Mr. Hiệp"
+                    />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>SỐ ĐIỆN THOẠI (*)</label>
+                    <input 
+                      style={inputStyle} 
+                      value={consultant.phone} 
+                      onChange={e => updateConsultant(index, 'phone', e.target.value)} 
+                      placeholder="090..."
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+            
+            {form.consultants.length === 0 && (
+              <div className="py-8 text-center border border-dashed border-white/10 rounded-xl text-white/20 font-orbitron text-[0.7rem] uppercase tracking-wider">
+                Chưa có người tư vấn nào
+              </div>
+            )}
+          </div>
+        </div>
+
         {/* Legal info */}
         <div 
           className="lg:col-span-2 p-6 rounded-2xl space-y-6"
@@ -180,6 +263,10 @@ export function SiteSettingsManager() {
               <div>
                 <label style={labelStyle}>SĐT NGƯỜI ĐẠI DIỆN</label>
                 <input style={inputStyle} value={form.directorPhone} onChange={e => setForm({...form, directorPhone: e.target.value})} />
+              </div>
+              <div>
+                <label style={labelStyle}>CHỨC VỤ</label>
+                <input style={inputStyle} value={form.directorRole} onChange={e => setForm({...form, directorRole: e.target.value})} placeholder="VD: Giám đốc" />
               </div>
             </div>
 

@@ -157,7 +157,11 @@ export function OverviewTab() {
                 className="flex items-center gap-4 p-3 rounded-lg"
                 style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}
               >
-                <img src={p.thumbnailImage} alt={p.title} className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
+                <img 
+                  src={p.thumbnailImage || 'https://images.unsplash.com/photo-1760539619529-cfd85a2a9cfd?w=800&q=80'} 
+                  alt={p.title} 
+                  className="w-10 h-10 rounded-lg object-cover flex-shrink-0" 
+                />
                 <div className="flex-1 min-w-0">
                   <div className="text-white font-exo truncate" style={{ fontSize: '0.83rem', fontWeight: 600 }}>{p.title}</div>
                   <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.7rem', fontFamily: "'Be Vietnam Pro', sans-serif" }}>{p.location} · {p.year}</div>

@@ -15,6 +15,13 @@ const InstagramIcon = ({ size = 18 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
 );
 
+const MessengerIcon = ({ size = 18 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-13.3 8.38 8.38 0 0 1 3.8.9L21 2z"></path>
+    <path d="M10 10l4 4 4-4"></path>
+  </svg>
+);
+
 // Custom Zalo Icon
 const ZaloIcon = ({ size = 20 }) => (
   <span style={{ fontSize: `${size * 0.6}px`, fontWeight: 900, color: 'rgba(255,255,255,0.6)' }}>Za</span>
@@ -63,7 +70,7 @@ export function Footer({ siteSettings }: { siteSettings: SiteSettings }) {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="font-vietnam text-[0.85rem]" style={{ color: 'var(--neon-green)' }}>Đại diện:</span>
-                  <span className="text-gray-400 font-vietnam text-[0.85rem]">{siteSettings.directorName} - Giám đốc</span>
+                  <span className="text-gray-400 font-vietnam text-[0.85rem]">{siteSettings.directorName} - {siteSettings.directorRole}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="font-vietnam text-[0.85rem]" style={{ color: 'var(--neon-green)' }}>STK:</span>
@@ -77,6 +84,7 @@ export function Footer({ siteSettings }: { siteSettings: SiteSettings }) {
               {[
                 { icon: FacebookIcon, link: siteSettings.facebookLink },
                 { icon: ZaloIcon, link: siteSettings.zaloLink },
+                { icon: MessengerIcon, link: siteSettings.messengerLink },
                 { icon: YoutubeIcon, link: '#' },
                 { icon: InstagramIcon, link: '#' },
               ].map((social, idx) => (
@@ -109,12 +117,17 @@ export function Footer({ siteSettings }: { siteSettings: SiteSettings }) {
                 <div>
                   <p className="text-gray-500 font-vietnam text-[0.8rem] mb-2">Tư Vấn & Báo Giá</p>
                   <div className="flex flex-col gap-1.5">
-                    <a href={`tel:${siteSettings.phone.replace(/\s+/g, '')}`} className="text-white hover:text-[var(--neon-green)] font-bold text-[1.1rem] transition-colors">
-                      {siteSettings.phone} — Mr. Hiệp
-                    </a>
-                    <a href={`tel:0989600049`} className="text-white hover:text-[var(--neon-green)] font-bold text-[1.1rem] transition-colors">
-                      098 9600049 — Mr. Phương
-                    </a>
+                    {(siteSettings.consultants && siteSettings.consultants.length > 0) ? (
+                      siteSettings.consultants.map((c, i) => (
+                        <a key={i} href={`tel:${c.phone.replace(/\s+/g, '')}`} className="text-white hover:text-[var(--neon-green)] font-bold text-[1.1rem] transition-colors">
+                          {c.phone} — {c.name}
+                        </a>
+                      ))
+                    ) : (
+                      <a href={`tel:${siteSettings.phone.replace(/\s+/g, '')}`} className="text-white hover:text-[var(--neon-green)] font-bold text-[1.1rem] transition-colors">
+                        {siteSettings.phone} — {siteSettings.consultantName}
+                      </a>
+                    )}
                   </div>
                 </div>
 

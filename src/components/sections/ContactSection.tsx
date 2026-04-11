@@ -107,8 +107,17 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
                 <div>
                   <h4 className="text-[0.7rem] font-orbitron uppercase tracking-widest mb-1.5" style={{ color: 'rgba(255,255,255,0.4)' }}>TƯ VẤN & BÁO GIÁ</h4>
                   <div className="flex flex-col gap-1 font-vietnam text-[1rem]">
-                    <a href={`tel:${siteSettings.phone.replace(/\s+/g, '')}`} className="text-white hover:text-[#00FF88] transition-colors"><span className="font-bold">{siteSettings.phone}</span> <span className="text-gray-500 font-normal">— Mr. Hiệp</span></a>
-                    <a href={`tel:0989600049`} className="text-white hover:text-[#00FF88] transition-colors"><span className="font-bold">098 9600049</span> <span className="text-gray-500 font-normal">— Mr. Phương</span></a>
+                    {(siteSettings.consultants && siteSettings.consultants.length > 0) ? (
+                      siteSettings.consultants.map((c, i) => (
+                        <a key={i} href={`tel:${c.phone.replace(/\s+/g, '')}`} className="text-white hover:text-[#00FF88] transition-colors">
+                          <span className="font-bold">{c.phone}</span> <span className="text-gray-500 font-normal">— {c.name}</span>
+                        </a>
+                      ))
+                    ) : (
+                      <a href={`tel:${siteSettings.phone.replace(/\s+/g, '')}`} className="text-white hover:text-[#00FF88] transition-colors">
+                        <span className="font-bold">{siteSettings.phone}</span> <span className="text-gray-500 font-normal">— {siteSettings.consultantName}</span>
+                      </a>
+                    )}
                   </div>
                 </div>
               </div>
@@ -142,7 +151,7 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
                 <div className="text-white">{siteSettings.directorName}</div>
                 
                 <div className="text-gray-400">Chức vụ:</div>
-                <div className="text-white">Giám đốc</div>
+                <div className="text-white">{siteSettings.directorRole}</div>
                 
                 <div className="text-gray-400">Mã số thuế:</div>
                 <div className="text-white">{siteSettings.taxCode}</div>
