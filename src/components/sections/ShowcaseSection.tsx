@@ -2,7 +2,7 @@
 import { useState, useRef } from 'react';
 import { motion, useInView } from 'motion/react';
 import Link from 'next/link';
-import { portfolioProjects } from '@/lib/data';
+import { PortfolioProject } from '@/lib/data';
 
 // Categories mapping to database structure
 const categories = [
@@ -12,14 +12,14 @@ const categories = [
   { id: 'vip', label: 'VIP / Private' },
 ];
 
-export function ShowcaseSection() {
+export function ShowcaseSection({ projects }: { projects: PortfolioProject[] }) {
   const [activeCategory, setActiveCategory] = useState('all');
   const titleRef = useRef(null);
   const titleInView = useInView(titleRef, { once: true, margin: '-50px' });
 
-  const filteredProjects = activeCategory === 'all' 
-    ? portfolioProjects 
-    : portfolioProjects.filter(p => p.category === activeCategory);
+  const filteredProjects = activeCategory === 'all'
+    ? projects
+    : projects.filter((p: any) => p.category === activeCategory);
 
   return (
     <section id="showcase" className="relative py-24 px-4 sm:px-6" style={{ background: '#02050A' }}>
@@ -43,7 +43,7 @@ export function ShowcaseSection() {
           {categories.map(cat => {
             const isActive = activeCategory === cat.id;
             return (
-              <button 
+              <button
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
                 className={`px-6 py-2.5 rounded-[50px] text-[0.85rem] font-bold transition-all duration-300 border bg-transparent`}
@@ -76,11 +76,16 @@ export function ShowcaseSection() {
                 {/* Image Top Half */}
                 <div className="relative aspect-[4/3] overflow-hidden bg-[#0A0F1A]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={project.thumbnailImage} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" loading="lazy" />
-                  
+                  <img
+                    src={project.thumbnailImage || 'https://images.unsplash.com/photo-1760539619529-cfd85a2a9cfd?w=800&q=80'}
+                    alt={project.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    loading="lazy"
+                  />
+
                   {/* Category Badge */}
-                  <div className="absolute top-4 left-4 px-3.5 py-1 rounded-full text-[0.6rem] font-bold font-orbitron tracking-widest z-10 backdrop-blur-md" 
-                       style={{ background: 'rgba(0,0,0,0.6)', border: `1px solid ${project.color}60`, color: project.color }}>
+                  <div className="absolute top-4 left-4 px-3.5 py-1 rounded-full text-[0.6rem] font-bold font-orbitron tracking-widest z-10 backdrop-blur-md"
+                    style={{ background: 'rgba(0,0,0,0.6)', border: `1px solid ${project.color}60`, color: project.color }}>
                     {project.categoryLabel.toUpperCase()}
                   </div>
 
@@ -92,7 +97,7 @@ export function ShowcaseSection() {
                       </svg>
                     </div>
                   </div>
-                  
+
                   {/* Bottom Image Gradient */}
                   <div className="absolute bottom-0 left-0 right-0 h-28 z-0" style={{ background: 'linear-gradient(to top, #050912, transparent)' }} />
                 </div>
@@ -101,17 +106,17 @@ export function ShowcaseSection() {
                 <div className="p-6 flex flex-col flex-1 z-10 relative">
                   <h3 className="text-white font-bold mb-1.5 line-clamp-2" style={{ fontSize: '1.25rem', fontFamily: 'var(--font-vietnam)', lineHeight: 1.35 }}>{project.title}</h3>
                   <p className="mb-5" style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.8rem', fontFamily: 'var(--font-vietnam)' }}>{project.location} · {project.year}</p>
-                  
+
                   {/* Highlight Pill */}
                   <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-5 self-start" style={{ background: `${project.color}15`, border: `1px solid ${project.color}30` }}>
                     <span className="w-1.5 h-1.5 rounded-full shadow-[0_0_8px_currentColor]" style={{ backgroundColor: project.color }}></span>
                     <span style={{ color: project.color, fontSize: '0.75rem', fontWeight: 600, fontFamily: 'var(--font-vietnam)' }}>{project.highlight}</span>
                   </div>
-                  
+
                   <p className="text-sm line-clamp-2 mb-7" style={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'var(--font-vietnam)', lineHeight: 1.6 }}>
                     {project.description}
                   </p>
-                  
+
                   {/* Buttons Row */}
                   <div className="flex flex-wrap items-center gap-3 mt-auto w-full">
                     <a href={project.slug === 'samsung-launch-2024' ? 'https://facebook.com' : '#'} target="_blank" rel="noreferrer" className="flex-1 min-w-[120px] justify-center px-4 py-2.5 rounded-lg text-[0.8rem] font-medium flex items-center gap-2 transition-colors" style={{ border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.6)', fontFamily: 'var(--font-vietnam)' }}
@@ -121,7 +126,7 @@ export function ShowcaseSection() {
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                       Xem trên FB
                     </a>
-                    
+
                     <Link href={`/lien-he?project=${project.slug}`} className="flex-1 min-w-[140px] justify-center px-4 py-2.5 rounded-lg text-[0.8rem] font-bold flex items-center gap-1.5 transition-all" style={{ color: project.color, background: `${project.color}05`, border: `1px solid ${project.color}30`, fontFamily: 'var(--font-vietnam)' }}
                       onMouseEnter={(e) => { e.currentTarget.style.background = `${project.color}15`; e.currentTarget.style.borderColor = `${project.color}60` }}
                       onMouseLeave={(e) => { e.currentTarget.style.background = `${project.color}05`; e.currentTarget.style.borderColor = `${project.color}30` }}
@@ -135,15 +140,15 @@ export function ShowcaseSection() {
             );
           })}
         </div>
-        
+
         {/* View on Facebook bottom button */}
         <div className="mt-16 flex justify-center">
           <a href="https://facebook.com/nguyenquang.hiep.39" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-[50px] text-[0.9rem] font-bold transition-all duration-300" style={{ color: 'var(--neon-green)', border: '1px solid var(--neon-green)', background: 'rgba(0, 255, 136, 0.03)', fontFamily: 'var(--font-vietnam)', boxShadow: '0 0 15px rgba(0, 255, 136, 0.05)' }}
-             onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--neon-green)'; e.currentTarget.style.color = '#000'; e.currentTarget.style.boxShadow = '0 0 25px rgba(0, 255, 136, 0.4)'; }}
-             onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(0, 255, 136, 0.03)'; e.currentTarget.style.color = 'var(--neon-green)'; e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 255, 136, 0.05)'; }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--neon-green)'; e.currentTarget.style.color = '#000'; e.currentTarget.style.boxShadow = '0 0 25px rgba(0, 255, 136, 0.4)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(0, 255, 136, 0.03)'; e.currentTarget.style.color = 'var(--neon-green)'; e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 255, 136, 0.05)'; }}
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
-            Xem Thêm Dự Án Trên Facebook 
+            Xem Thêm Dự Án Trên Facebook
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
           </a>
         </div>

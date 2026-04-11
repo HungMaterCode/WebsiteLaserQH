@@ -20,6 +20,11 @@ export interface PortfolioProject {
   color: string;
 }
 
+export interface Consultant {
+  name: string;
+  phone: string;
+}
+
 export interface SiteSettings {
   messengerLink: string;
   zaloLink: string;
@@ -32,6 +37,9 @@ export interface SiteSettings {
   taxCode: string;
   bankAccount: string;
   companyEmail: string;
+  consultantName: string;
+  consultants: Consultant[];
+  directorRole: string;
 }
 
 export interface MediaSettings {
@@ -52,6 +60,12 @@ export const defaultSiteSettings: SiteSettings = {
   taxCode: '0319250452',
   bankAccount: '1062510995 ngân hàng Vietcombank',
   companyEmail: 'laserqh2011@gmail.com',
+  consultantName: 'Mr. Hiệp',
+  consultants: [
+    { name: 'Mr. Hiệp', phone: '0907 579 481' },
+    { name: 'Mr. Phương', phone: '098 9600049' }
+  ],
+  directorRole: 'Giám đốc',
 };
 
 export const defaultMediaSettings: MediaSettings = {

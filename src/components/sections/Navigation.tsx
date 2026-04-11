@@ -8,7 +8,7 @@ const Facebook = ({ size = 24, style = {} }) => (
     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
   </svg>
 );
-import { defaultSiteSettings } from '@/lib/data';
+import { SiteSettings } from '@/lib/data';
 
 const navLinks = [
   { href: '#flexibility', label: 'Quy Mô Sự Kiện' },
@@ -18,14 +18,24 @@ const navLinks = [
   { href: '#contact', label: 'Liên Hệ' },
 ];
 
-export function Navigation() {
-  const siteSettings = defaultSiteSettings;
+export function Navigation({ siteSettings }: { siteSettings: SiteSettings }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  const primaryConsultant = siteSettings.consultants?.[0] || { name: 'Mr. Hiệp', phone: siteSettings.phone };
+  const secondaryConsultant = siteSettings.consultants?.[1];
+
   const CONTACT_INFO = {
-    phone1: { number: siteSettings.phone, name: 'Tư Vấn: Mr Hiệp', href: `tel:${siteSettings.phone.replace(/\s+/g, '')}` },
-    phone2: { number: '098 9600049', name: 'Báo Giá: Mr Phương', href: 'tel:0989600049' },
+    phone1: { 
+      number: primaryConsultant.phone, 
+      name: `Tư Vấn: ${primaryConsultant.name}`, 
+      href: `tel:${primaryConsultant.phone.replace(/\s+/g, '')}` 
+    },
+    phone2: secondaryConsultant ? { 
+      number: secondaryConsultant.phone, 
+      name: `Báo Giá: ${secondaryConsultant.name}`, 
+      href: `tel:${secondaryConsultant.phone.replace(/\s+/g, '')}` 
+    } : null,
     facebook: { label: 'Facebook', href: siteSettings.facebookLink },
   };
 
@@ -72,20 +82,24 @@ export function Navigation() {
                     {CONTACT_INFO.phone1.number}
                   </span>
                 </a>
-                <span style={{ color: 'rgba(255,255,255,0.12)', fontSize: '0.7rem' }}>|</span>
-                <a
-                  href={CONTACT_INFO.phone2.href}
-                  className="flex items-center gap-1.5 group transition-all duration-200 whitespace-nowrap"
-                  style={{ textDecoration: 'none' }}
-                >
-                  <Phone size={11} style={{ color: '#00FF88', flexShrink: 0 }} />
-                  <span
-                    className="group-hover:text-white transition-colors duration-200"
-                    style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.72rem', fontFamily: "'Be Vietnam Pro', sans-serif", fontWeight: 500 }}
-                  >
-                    {CONTACT_INFO.phone2.number}
-                  </span>
-                </a>
+                {CONTACT_INFO.phone2 && (
+                  <>
+                    <span style={{ color: 'rgba(255,255,255,0.12)', fontSize: '0.7rem' }}>|</span>
+                    <a
+                      href={CONTACT_INFO.phone2.href}
+                      className="flex items-center gap-1.5 group transition-all duration-200 whitespace-nowrap"
+                      style={{ textDecoration: 'none' }}
+                    >
+                      <Phone size={11} style={{ color: '#00FF88', flexShrink: 0 }} />
+                      <span
+                        className="group-hover:text-white transition-colors duration-200"
+                        style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.72rem', fontFamily: "'Be Vietnam Pro', sans-serif", fontWeight: 500 }}
+                      >
+                        {CONTACT_INFO.phone2.number}
+                      </span>
+                    </a>
+                  </>
+                )}
               </div>
 
               {/* FB and Zalo links */}
@@ -236,12 +250,14 @@ export function Navigation() {
                 {CONTACT_INFO.phone1.number} · {CONTACT_INFO.phone1.name}
               </span>
             </a>
-            <a href={CONTACT_INFO.phone2.href} className="flex items-center gap-2" style={{ textDecoration: 'none' }}>
-              <Phone size={13} style={{ color: '#00FF88' }} />
-              <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', fontFamily: "'Be Vietnam Pro', sans-serif" }}>
-                {CONTACT_INFO.phone2.number} · {CONTACT_INFO.phone2.name}
-              </span>
-            </a>
+            {CONTACT_INFO.phone2 && (
+              <a href={CONTACT_INFO.phone2.href} className="flex items-center gap-2" style={{ textDecoration: 'none' }}>
+                <Phone size={13} style={{ color: '#00FF88' }} />
+                <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', fontFamily: "'Be Vietnam Pro', sans-serif" }}>
+                  {CONTACT_INFO.phone2.number} · {CONTACT_INFO.phone2.name}
+                </span>
+              </a>
+            )}
             <div className="flex items-center gap-4 pt-1">
               <a href={siteSettings.zaloLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2" style={{ textDecoration: 'none' }}>
                 <div className="w-5 h-5 rounded-md flex items-center justify-center bg-[#0068FF] overflow-hidden">

@@ -248,7 +248,11 @@ export function PostsManager() {
               style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.07)' }}
             >
               <div className="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0">
-                <img src={project.thumbnailImage} alt={project.title} className="w-full h-full object-cover" />
+                <img 
+                  src={project.thumbnailImage || 'https://images.unsplash.com/photo-1760539619529-cfd85a2a9cfd?w=800&q=80'} 
+                  alt={project.title} 
+                  className="w-full h-full object-cover" 
+                />
               </div>
 
               <div className="flex-1 min-w-0">
@@ -527,8 +531,12 @@ function PostEditorModal({
                 <label style={labelStyle}>HERO IMAGE URL (ảnh đầu trang chi tiết)</label>
                 <input style={inputStyle} value={form.heroImage} onChange={e => update('heroImage', e.target.value)} placeholder="https://..." />
                 {form.heroImage && (
-                  <div className="mt-2 rounded-lg overflow-hidden" style={{ height: 100 }}>
-                    <img src={form.heroImage} alt="" className="w-full h-full object-cover" />
+                  <div className="mt-2 rounded-lg overflow-hidden bg-white/5" style={{ height: 100 }}>
+                    {form.heroImage ? (
+                      <img src={form.heroImage} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-white/20 text-[0.7rem]">Chưa có ảnh Hero</div>
+                    )}
                   </div>
                 )}
               </div>
@@ -536,8 +544,12 @@ function PostEditorModal({
                 <label style={labelStyle}>THUMBNAIL IMAGE URL (ảnh hiển thị trong grid)</label>
                 <input style={inputStyle} value={form.thumbnailImage} onChange={e => update('thumbnailImage', e.target.value)} placeholder="https://..." />
                 {form.thumbnailImage && (
-                  <div className="mt-2 rounded-lg overflow-hidden" style={{ height: 80, width: 140 }}>
-                    <img src={form.thumbnailImage} alt="" className="w-full h-full object-cover" />
+                  <div className="mt-2 rounded-lg overflow-hidden bg-white/5" style={{ height: 80, width: 140 }}>
+                    {form.thumbnailImage ? (
+                      <img src={form.thumbnailImage} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-white/20 text-[0.7rem]">Chưa có ảnh Thumbnail</div>
+                    )}
                   </div>
                 )}
               </div>

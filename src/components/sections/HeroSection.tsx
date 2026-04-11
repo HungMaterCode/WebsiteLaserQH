@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { ChevronDown } from 'lucide-react';
-import { defaultMediaSettings, defaultSiteSettings } from '@/lib/data';
+import { SiteSettings, MediaSettings } from '@/lib/data';
 
 function LaserBeam({ style }: { style: React.CSSProperties }) {
   return (
@@ -112,10 +112,8 @@ function ParticleField() {
   );
 }
 
-export function HeroSection() {
+export function HeroSection({ siteSettings, mediaSettings }: { siteSettings: SiteSettings, mediaSettings: MediaSettings }) {
   const [loaded, setLoaded] = useState(false);
-  const mediaSettings = defaultMediaSettings;
-  const siteSettings = defaultSiteSettings;
 
   useEffect(() => {
     const timer = setTimeout(() => setLoaded(true), 100);
@@ -146,7 +144,7 @@ export function HeroSection() {
         ) : (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={mediaSettings.heroImageUrl}
+            src={mediaSettings.heroImageUrl || 'https://images.unsplash.com/photo-1760539619529-cfd85a2a9cfd?w=1920&q=80'}
             alt="Concert laser show"
             className="w-full h-full object-cover"
             style={{ opacity: 0.3 }}
