@@ -54,7 +54,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi" className={`${beVietnamPro.variable} ${exo2.variable} ${orbitron.variable}`}>
-      <body className="font-vietnam">
+      <body className="font-vietnam" suppressHydrationWarning>
         <AuthProvider>
           {children}
         </AuthProvider>

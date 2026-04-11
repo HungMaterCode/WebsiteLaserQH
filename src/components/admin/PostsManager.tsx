@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, Pencil, Trash2, X, AlertTriangle, Search, AlertCircle } from 'lucide-react';
+import { Plus, Pencil, Trash2, X, AlertTriangle, Search, AlertCircle, Image as ImageIcon } from 'lucide-react';
 import { portfolioProjects as mockProjects } from '@/lib/data';
 
 const CATEGORY_OPTIONS = [
@@ -248,7 +248,13 @@ export function PostsManager() {
               style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.07)' }}
             >
               <div className="w-14 h-14 rounded-lg overflow-hidden flex-shrink-0">
-                <img src={project.thumbnailImage} alt={project.title} className="w-full h-full object-cover" />
+                {project.thumbnailImage ? (
+                  <img src={project.thumbnailImage} alt={project.title} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-white/5 border border-white/10">
+                    <ImageIcon size={16} className="text-white/20" />
+                  </div>
+                )}
               </div>
 
               <div className="flex-1 min-w-0">
