@@ -13,8 +13,6 @@ import {
   Zap,
   Wrench,
   ChevronLeft,
-  Share2,
-  ExternalLink,
   MessageSquare,
   ArrowRight
 } from 'lucide-react';
@@ -189,9 +187,9 @@ export default async function ProjectPage({ params }: Props) {
         </div>
 
         {/* Hero Section */}
-        <section 
+        <section
           className="relative h-[45vh] md:h-[60vh] min-h-[400px] md:min-h-[500px] overflow-hidden shadow-2xl"
-          style={{ 
+          style={{
             backgroundImage: `url(${project.heroImage})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
@@ -201,10 +199,10 @@ export default async function ProjectPage({ params }: Props) {
         >
           {/* Subtle Grain to enhance perceived detail */}
           <div className="absolute inset-0 opacity-[0.02] pointer-events-none" style={{ backgroundImage: 'url("https://www.transparenttextures.com/patterns/stardust.png")' }} />
-          
+
           {/* Optimized Overlay - Pure and Deep at the bottom only */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#02050A] via-[#02050A]/20 to-transparent" />
-          
+
           <div className="absolute inset-0 flex items-end">
             <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 pb-16">
               <div className="max-w-3xl">
@@ -328,22 +326,13 @@ export default async function ProjectPage({ params }: Props) {
                       <p className="text-white/60 text-sm mb-6 leading-relaxed font-body">Để Laser QH tư vấn giải pháp ánh sáng & hiệu ứng tối ưu nhất cho sự kiện của bạn tại {project.location.split(',').pop()?.trim()}.</p>
 
                       <Link
-                        href={`/lien-he?project=${project.slug}`}
+                        href="/#contact"
                         className="w-full flex items-center justify-center gap-2 py-4 rounded-xl text-sm font-bold transition-all hover:scale-[1.02] font-header"
                         style={{ background: project.color, color: '#000' }}
                       >
                         <MessageSquare size={16} />
                         Nhận Tư Vấn & Báo Giá
                       </Link>
-                    </div>
-                  </div>
-
-                  {/* Social Share */}
-                  <div className="flex items-center gap-4 px-4 py-2 rounded-2xl border border-white/5 bg-white/5 justify-center">
-                    <span className="text-white/40 text-[0.7rem] font-bold tracking-widest font-header">CHIA SẺ</span>
-                    <div className="flex gap-4">
-                      <button className="text-white/60 hover:text-white transition-colors"><Share2 size={18} /></button>
-                      <button className="text-white/60 hover:text-white transition-colors"><ExternalLink size={18} /></button>
                     </div>
                   </div>
                 </div>

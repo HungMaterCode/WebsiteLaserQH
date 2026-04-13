@@ -31,39 +31,64 @@ export function Navigation({ siteSettings }: { siteSettings: SiteSettings }) {
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
-      // Save scroll position to sessionStorage
       sessionStorage.setItem('lastScrollY', window.scrollY.toString());
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
 
-    // Restore scroll position on mount with a smooth animation
+    // 1. Handle scroll restoration from manual F5 (if no hash)
     const savedY = sessionStorage.getItem('lastScrollY');
-    if (savedY) {
+    const isReload = typeof window !== 'undefined' &&
+      window.performance &&
+      window.performance.getEntriesByType('navigation').length > 0 &&
+      (window.performance.getEntriesByType('navigation')[0] as any).type === 'reload';
+
+    if (savedY && isReload && !window.location.hash) {
       const targetY = parseInt(savedY, 10);
-      // Wait for components to render then scroll smoothly
       setTimeout(() => {
-        window.scrollTo({
-          top: targetY,
-          behavior: 'smooth'
-        });
+        window.scrollTo({ top: targetY, behavior: 'smooth' });
       }, 100);
     }
-    
+
+    // 2. Handle cross-page navigation with hash (e.g., from Project detail to #contact)
+    if (window.location.hash) {
+      // Increase timeout slightly to ensure DOM is fully ready and images/layout are settled
+      const timer = setTimeout(() => {
+        const id = window.location.hash.replace('#', '');
+        const el = document.getElementById(id);
+        if (el) {
+          // Use 'start' with center fallback if needed, or stick to 'center' for reliability
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          
+          // Clear hash after scrolling so a subsequent F5 starts at top or stays here
+          window.history.pushState(null, document.title, window.location.pathname + window.location.search);
+        }
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const handleNavClick = (e: React.MouseEvent, href: string) => {
-    const id = href.replace('/#', '').replace('#', '');
-    const el = document.getElementById(id);
+    // Check if we are navigatings to a section on the CURRENT page
+    const isHomePage = window.location.pathname === '/';
+    const isHashLink = href.includes('#');
+    
+    if (isHomePage && isHashLink) {
+      const id = href.split('#')[1];
+      const el = document.getElementById(id);
 
-    if (el) {
-      e.preventDefault();
-      setMobileOpen(false);
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    } else {
-      setMobileOpen(false);
+      if (el) {
+        e.preventDefault();
+        setMobileOpen(false);
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
     }
+    
+    // If NOT on homepage or element not found, let the Link handle the navigation
+    setMobileOpen(false);
   };
 
   return (

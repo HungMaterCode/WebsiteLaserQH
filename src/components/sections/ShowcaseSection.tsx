@@ -36,7 +36,7 @@ export function ShowcaseSection({ projects }: { projects: PortfolioProject[] }) 
   // This handles scrolls for ANY ID on the home page when arriving from other pages
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    
+
     const hash = window.location.hash.replace('#', '');
     if (!hash) return;
 
@@ -47,14 +47,14 @@ export function ShowcaseSection({ projects }: { projects: PortfolioProject[] }) 
         // Decide the best scroll block based on the type of target
         const isProject = hash.startsWith('project-');
         const isService = hash === 'services';
-        
-        el.scrollIntoView({ 
-          behavior: 'smooth', 
+
+        el.scrollIntoView({
+          behavior: 'smooth',
           block: isProject ? 'center' : 'start'
         });
       }
     }, 850); // Robust delay for Next.js hydration and layout stability
-    
+
     return () => clearTimeout(timer);
   }, []); // Run once on home page mount
 
@@ -140,72 +140,72 @@ export function ShowcaseSection({ projects }: { projects: PortfolioProject[] }) 
                   style={{ background: '#050912', borderColor: 'rgba(255,255,255,0.06)' }}
                   whileTap={{ scale: 0.98 }}
                 >
-                {/* Image Top Half */}
-                <div className="relative aspect-[4/3] overflow-hidden bg-[#0A0F1A]">
-                  <Image
-                    src={project.thumbnailImage || 'https://images.unsplash.com/photo-1760539619529-cfd85a2a9cfd?w=800&q=80'}
-                    alt={project.title}
-                    fill
-                    priority={index < 3}
-                    className="object-cover transition-transform duration-700 ease-out"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  />
+                  {/* Image Top Half */}
+                  <div className="relative aspect-[4/3] overflow-hidden bg-[#0A0F1A]">
+                    <Image
+                      src={project.thumbnailImage || 'https://images.unsplash.com/photo-1760539619529-cfd85a2a9cfd?w=800&q=80'}
+                      alt={project.title}
+                      fill
+                      priority={index < 3}
+                      className="object-cover transition-transform duration-700 ease-out"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
 
-                  {/* Category Badge */}
-                  <div className="absolute top-4 left-4 px-3.5 py-1 rounded-full text-[0.62rem] font-bold font-body tracking-wider z-10 backdrop-blur-md"
-                    style={{ background: 'rgba(0,0,0,0.6)', border: `1px solid ${project.color}60`, color: project.color }}>
-                    {project.categoryLabel.toUpperCase()}
+                    {/* Category Badge */}
+                    <div className="absolute top-4 left-4 px-3.5 py-1 rounded-full text-[0.62rem] font-bold font-body tracking-wider z-10 backdrop-blur-md"
+                      style={{ background: 'rgba(0,0,0,0.6)', border: `1px solid ${project.color}60`, color: project.color }}>
+                      {project.categoryLabel.toUpperCase()}
+                    </div>
+
+                    {/* Bottom Image Gradient */}
+                    <div className="absolute bottom-0 left-0 right-0 h-28 z-0" style={{ background: 'linear-gradient(to top, #050912, transparent)' }} />
+
+                    {/* Laser Line Hover Effect - Moved here to separate image and content */}
+                    <motion.div
+                      variants={{
+                        initial: { opacity: 0, scaleX: 0 },
+                        hover: { opacity: 1, scaleX: 1 }
+                      }}
+                      transition={{ duration: 0.4 }}
+                      className="absolute bottom-0 left-0 right-0 h-[2px] pointer-events-none z-20"
+                      style={{ background: `linear-gradient(90deg, transparent, ${project.color}, transparent)` }}
+                    />
                   </div>
 
-                  {/* Bottom Image Gradient */}
-                  <div className="absolute bottom-0 left-0 right-0 h-28 z-0" style={{ background: 'linear-gradient(to top, #050912, transparent)' }} />
-                    
-                  {/* Laser Line Hover Effect - Moved here to separate image and content */}
-                  <motion.div 
-                    variants={{
-                      initial: { opacity: 0, scaleX: 0 },
-                      hover: { opacity: 1, scaleX: 1 }
-                    }}
-                    transition={{ duration: 0.4 }}
-                    className="absolute bottom-0 left-0 right-0 h-[2px] pointer-events-none z-20" 
-                    style={{ background: `linear-gradient(90deg, transparent, ${project.color}, transparent)` }} 
-                  />
-                </div>
+                  {/* Content Bottom Half */}
+                  <div className="p-6 flex flex-col flex-1 z-10 relative">
+                    <h3 className="text-white font-bold mb-1.5 line-clamp-2" style={{ fontSize: '1.25rem', fontFamily: 'var(--font-vietnam)', lineHeight: 1.35 }}>{project.title}</h3>
+                    <p className="mb-5" style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.8rem', fontFamily: 'var(--font-vietnam)' }}>{project.location} · {project.year}</p>
 
-                {/* Content Bottom Half */}
-                <div className="p-6 flex flex-col flex-1 z-10 relative">
-                  <h3 className="text-white font-bold mb-1.5 line-clamp-2" style={{ fontSize: '1.25rem', fontFamily: 'var(--font-vietnam)', lineHeight: 1.35 }}>{project.title}</h3>
-                  <p className="mb-5" style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.8rem', fontFamily: 'var(--font-vietnam)' }}>{project.location} · {project.year}</p>
+                    {/* Highlight Pill */}
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-5 self-start" style={{ background: `${project.color}15`, border: `1px solid ${project.color}30` }}>
+                      <span className="w-1.5 h-1.5 rounded-full shadow-[0_0_8px_currentColor]" style={{ backgroundColor: project.color }}></span>
+                      <span style={{ color: project.color, fontSize: '0.75rem', fontWeight: 600, fontFamily: 'var(--font-vietnam)' }}>{project.highlight}</span>
+                    </div>
 
-                  {/* Highlight Pill */}
-                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-5 self-start" style={{ background: `${project.color}15`, border: `1px solid ${project.color}30` }}>
-                    <span className="w-1.5 h-1.5 rounded-full shadow-[0_0_8px_currentColor]" style={{ backgroundColor: project.color }}></span>
-                    <span style={{ color: project.color, fontSize: '0.75rem', fontWeight: 600, fontFamily: 'var(--font-vietnam)' }}>{project.highlight}</span>
-                  </div>
+                    <p className="text-sm line-clamp-2 mb-7" style={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'var(--font-vietnam)', lineHeight: 1.6 }}>
+                      {project.description}
+                    </p>
 
-                  <p className="text-sm line-clamp-2 mb-7" style={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'var(--font-vietnam)', lineHeight: 1.6 }}>
-                    {project.description}
-                  </p>
-
-                  {/* View Details Button (Visual only) */}
-                  <div
-                    className="mt-auto w-full py-3 px-4 rounded-xl text-[0.85rem] font-bold flex items-center justify-center gap-2 transition-all duration-300 group/btn"
-                    style={{
-                      background: `${project.color}10`,
-                      border: `1px solid ${project.color}30`,
-                      color: project.color,
-                      fontFamily: 'var(--font-vietnam)',
-                    }}
-                  >
-                    Xem Chi Tiết
-                    <span className="group-hover/btn:translate-x-1 transition-transform duration-300">→</span>
-                  </div>
+                    {/* View Details Button (Visual only) */}
+                    <div
+                      className="mt-auto w-full py-3 px-4 rounded-xl text-[0.85rem] font-bold flex items-center justify-center gap-2 transition-all duration-300 group/btn"
+                      style={{
+                        background: `${project.color}10`,
+                        border: `1px solid ${project.color}30`,
+                        color: project.color,
+                        fontFamily: 'var(--font-vietnam)',
+                      }}
+                    >
+                      Xem Chi Tiết
+                      <span className="group-hover/btn:translate-x-1 transition-transform duration-300">→</span>
+                    </div>
 
                   </div>
                 </motion.div>
               </motion.div>
-          </Link>
-        ))}
+            </Link>
+          ))}
         </div>
 
         {/* View on Facebook bottom button */}

@@ -39,15 +39,21 @@ const services = [
 
 export function Footer({ siteSettings }: { siteSettings: SiteSettings }) {
   const handleServiceClick = (e: React.MouseEvent, title: string) => {
-    e.preventDefault();
+    const isHomePage = window.location.pathname === '/';
     const id = `service-${title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')}`;
     const el = document.getElementById(id);
-    if (el) {
+
+    if (isHomePage && el) {
+      e.preventDefault();
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    } else {
-      // Fallback to general services section if specific id not found
-      document.getElementById('services')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else if (isHomePage && !el) {
+      const servicesEl = document.getElementById('services');
+      if (servicesEl) {
+        e.preventDefault();
+        servicesEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
     }
+    // If not on homepage or element not found, standard link behavior takes over
   };
 
   return (
@@ -108,14 +114,14 @@ export function Footer({ siteSettings }: { siteSettings: SiteSettings }) {
             <h3 className="font-header text-white mb-8 font-bold tracking-[0.2em] text-[0.85rem]">DỊCH VỤ</h3>
             <div className="flex flex-col gap-4">
               {services.map((service) => (
-                <a
+                <Link
                   key={service}
-                  href={`#service-${service.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')}`}
+                  href={`/#service-${service.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')}`}
                   onClick={(e) => handleServiceClick(e, service)}
                   className="text-gray-500 hover:text-white transition-colors duration-300 font-body text-[0.95rem] cursor-pointer"
                 >
                   {service}
-                </a>
+                </Link>
               ))}
             </div>
           </div>
