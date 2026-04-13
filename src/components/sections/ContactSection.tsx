@@ -2,6 +2,7 @@
 import { useRef, useState } from 'react';
 import { motion, useInView } from 'motion/react';
 import { Phone, MapPin, Building2, Send } from 'lucide-react';
+import { LaserLoader } from '@/components/ui/LaserLoader';
 import { SiteSettings } from '@/lib/data';
 
 // Icons for social
@@ -19,27 +20,34 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
     name: '', phone: '', eventType: '', size: '', budget: '', date: '', message: '' 
   });
   const [submitted, setSubmitted] = useState(false);
+  const [isSending, setIsSending] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSending(true);
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
     setSubmitted(true);
+    setIsSending(false);
     setTimeout(() => setSubmitted(false), 4000);
     setFormData({ name: '', phone: '', eventType: '', size: '', budget: '', date: '', message: '' });
   };
 
   return (
-    <section id="contact" className="relative pt-12 pb-24 px-4 sm:px-6" style={{ background: '#02050A' }}>
+    <section id="contact" className="relative pt-8 pb-16 px-4 sm:px-6 md:pt-12 md:pb-24" style={{ background: '#02050A' }}>
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <motion.div ref={titleRef} initial={{ opacity: 0, y: 30 }} animate={{ opacity: titleInView ? 1 : 0, y: titleInView ? 0 : 30 }} transition={{ duration: 0.6 }} className="text-center mb-16">
-          <p className="font-orbitron mb-4 font-semibold tracking-widest text-[0.7rem] uppercase" style={{ color: 'var(--neon-green)' }}>
+          <p className="mb-4 font-semibold tracking-widest text-[0.7rem] uppercase font-body" style={{ color: 'var(--neon-green)', letterSpacing: '0.2em' }}>
             — BẮT ĐẦU DỰ ÁN —
           </p>
-          <h2 className="font-orbitron mb-5" style={{ fontSize: 'clamp(2.2rem, 5vw, 3.5rem)', fontWeight: 800, lineHeight: 1.1 }}>
-            <span className="text-white block">Hãy Nói Chuyện</span>
-            <span className="block" style={{ color: 'var(--neon-green)' }}>Về Sự Kiện Của Bạn</span>
+          <h2 className="text-white mb-5 font-body" style={{ fontSize: 'clamp(2.2rem, 5vw, 3.5rem)', fontWeight: 800, lineHeight: 1.1 }}>
+            Hãy Nói Chuyện
+            <span className="block" style={{ color: 'var(--neon-green)', padding: '0.1em 0' }}>Về Sự Kiện Của Bạn</span>
           </h2>
-          <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '1rem', fontFamily: 'var(--font-vietnam)', maxWidth: '650px', margin: '0 auto', lineHeight: 1.8 }}>
+          <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '1rem', fontFamily: 'var(--font-body)', maxWidth: '650px', margin: '0 auto', lineHeight: 1.8 }}>
             Dù sự kiện của bạn là 50 hay 50,000 người — chúng tôi luôn có giải pháp phù hợp.
           </p>
         </motion.div>
@@ -50,8 +58,8 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
           <div className="space-y-8 p-1 sm:p-2">
             
             {/* Social Chat */}
-            <div className="p-8 rounded-[20px]" style={{ background: '#050912', border: '1px solid rgba(255,255,255,0.06)' }}>
-              <h3 className="text-white font-orbitron font-bold text-[1.15rem] mb-2 tracking-wide">
+            <div className="p-6 sm:p-8 rounded-[20px]" style={{ background: '#050912', border: '1px solid rgba(255,255,255,0.06)' }}>
+              <h3 className="text-white font-body font-bold text-[1.15rem] mb-2 tracking-wide">
                 Chat Ngay — Phản Hồi Trong 5 Phút
               </h3>
               <p className="mb-6 font-vietnam text-[0.9rem]" style={{ color: 'rgba(255,255,255,0.5)', lineHeight: 1.6 }}>
@@ -94,7 +102,7 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
             {/* Divider */}
             <div className="flex items-center gap-4 px-4 opacity-60">
               <div className="h-px bg-white/10 flex-1" />
-              <span className="text-[0.65rem] font-orbitron text-gray-500 uppercase tracking-[0.2em] font-medium">Hoặc Gọi Trực Tiếp</span>
+              <span className="text-[0.65rem] font-body text-gray-500 uppercase tracking-[0.2em] font-medium">Hoặc Gọi Trực Tiếp</span>
               <div className="h-px bg-white/10 flex-1" />
             </div>
 
@@ -105,7 +113,7 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
                   <Phone size={18} />
                 </div>
                 <div>
-                  <h4 className="text-[0.7rem] font-orbitron uppercase tracking-widest mb-1.5" style={{ color: 'rgba(255,255,255,0.4)' }}>TƯ VẤN & BÁO GIÁ</h4>
+                  <h4 className="text-[0.7rem] font-body font-bold uppercase tracking-widest mb-1.5" style={{ color: 'rgba(255,255,255,0.4)' }}>TƯ VẤN & BÁO GIÁ</h4>
                   <div className="flex flex-col gap-1 font-vietnam text-[1rem]">
                     {(siteSettings.consultants && siteSettings.consultants.length > 0) ? (
                       siteSettings.consultants.map((c, i) => (
@@ -127,7 +135,7 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
                   <MapPin size={18} />
                 </div>
                 <div>
-                  <h4 className="text-[0.7rem] font-orbitron uppercase tracking-widest mb-1.5" style={{ color: 'rgba(255,255,255,0.4)' }}>Trụ sở chính</h4>
+                  <h4 className="text-[0.7rem] font-body font-bold uppercase tracking-widest mb-1.5" style={{ color: 'rgba(255,255,255,0.4)' }}>Trụ sở chính</h4>
                   <p className="text-white font-vietnam leading-relaxed text-[0.95rem]">
                     {siteSettings.address}
                   </p>
@@ -136,10 +144,10 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
             </div>
 
             {/* Company Info Box */}
-            <div className="mt-4 p-6 rounded-[20px]" style={{ background: 'rgba(0, 255, 136, 0.02)', border: '1px solid rgba(0, 255, 136, 0.1)' }}>
+            <div className="mt-4 p-5 sm:p-6 rounded-[20px]" style={{ background: 'rgba(0, 255, 136, 0.02)', border: '1px solid rgba(0, 255, 136, 0.1)' }}>
               <div className="flex items-center gap-2 mb-4">
                 <Building2 size={16} color="var(--neon-cyan)" />
-                <h4 className="text-[0.75rem] font-orbitron font-bold uppercase tracking-widest" style={{ color: 'var(--neon-cyan)' }}>THÔNG TIN CÔNG TY</h4>
+                <h4 className="text-[0.75rem] font-body font-bold uppercase tracking-widest" style={{ color: 'var(--neon-cyan)' }}>THÔNG TIN CÔNG TY</h4>
               </div>
               <h3 className="text-white font-bold font-vietnam text-[1.05rem] mb-4">{siteSettings.companyName}</h3>
               
@@ -172,7 +180,7 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
           {/* RIGHT COLUMN: Form */}
           <div>
             <div className="rounded-[20px] p-8 sm:p-10" style={{ background: '#050912', border: '1px solid rgba(255,255,255,0.06)' }}>
-              <h3 className="text-white font-orbitron font-bold text-[1.4rem] mb-3">Yêu Cầu Báo Giá Chi Tiết</h3>
+              <h3 className="text-white font-body font-bold text-[1.4rem] mb-3">Yêu Cầu Báo Giá Chi Tiết</h3>
               <p className="font-vietnam text-[0.95rem] mb-8" style={{ color: 'rgba(255,255,255,0.5)', lineHeight: 1.6 }}>
                 Điền form để nhận báo giá chính xác và tư vấn chuyên sâu từ đội ngũ chúng tôi.
               </p>
@@ -182,7 +190,7 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
                   <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: 'rgba(0,255,136,0.1)', border: '2px solid rgba(0,255,136,0.5)' }}>
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--neon-green)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                   </div>
-                  <h4 className="text-white font-orbitron font-bold text-xl mb-2">Đã Gửi Thành Công!</h4>
+                  <h4 className="text-white font-body font-bold text-xl mb-2">Đã Gửi Thành Công!</h4>
                   <p className="text-gray-400 font-vietnam">Cảm ơn bạn. Đội ngũ tư vấn sẽ liên hệ lại qua số điện thoại của bạn trong thời gian sớm nhất.</p>
                 </div>
               ) : (
@@ -257,12 +265,38 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
                   </div>
 
                   {/* Submit Button */}
-                  <button type="submit" className="w-full py-4 rounded-xl flex items-center justify-center gap-2.5 transition-all duration-300 font-vietnam group" 
-                          style={{ background: 'rgba(0, 255, 136, 0.05)', border: '1px solid rgba(0, 255, 136, 0.4)', color: 'var(--neon-green)', fontWeight: 700, fontSize: '0.95rem' }}
-                          onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--neon-green)'; e.currentTarget.style.color = '#000'; }}
-                          onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(0, 255, 136, 0.05)'; e.currentTarget.style.color = 'var(--neon-green)'; }}>
-                    <Send size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" /> 
-                    Gửi Yêu Cầu Báo Giá
+                  <button 
+                    type="submit" 
+                    disabled={isSending}
+                    className="w-full py-4 rounded-xl flex items-center justify-center gap-2.5 transition-all duration-300 font-vietnam group" 
+                    style={{ 
+                      background: isSending ? 'rgba(0, 255, 136, 0.1)' : 'rgba(0, 255, 136, 0.05)', 
+                      border: '1px solid rgba(0, 255, 136, 0.4)', 
+                      color: 'var(--neon-green)', 
+                      fontWeight: 700, 
+                      fontSize: '0.95rem',
+                      cursor: isSending ? 'not-allowed' : 'pointer'
+                    }}
+                    onMouseEnter={(e) => { 
+                      if (!isSending) {
+                        e.currentTarget.style.background = 'var(--neon-green)'; 
+                        e.currentTarget.style.color = '#000'; 
+                      }
+                    }}
+                    onMouseLeave={(e) => { 
+                      if (!isSending) {
+                        e.currentTarget.style.background = 'rgba(0, 255, 136, 0.05)'; 
+                        e.currentTarget.style.color = 'var(--neon-green)'; 
+                      }
+                    }}>
+                    {isSending ? (
+                      <LaserLoader size="sm" color="var(--neon-green)" />
+                    ) : (
+                      <>
+                        <Send size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" /> 
+                        Gửi Yêu Cầu Báo Giá
+                      </>
+                    )}
                   </button>
                 </form>
               )}

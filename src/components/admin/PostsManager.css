@@ -1,0 +1,57 @@
+.preview-content {
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.preview-content p {
+  margin-bottom: 0.75rem;
+}
+
+.preview-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1rem 0;
+  display: block;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.preview-content .ql-align-justify {
+  text-align: justify;
+}
+
+.preview-content .ql-align-center {
+  text-align: center;
+}
+
+.preview-content .ql-align-right {
+  text-align: right;
+}
+
+/* Hide scrollbar for tabs */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Make main modal scrollbar thinner and more subtle */
+.flex-1.overflow-y-auto::-webkit-scrollbar {
+  width: 5px;
+}
+
+.flex-1.overflow-y-auto::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.flex-1.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 136, 0.3);
+  border-radius: 10px;
+}
+
+.flex-1.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 255, 136, 0.5);
+}

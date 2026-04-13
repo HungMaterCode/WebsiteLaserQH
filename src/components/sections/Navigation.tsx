@@ -9,47 +9,61 @@ const Facebook = ({ size = 24, style = {} }) => (
   </svg>
 );
 import { SiteSettings } from '@/lib/data';
+import { Logo } from '@/components/Logo';
 
 const navLinks = [
-  { href: '#flexibility', label: 'Quy Mô Sự Kiện' },
-  { href: '#services', label: 'Dịch Vụ' },
-  { href: '#showcase', label: 'Portfolio' },
-  { href: '#why-us', label: 'Tại Sao Chọn Chúng Tôi' },
-  { href: '#contact', label: 'Liên Hệ' },
+  { href: '/#flexibility', label: 'Quy Mô Sự Kiện' },
+  { href: '/#services', label: 'Dịch Vụ' },
+  { href: '/#showcase', label: 'Portfolio' },
+  { href: '/#why-us', label: 'Tại Sao Chọn Chúng Tôi' },
+  { href: '/#contact', label: 'Liên Hệ' },
 ];
 
 export function Navigation({ siteSettings }: { siteSettings: SiteSettings }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const primaryConsultant = siteSettings.consultants?.[0] || { name: 'Mr. Hiệp', phone: siteSettings.phone };
-  const secondaryConsultant = siteSettings.consultants?.[1];
-
-  const CONTACT_INFO = {
-    phone1: { 
-      number: primaryConsultant.phone, 
-      name: `Tư Vấn: ${primaryConsultant.name}`, 
-      href: `tel:${primaryConsultant.phone.replace(/\s+/g, '')}` 
-    },
-    phone2: secondaryConsultant ? { 
-      number: secondaryConsultant.phone, 
-      name: `Báo Giá: ${secondaryConsultant.name}`, 
-      href: `tel:${secondaryConsultant.phone.replace(/\s+/g, '')}` 
-    } : null,
-    facebook: { label: 'Facebook', href: siteSettings.facebookLink },
-  };
+  // Dynamically get all consultants
+  const consultants = siteSettings.consultants && siteSettings.consultants.length > 0
+    ? siteSettings.consultants
+    : [{ name: 'Hotline', phone: siteSettings.phone }];
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+      // Save scroll position to sessionStorage
+      sessionStorage.setItem('lastScrollY', window.scrollY.toString());
+    };
+
     window.addEventListener('scroll', handleScroll, { passive: true });
+
+    // Restore scroll position on mount with a smooth animation
+    const savedY = sessionStorage.getItem('lastScrollY');
+    if (savedY) {
+      const targetY = parseInt(savedY, 10);
+      // Wait for components to render then scroll smoothly
+      setTimeout(() => {
+        window.scrollTo({
+          top: targetY,
+          behavior: 'smooth'
+        });
+      }, 100);
+    }
+    
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleNavClick = (href: string) => {
-    setMobileOpen(false);
-    const id = href.replace('#', '');
+  const handleNavClick = (e: React.MouseEvent, href: string) => {
+    const id = href.replace('/#', '').replace('#', '');
     const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+
+    if (el) {
+      e.preventDefault();
+      setMobileOpen(false);
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else {
+      setMobileOpen(false);
+    }
   };
 
   return (
@@ -67,43 +81,32 @@ export function Navigation({ siteSettings }: { siteSettings: SiteSettings }) {
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between" style={{ height: 34 }}>
-              {/* Phones */}
-              <div className="flex items-center gap-1 sm:gap-5">
-                <a
-                  href={CONTACT_INFO.phone1.href}
-                  className="flex items-center gap-1.5 group transition-all duration-200 whitespace-nowrap"
-                  style={{ textDecoration: 'none' }}
-                >
-                  <Phone size={11} style={{ color: '#00FF88', flexShrink: 0 }} />
-                  <span
-                    className="group-hover:text-white transition-colors duration-200"
-                    style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.72rem', fontFamily: "'Be Vietnam Pro', sans-serif", fontWeight: 500 }}
-                  >
-                    {CONTACT_INFO.phone1.number}
-                  </span>
-                </a>
-                {CONTACT_INFO.phone2 && (
-                  <>
-                    <span style={{ color: 'rgba(255,255,255,0.12)', fontSize: '0.7rem' }}>|</span>
+              {/* Phones List */}
+              <div className="flex items-center gap-2 sm:gap-4 overflow-x-auto no-scrollbar py-1">
+                {consultants.map((consultant, index) => (
+                  <div key={index} className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
                     <a
-                      href={CONTACT_INFO.phone2.href}
+                      href={`tel:${consultant.phone.replace(/\s+/g, '')}`}
                       className="flex items-center gap-1.5 group transition-all duration-200 whitespace-nowrap"
                       style={{ textDecoration: 'none' }}
                     >
                       <Phone size={11} style={{ color: '#00FF88', flexShrink: 0 }} />
                       <span
                         className="group-hover:text-white transition-colors duration-200"
-                        style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.72rem', fontFamily: "'Be Vietnam Pro', sans-serif", fontWeight: 500 }}
+                        style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.72rem', fontFamily: "var(--font-body), sans-serif", fontWeight: 500 }}
                       >
-                        {CONTACT_INFO.phone2.number}
+                        {consultant.phone}
                       </span>
                     </a>
-                  </>
-                )}
+                    {index < consultants.length - 1 && (
+                      <span style={{ color: 'rgba(255,255,255,0.12)', fontSize: '0.7rem' }}>|</span>
+                    )}
+                  </div>
+                ))}
               </div>
 
               {/* FB and Zalo links */}
-              <div className="flex items-center gap-3 sm:gap-4">
+              <div className="flex items-center gap-3 sm:gap-4 flex-shrink-0">
                 <a
                   href={siteSettings.zaloLink}
                   target="_blank"
@@ -116,13 +119,13 @@ export function Navigation({ siteSettings }: { siteSettings: SiteSettings }) {
                   </div>
                   <span
                     className="hidden sm:inline group-hover:text-white transition-colors duration-200"
-                    style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.7rem', fontFamily: "'Be Vietnam Pro', sans-serif" }}
+                    style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.7rem', fontFamily: "var(--font-body), sans-serif" }}
                   >
                     Zalo
                   </span>
                 </a>
                 <a
-                  href={CONTACT_INFO.facebook.href}
+                  href={siteSettings.facebookLink}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-1.5 transition-all duration-200 group"
@@ -131,7 +134,7 @@ export function Navigation({ siteSettings }: { siteSettings: SiteSettings }) {
                   <Facebook size={12} style={{ color: '#4B9FFF' }} />
                   <span
                     className="hidden sm:inline group-hover:text-white transition-colors duration-200"
-                    style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.7rem', fontFamily: "'Be Vietnam Pro', sans-serif" }}
+                    style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.7rem', fontFamily: "var(--font-body), sans-serif" }}
                   >
                     Facebook
                   </span>
@@ -157,38 +160,21 @@ export function Navigation({ siteSettings }: { siteSettings: SiteSettings }) {
           }}
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-16 md:h-[68px]">
+            <div className="flex items-center justify-between h-16 md:h-[96px]">
               {/* Logo */}
-              <Link href="/" className="flex items-center gap-2.5 group">
-                <div
-                  className="w-9 h-9 rounded-md flex items-center justify-center transition-all duration-300"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(0,255,136,0.2), rgba(0,229,255,0.15))',
-                    border: '1px solid rgba(0,255,136,0.45)',
-                    boxShadow: '0 0 15px rgba(0,255,136,0.25)',
-                  }}
-                >
-                  <Zap size={18} style={{ color: '#00FF88' }} />
-                </div>
-                <div className="flex flex-col leading-none">
-                  <span className="font-orbitron text-white" style={{ fontSize: '0.92rem', fontWeight: 800, letterSpacing: '0.04em' }}>
-                    Laser<span style={{ color: '#00FF88', textShadow: '0 0 12px rgba(0,255,136,0.6)' }}>QH</span>
-                  </span>
-                  <span style={{ fontSize: '0.5rem', color: 'rgba(255,255,255,0.35)', letterSpacing: '0.25em', fontFamily: "'Be Vietnam Pro', sans-serif", textTransform: 'uppercase' }}>
-                    Production
-                  </span>
-                </div>
+              <Link href="/" className="flex items-center group">
+                <Logo />
               </Link>
 
               {/* Desktop Nav */}
-              <div className="hidden md:flex items-center gap-4 lg:gap-6">
+              <div className="hidden md:flex items-center gap-4 lg:gap-10">
                 {navLinks.map((link) => (
                   <a
                     key={link.href}
                     href={link.href}
-                    onClick={(e) => { e.preventDefault(); handleNavClick(link.href); }}
+                    onClick={(e) => handleNavClick(e, link.href)}
                     className="text-white/70 hover:text-white transition-colors duration-300 relative group whitespace-nowrap"
-                    style={{ fontFamily: "'Be Vietnam Pro', sans-serif", fontSize: '0.83rem', letterSpacing: '0.01em' }}
+                    style={{ fontFamily: "var(--font-body), sans-serif", fontSize: '0.83rem', letterSpacing: '0.01em' }}
                   >
                     {link.label}
                     <span
@@ -202,9 +188,9 @@ export function Navigation({ siteSettings }: { siteSettings: SiteSettings }) {
               {/* Desktop CTA */}
               <div className="hidden md:flex items-center gap-3">
                 <a
-                  href="#contact"
-                  onClick={(e) => { e.preventDefault(); handleNavClick('#contact'); }}
-                  className="px-5 py-2 rounded-md text-sm transition-all duration-300 btn-glow-green font-exo"
+                  href="/#contact"
+                  onClick={(e) => handleNavClick(e, '/#contact')}
+                  className="px-5 py-2 rounded-md transition-all duration-300 btn-glow-green font-header"
                   style={{ fontWeight: 600, fontSize: '0.82rem' }}
                 >
                   Báo Giá Ngay
@@ -225,7 +211,7 @@ export function Navigation({ siteSettings }: { siteSettings: SiteSettings }) {
 
       {/* Mobile Menu */}
       <div
-        className="fixed inset-0 z-40 md:hidden transition-all duration-300"
+        className="fixed inset-0 z-[100] md:hidden transition-all duration-300"
         style={{
           pointerEvents: mobileOpen ? 'all' : 'none',
           opacity: mobileOpen ? 1 : 0,
@@ -244,30 +230,30 @@ export function Navigation({ siteSettings }: { siteSettings: SiteSettings }) {
         >
           {/* Mobile contact info */}
           <div className="pb-4 space-y-3" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
-            <a href={CONTACT_INFO.phone1.href} className="flex items-center gap-2" style={{ textDecoration: 'none' }}>
-              <Phone size={13} style={{ color: '#00FF88' }} />
-              <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', fontFamily: "'Be Vietnam Pro', sans-serif" }}>
-                {CONTACT_INFO.phone1.number} · {CONTACT_INFO.phone1.name}
-              </span>
-            </a>
-            {CONTACT_INFO.phone2 && (
-              <a href={CONTACT_INFO.phone2.href} className="flex items-center gap-2" style={{ textDecoration: 'none' }}>
+            {consultants.map((consultant, index) => (
+              <a
+                key={index}
+                href={`tel:${consultant.phone.replace(/\s+/g, '')}`}
+                className="flex items-center gap-2"
+                style={{ textDecoration: 'none' }}
+              >
                 <Phone size={13} style={{ color: '#00FF88' }} />
-                <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', fontFamily: "'Be Vietnam Pro', sans-serif" }}>
-                  {CONTACT_INFO.phone2.number} · {CONTACT_INFO.phone2.name}
+                <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', fontFamily: "var(--font-body), sans-serif" }}>
+                  {consultant.phone} · {consultant.name}
                 </span>
               </a>
-            )}
+            ))}
+
             <div className="flex items-center gap-4 pt-1">
               <a href={siteSettings.zaloLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2" style={{ textDecoration: 'none' }}>
                 <div className="w-5 h-5 rounded-md flex items-center justify-center bg-[#0068FF] overflow-hidden">
                   <span style={{ fontSize: '0.55rem', color: '#fff', fontWeight: 900 }}>Za</span>
                 </div>
-                <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', fontFamily: "'Be Vietnam Pro', sans-serif" }}>Zalo</span>
+                <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', fontFamily: "var(--font-body), sans-serif" }}>Zalo</span>
               </a>
               <a href={siteSettings.facebookLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2" style={{ textDecoration: 'none' }}>
                 <Facebook size={14} style={{ color: '#4B9FFF' }} />
-                <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', fontFamily: "'Be Vietnam Pro', sans-serif" }}>Facebook</span>
+                <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem', fontFamily: "var(--font-body), sans-serif" }}>Facebook</span>
               </a>
             </div>
           </div>
@@ -276,11 +262,11 @@ export function Navigation({ siteSettings }: { siteSettings: SiteSettings }) {
             <a
               key={link.href}
               href={link.href}
-              onClick={(e) => { e.preventDefault(); handleNavClick(link.href); }}
+              onClick={(e) => handleNavClick(e, link.href)}
               className="text-white/80 hover:text-white py-1.5 border-b transition-colors duration-300"
               style={{
                 borderColor: 'rgba(255,255,255,0.07)',
-                fontFamily: "'Be Vietnam Pro', sans-serif",
+                fontFamily: "var(--font-body), sans-serif",
                 fontSize: '0.95rem',
               }}
             >
@@ -288,9 +274,9 @@ export function Navigation({ siteSettings }: { siteSettings: SiteSettings }) {
             </a>
           ))}
           <a
-            href="#contact"
-            onClick={(e) => { e.preventDefault(); handleNavClick('#contact'); }}
-            className="mt-3 text-center py-3 rounded-md btn-glow-green font-exo"
+            href="/#contact"
+            onClick={(e) => handleNavClick(e, '/#contact')}
+            className="mt-3 text-center py-3 rounded-md btn-glow-green font-header"
             style={{ fontWeight: 700 }}
           >
             Báo Giá Ngay

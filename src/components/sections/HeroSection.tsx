@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { ChevronDown } from 'lucide-react';
+import Image from 'next/image';
 import { SiteSettings, MediaSettings } from '@/lib/data';
 
 function LaserBeam({ style }: { style: React.CSSProperties }) {
@@ -142,11 +143,12 @@ export function HeroSection({ siteSettings, mediaSettings }: { siteSettings: Sit
             <source src={mediaSettings.heroVideoUrl} type="video/mp4" />
           </video>
         ) : (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={mediaSettings.heroImageUrl || 'https://images.unsplash.com/photo-1760539619529-cfd85a2a9cfd?w=1920&q=80'}
             alt="Concert laser show"
-            className="w-full h-full object-cover"
+            fill
+            priority
+            className="object-cover"
             style={{ opacity: 0.3 }}
           />
         )}
@@ -174,7 +176,7 @@ export function HeroSection({ siteSettings, mediaSettings }: { siteSettings: Sit
       <div className="absolute left-0 right-0 h-px" style={{ top: '62%', background: 'linear-gradient(90deg, transparent, rgba(0,229,255,0.12), transparent)', animation: 'glowPulse 5s ease-in-out infinite 1s' }} />
 
       {/* Hero Content */}
-      <div className="relative z-10 text-center px-4 sm:px-6 max-w-5xl mx-auto hero-content-wrapper pt-24 lg:pt-0">
+      <div className="relative z-10 text-center px-4 sm:px-6 max-w-5xl mx-auto hero-content-wrapper pt-32 md:pt-40 lg:pt-[160px]">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: loaded ? 1 : 0, y: loaded ? 0 : 20 }}
@@ -195,44 +197,40 @@ export function HeroSection({ siteSettings, mediaSettings }: { siteSettings: Sit
         </motion.div>
 
         <motion.h1
+          // ... (rest of h1 style same)
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: loaded ? 1 : 0, y: loaded ? 0 : 40 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="font-orbitron text-white mb-4 hero-headline"
+          transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="font-body text-white mb-6 hero-headline pointer-events-none"
           style={{
-            fontSize: 'clamp(2rem, 6vw, 4.5rem)',
+            fontSize: 'clamp(2.5rem, 9vw, 6.5rem)',
             fontWeight: 900,
-            lineHeight: 1.1,
-            letterSpacing: '-0.01em',
+            lineHeight: 0.95,
+            letterSpacing: '-0.04em',
+            textShadow: '0 20px 40px rgba(0,0,0,0.5)',
           }}
         >
-          Chất Lượng
-          <br />
-          <span
-            style={{
-              background: 'linear-gradient(135deg, #00FF88 0%, #00E5FF 55%, #BF00FF 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}
-          >
-            Mega Concert.
+          <span className="quality-badge-premium">
+            <span className="text-platinum-chrome" style={{ fontSize: '0.65em', letterSpacing: '0.05em', fontWeight: 800, marginLeft: '0.05em' }}>CHẤT LƯỢNG</span>
           </span>
-          <br />
-          <span className="text-white">Cho Mọi Quy Mô.</span>
+          <span className="text-gradient-chrome block mb-2 py-4 tracking-[-0.05em]">
+            MEGA CONCERT
+          </span>
+          <span className="block stroke-text" style={{ fontSize: '0.75em', marginTop: '1rem', whiteSpace: 'nowrap' }}>
+            CHO MỌI QUY MÔ
+          </span>
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: loaded ? 1 : 0, y: loaded ? 0 : 30 }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="mb-10 mx-auto hero-description"
+          className="mb-10 mx-auto hero-description font-body"
           style={{
             color: 'rgba(255,255,255,0.68)',
-            fontSize: 'clamp(0.95rem, 2.5vw, 1.2rem)',
-            lineHeight: 1.75,
-            maxWidth: '680px',
-            fontFamily: "'Be Vietnam Pro', sans-serif",
+            fontSize: 'clamp(1rem, 2.5vw, 1.25rem)',
+            lineHeight: 1.8,
+            maxWidth: '720px',
             fontWeight: 300,
           }}
         >
@@ -252,7 +250,7 @@ export function HeroSection({ siteSettings, mediaSettings }: { siteSettings: Sit
             href={siteSettings.zaloLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl font-exo transition-all duration-300 relative overflow-hidden group"
+            className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl font-header transition-all duration-300 relative overflow-hidden group"
             style={{
               background: 'linear-gradient(135deg, #0068FF, #0056D2)',
               color: '#fff',
@@ -269,24 +267,23 @@ export function HeroSection({ siteSettings, mediaSettings }: { siteSettings: Sit
           </a>
 
           <a
-            href={siteSettings.messengerLink}
+            href={siteSettings.facebookLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl font-exo transition-all duration-300 relative overflow-hidden group"
+            className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl font-header transition-all duration-300 relative overflow-hidden group"
             style={{
-              background: 'linear-gradient(135deg, #00FF88, #00cc66)',
-              color: '#000',
+              background: 'linear-gradient(135deg, #1877F2, #0C5DC7)',
+              color: '#fff',
               fontWeight: 700,
               fontSize: '0.88rem',
-              boxShadow: '0 0 20px rgba(0,255,136,0.3)',
+              boxShadow: '0 0 20px rgba(24,119,242,0.3)',
               minWidth: '180px',
             }}
           >
-            <svg className="relative z-10" width="18" height="18" viewBox="0 0 48 48" fill="none">
-              <path d="M24 7C14.611 7 7 14.165 7 23C7 27.89 9.177 32.267 12.714 35.234V41L18.302 38.003C20.095 38.495 22.01 38.762 24 38.762C33.389 38.762 41 31.597 41 22.762C41 13.927 33.389 7 24 7Z" fill="#000" opacity="0.8"/>
-              <path d="M10.5 27L18.5 18.5L22.5 23L27.5 18.5L35.5 27L27.5 22.5L22.5 27L18.5 22.5L10.5 27Z" fill="white"/>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
             </svg>
-            <span className="relative z-10">Chat Facebook</span>
+            <span className="relative z-10">Facebook</span>
           </a>
 
           <a
@@ -299,10 +296,10 @@ export function HeroSection({ siteSettings, mediaSettings }: { siteSettings: Sit
             style={{ fontWeight: 600, fontSize: '0.88rem', minWidth: '180px' }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-              <polyline points="14,2 14,8 20,8"/>
-              <line x1="16" y1="13" x2="8" y2="13"/>
-              <line x1="16" y1="17" x2="8" y2="17"/>
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14,2 14,8 20,8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
             </svg>
             Báo Giá Ngay
           </a>
@@ -322,10 +319,10 @@ export function HeroSection({ siteSettings, mediaSettings }: { siteSettings: Sit
             { value: '3', label: 'Quy Mô Phục Vụ' },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
-              <div className="stat-value font-orbitron" style={{ fontSize: 'clamp(1.4rem, 4vw, 2rem)', fontWeight: 900, lineHeight: 1 }}>
+              <div className="stat-value font-header" style={{ fontSize: 'clamp(1.6rem, 4.5vw, 2.2rem)', fontWeight: 900, lineHeight: 1 }}>
                 {stat.value}
               </div>
-              <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem', fontFamily: "'Be Vietnam Pro', sans-serif", letterSpacing: '0.05em', marginTop: 5 }}>
+              <div className="font-body" style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem', letterSpacing: '0.05em', marginTop: 5 }}>
                 {stat.label}
               </div>
             </div>
@@ -333,13 +330,6 @@ export function HeroSection({ siteSettings, mediaSettings }: { siteSettings: Sit
         </motion.div>
       </div>
 
-      <button
-        onClick={scrollToNext}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 transition-all duration-300 cursor-pointer hero-scroll-indicator"
-        style={{ color: 'rgba(0,255,136,0.4)' }}
-      >
-        <ChevronDown size={18} className="animate-bounce" />
-      </button>
     </section>
   );
 }

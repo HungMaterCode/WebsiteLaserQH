@@ -1,6 +1,8 @@
+'use client';
 import { Zap, Phone, MapPin, Mail, User, Info, CreditCard } from 'lucide-react';
 import Link from 'next/link';
 import { SiteSettings } from '@/lib/data';
+import { Logo } from '@/components/Logo';
 
 // Custom Social Icons
 const FacebookIcon = ({ size = 18 }) => (
@@ -16,9 +18,8 @@ const InstagramIcon = ({ size = 18 }) => (
 );
 
 const MessengerIcon = ({ size = 18 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 1 1-7.6-13.3 8.38 8.38 0 0 1 3.8.9L21 2z"></path>
-    <path d="M10 10l4 4 4-4"></path>
+  <svg width={size} height={size} viewBox="0 0 28 28" fill="currentColor">
+    <path d="M14 2C7.373 2 2 6.941 2 13.04c0 3.473 1.733 6.574 4.453 8.527V26l4.246-2.333c1.066.296 2.197.453 3.301.453 6.627 0 12-4.941 12-11.04C26 6.941 20.627 2 14 2zm1.606 14.974l-3.076-3.28-5.996 3.28 6.59-6.994 3.076 3.28 5.996-3.28-6.59 6.994z"></path>
   </svg>
 );
 
@@ -28,53 +29,55 @@ const ZaloIcon = ({ size = 20 }) => (
 );
 
 const services = [
-  'Hệ Thống Laser',
-  'Kinetic Lighting',
-  'Moving Head Lights',
-  'Special Effects',
-  'Lập Trình Show',
-  'Thiết Kế Concept'
+  'Hệ Thống Laser Mapping 3D',
+  'Hệ Thống Kinetic Lighting',
+  'Moving Head Professional',
+  'Special Effects (SFX)',
+  'Lập Trình & Điều Khiển Show',
+  'Tư Vấn & Thiết Kế Concept'
 ];
 
 export function Footer({ siteSettings }: { siteSettings: SiteSettings }) {
+  const handleServiceClick = (e: React.MouseEvent, title: string) => {
+    e.preventDefault();
+    const id = `service-${title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')}`;
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else {
+      // Fallback to general services section if specific id not found
+      document.getElementById('services')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
 
   return (
     <footer className="relative pt-20 pb-12 px-4 sm:px-6" style={{ background: '#000', borderTop: '1px solid rgba(0,255,136,0.15)' }}>
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16 mb-16">
-          
+
           {/* Column 1: Company Info & Socials */}
           <div className="flex flex-col gap-8">
             <div className="flex flex-col gap-6">
-              <Link href="/" className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(0,255,136,0.3)] transition-transform hover:scale-105" 
-                     style={{ background: 'linear-gradient(135deg, #00FF88 0%, #00BD65 100%)' }}>
-                  <Zap size={22} fill="white" color="white" />
-                </div>
-                <div className="flex flex-col leading-none">
-                  <span className="font-orbitron text-white text-[1.1rem] font-black tracking-wider">
-                    Laser<span style={{ color: '#00FF88' }}>QH</span>
-                  </span>
-                  <span style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.3em', fontFamily: 'var(--font-orbitron)', textTransform: 'uppercase' }}>Production</span>
-                </div>
+              <Link href="/" className="flex items-center group">
+                <Logo size="lg" />
               </Link>
-              
-              <h3 className="text-white font-bold font-vietnam text-[0.95rem] tracking-wide leading-relaxed">
+
+              <h3 className="text-white font-bold font-body text-[0.95rem] tracking-wide leading-relaxed">
                 {siteSettings.companyName}
               </h3>
 
               <div className="flex flex-col gap-2.5">
                 <div className="flex items-center gap-2">
-                  <span className="font-vietnam text-[0.85rem]" style={{ color: 'var(--neon-green)' }}>Mã số thuế:</span>
-                  <span className="text-gray-400 font-vietnam text-[0.85rem]">{siteSettings.taxCode}</span>
+                  <span className="font-body text-[0.85rem]" style={{ color: 'var(--neon-green)' }}>Mã số thuế:</span>
+                  <span className="text-gray-400 font-body text-[0.85rem]">{siteSettings.taxCode}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="font-vietnam text-[0.85rem]" style={{ color: 'var(--neon-green)' }}>Đại diện:</span>
-                  <span className="text-gray-400 font-vietnam text-[0.85rem]">{siteSettings.directorName} - {siteSettings.directorRole}</span>
+                  <span className="font-body text-[0.85rem]" style={{ color: 'var(--neon-green)' }}>Đại diện:</span>
+                  <span className="text-gray-400 font-body text-[0.85rem]">{siteSettings.directorName} - {siteSettings.directorRole}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="font-vietnam text-[0.85rem]" style={{ color: 'var(--neon-green)' }}>STK:</span>
-                  <span className="text-gray-400 font-vietnam text-[0.85rem]">{siteSettings.bankAccount}</span>
+                  <span className="font-body text-[0.85rem]" style={{ color: 'var(--neon-green)' }}>STK:</span>
+                  <span className="text-gray-400 font-body text-[0.85rem]">{siteSettings.bankAccount}</span>
                 </div>
               </div>
             </div>
@@ -85,12 +88,15 @@ export function Footer({ siteSettings }: { siteSettings: SiteSettings }) {
                 { icon: FacebookIcon, link: siteSettings.facebookLink },
                 { icon: ZaloIcon, link: siteSettings.zaloLink },
                 { icon: MessengerIcon, link: siteSettings.messengerLink },
-                { icon: YoutubeIcon, link: '#' },
-                { icon: InstagramIcon, link: '#' },
+                { icon: YoutubeIcon, link: siteSettings.youtubeLink },
               ].map((social, idx) => (
-                <a key={idx} href={social.link} target="_blank" rel="noopener noreferrer" 
-                   className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 hover:bg-[rgba(255,255,255,0.1)] hover:scale-110"
-                   style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <a key={idx} href={social.link} target="_blank" rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 hover:bg-[rgba(255,255,255,0.1)] hover:scale-110 hover:text-white"
+                  style={{
+                    background: 'rgba(255,255,255,0.05)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    color: 'rgba(255,255,255,0.6)'
+                  }}>
                   <social.icon size={18} />
                 </a>
               ))}
@@ -99,12 +105,17 @@ export function Footer({ siteSettings }: { siteSettings: SiteSettings }) {
 
           {/* Column 2: Services List */}
           <div>
-            <h3 className="font-orbitron text-white mb-8 font-bold tracking-[0.2em] text-[0.85rem]">DỊCH VỤ</h3>
+            <h3 className="font-header text-white mb-8 font-bold tracking-[0.2em] text-[0.85rem]">DỊCH VỤ</h3>
             <div className="flex flex-col gap-4">
               {services.map((service) => (
-                <Link key={service} href="#services" className="text-gray-500 hover:text-white transition-colors duration-300 font-vietnam text-[0.95rem]">
+                <a
+                  key={service}
+                  href={`#service-${service.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')}`}
+                  onClick={(e) => handleServiceClick(e, service)}
+                  className="text-gray-500 hover:text-white transition-colors duration-300 font-body text-[0.95rem] cursor-pointer"
+                >
                   {service}
-                </Link>
+                </a>
               ))}
             </div>
           </div>
@@ -112,10 +123,10 @@ export function Footer({ siteSettings }: { siteSettings: SiteSettings }) {
           {/* Column 3: Contact Info */}
           <div className="flex flex-col gap-10">
             <div>
-              <h3 className="font-orbitron text-white mb-8 font-bold tracking-[0.2em] text-[0.85rem]">LIÊN HỆ</h3>
+              <h3 className="font-header text-white mb-8 font-bold tracking-[0.2em] text-[0.85rem]">LIÊN HỆ</h3>
               <div className="flex flex-col gap-6">
                 <div>
-                  <p className="text-gray-500 font-vietnam text-[0.8rem] mb-2">Tư Vấn & Báo Giá</p>
+                  <p className="text-gray-500 font-body text-[0.8rem] mb-2">Tư Vấn & Báo Giá</p>
                   <div className="flex flex-col gap-1.5">
                     {(siteSettings.consultants && siteSettings.consultants.length > 0) ? (
                       siteSettings.consultants.map((c, i) => (
@@ -132,21 +143,21 @@ export function Footer({ siteSettings }: { siteSettings: SiteSettings }) {
                 </div>
 
                 <div>
-                  <p className="text-gray-500 font-vietnam text-[0.8rem] mb-1.5">Email</p>
+                  <p className="text-gray-500 font-body text-[0.8rem] mb-1.5">Email</p>
                   <a href={`mailto:${siteSettings.companyEmail}`} className="text-white hover:text-[var(--neon-green)] transition-colors text-[0.9rem]">
                     {siteSettings.companyEmail}
                   </a>
                 </div>
 
                 <div>
-                  <p className="text-gray-500 font-vietnam text-[0.8rem] mb-1.5">Văn Phòng</p>
-                  <p className="text-gray-400 font-vietnam text-[0.9rem] leading-relaxed max-w-[320px]">
+                  <p className="text-gray-500 font-body text-[0.8rem] mb-1.5">Văn Phòng</p>
+                  <p className="text-gray-400 font-body text-[0.9rem] leading-relaxed max-w-[320px]">
                     {siteSettings.address}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-white font-vietnam text-[0.85rem]">
+                  <p className="text-white font-body text-[0.85rem]">
                     GĐ: <span className="font-bold">{siteSettings.directorPhone}</span>
                   </p>
                 </div>
@@ -158,17 +169,17 @@ export function Footer({ siteSettings }: { siteSettings: SiteSettings }) {
 
         {/* Bottom Bar */}
         <div className="pt-10 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-gray-600 text-[0.75rem] font-vietnam">
+          <p className="text-gray-600 text-[0.75rem] font-body">
             © 2025 LaserQH Production. Tất cả quyền được bảo lưu.
           </p>
           <div className="flex gap-6">
-            <Link href="/admin" className="text-gray-600 hover:text-[var(--neon-green)] text-[0.75rem] font-vietnam transition-colors">Quản trị</Link>
-            <Link href="/privacy" className="text-gray-600 hover:text-gray-400 text-[0.75rem] font-vietnam transition-colors">Chính sách bảo mật</Link>
-            <Link href="/terms" className="text-gray-600 hover:text-gray-400 text-[0.75rem] font-vietnam transition-colors">Điều khoản dịch vụ</Link>
+            <Link href="/admin" className="text-gray-600 hover:text-[var(--neon-green)] text-[0.75rem] font-body transition-colors">Quản trị</Link>
+            <Link href="/privacy" className="text-gray-600 hover:text-gray-400 text-[0.75rem] font-body transition-colors">Chính sách bảo mật</Link>
+            <Link href="/terms" className="text-gray-600 hover:text-gray-400 text-[0.75rem] font-body transition-colors">Điều khoản dịch vụ</Link>
           </div>
         </div>
       </div>
-      
+
       {/* Background Decorative Glow */}
       <div className="absolute right-0 bottom-0 w-[300px] h-[300px] bg-[var(--neon-green)] opacity-[0.03] blur-[100px] pointer-events-none rounded-full" />
     </footer>

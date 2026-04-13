@@ -3,9 +3,14 @@
 import { useState, useEffect } from 'react';
 import { ExternalLink, FileText, Image as ImageIcon, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
+import { LaserLoader } from '../ui/LaserLoader';
 import { PortfolioProject, portfolioProjects as mockProjects } from '@/lib/data';
 
-export function OverviewTab() {
+interface OverviewTabProps {
+  onNavigate: (tab: 'posts' | 'media' | 'settings') => void;
+}
+
+export function OverviewTab({ onNavigate }: OverviewTabProps) {
   const [stats, setStats] = useState([
     { label: 'Tổng Bài Đăng', value: 0, color: '#00FF88', icon: '📝' },
     { label: 'Mega Concert', value: 0, color: '#00FF88', icon: '🎪' },
@@ -21,7 +26,7 @@ export function OverviewTab() {
       try {
         const res = await fetch('/api/projects');
         const data = await res.json();
-        
+
         let projects: PortfolioProject[] = [];
 
         if (!res.ok || !Array.isArray(data)) {
@@ -35,8 +40,8 @@ export function OverviewTab() {
         }
 
         const categories = { mega: 0, medium: 0, vip: 0 };
-        projects.forEach((p) => { 
-          if (categories[p.category as keyof typeof categories] !== undefined) categories[p.category as keyof typeof categories]++; 
+        projects.forEach((p) => {
+          if (categories[p.category as keyof typeof categories] !== undefined) categories[p.category as keyof typeof categories]++;
         });
 
         setStats([
@@ -45,7 +50,7 @@ export function OverviewTab() {
           { label: 'Tầm Trung', value: categories.medium, color: '#00FF88', icon: '🎉' },
           { label: 'VIP / Private', value: categories.vip, color: '#00FF88', icon: '💎' },
         ]);
-        
+
         setRecentProjects(projects.slice(0, 4));
         setLoading(false);
       } catch (err) {
@@ -58,25 +63,30 @@ export function OverviewTab() {
     fetchStats();
   }, []);
 
-  if (loading) return <div className="animate-pulse space-y-8">...</div>;
+  if (loading) return (
+    <div className="flex flex-col items-center justify-center py-20 gap-4">
+      <LaserLoader size="lg" color="#00FF88" />
+      <span className="text-white/30 text-[0.7rem] uppercase tracking-widest font-bold">Đang tổng hợp dữ liệu...</span>
+    </div>
+  );
 
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="font-orbitron text-white mb-2" style={{ fontSize: '1.1rem', fontWeight: 700 }}>Tổng Quan</h2>
+        <h2 className="font-body text-white mb-2" style={{ fontSize: '1.2rem', fontWeight: 800 }}>Tổng Quan</h2>
         <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.83rem', fontFamily: "'Be Vietnam Pro', sans-serif" }}>
           Quản lý nội dung website Laser Việt Production
         </p>
       </div>
 
       {error && (
-        <div 
+        <div
           className="flex items-start gap-3 p-4 rounded-xl mb-4 animate-in fade-in slide-in-from-top-4 duration-500"
           style={{ background: 'rgba(255, 59, 48, 0.1)', border: '1px solid rgba(255, 59, 48, 0.2)' }}
         >
           <AlertCircle className="flex-shrink-0" style={{ color: '#FF3B30' }} size={20} />
           <div>
-            <div className="text-white font-exo" style={{ fontSize: '0.85rem', fontWeight: 700 }}>Cảnh báo hệ thống</div>
+            <div className="text-white font-body" style={{ fontSize: '0.85rem', fontWeight: 700 }}>Cảnh báo hệ thống</div>
             <div style={{ color: 'rgba(255, 255, 255, 0.6)', fontSize: '0.75rem', fontFamily: "'Be Vietnam Pro', sans-serif", marginTop: 2 }}>
               {error}
             </div>
@@ -85,7 +95,7 @@ export function OverviewTab() {
       )}
 
       {/* Stats grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((s) => (
           <div
             key={s.label}
@@ -94,8 +104,8 @@ export function OverviewTab() {
           >
             <div style={{ fontSize: '1.5rem', marginBottom: 8 }}>{s.icon}</div>
             <div
-              className="font-orbitron"
-              style={{ fontSize: '2rem', fontWeight: 900, color: s.color, lineHeight: 1 }}
+              className="font-body"
+              style={{ fontSize: '2.4rem', fontWeight: 900, color: s.color, lineHeight: 1, letterSpacing: '-0.02em' }}
             >
               {s.value}
             </div>
@@ -108,23 +118,23 @@ export function OverviewTab() {
 
       {/* Quick actions */}
       <div>
-        <h3 style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.75rem', fontFamily: 'Orbitron, sans-serif', letterSpacing: '0.2em', marginBottom: 12 }}>
+        <h3 style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem', fontFamily: 'var(--font-body), sans-serif', fontWeight: 800, letterSpacing: '0.15em', marginBottom: 12 }}>
           TRUY CẬP NHANH
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
-            { label: 'Xem Landing Page', href: '/', icon: ExternalLink, desc: 'Xem trang chủ công khai', color: '#00FF88' },
-            { label: 'Quản lý Bài Đăng', href: '#posts', icon: FileText, desc: 'Thêm, sửa, xóa portfolio', color: '#00FF88' },
-            { label: 'Quản lý Media', href: '#media', icon: ImageIcon, desc: 'Thay đổi hình ảnh trang', color: '#00FF88' },
+            { label: 'Xem Landing Page', action: () => window.open('/', '_blank'), icon: ExternalLink, desc: 'Xem trang chủ công khai', color: '#00FF88' },
+            { label: 'Quản lý Bài Đăng', action: () => onNavigate('posts'), icon: FileText, desc: 'Thêm, sửa, xóa portfolio', color: '#00FF88' },
+            { label: 'Quản lý Media', action: () => onNavigate('media'), icon: ImageIcon, desc: 'Thay đổi hình ảnh trang', color: '#00FF88' },
           ].map((a) => (
-            <Link
+            <button
               key={a.label}
-              href={a.href}
-              className="flex items-center gap-4 p-4 rounded-xl transition-all duration-300 hover:bg-[rgba(255,255,255,0.05)]"
+              onClick={a.action}
+              className="flex items-center text-left w-full gap-4 p-4 rounded-xl transition-all duration-300 hover:bg-[rgba(255,255,255,0.05)]"
               style={{
                 background: 'rgba(255,255,255,0.025)',
                 border: `1px solid ${a.color}20`,
-                textDecoration: 'none',
+                cursor: 'pointer'
               }}
             >
               <div
@@ -134,17 +144,17 @@ export function OverviewTab() {
                 <a.icon size={18} style={{ color: a.color }} />
               </div>
               <div>
-                <div className="text-white font-exo" style={{ fontSize: '0.85rem', fontWeight: 700 }}>{a.label}</div>
+                <div className="text-white font-body" style={{ fontSize: '0.85rem', fontWeight: 700 }}>{a.label}</div>
                 <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.73rem', fontFamily: "'Be Vietnam Pro', sans-serif" }}>{a.desc}</div>
               </div>
-            </Link>
+            </button>
           ))}
         </div>
       </div>
 
       {/* Recent posts preview */}
       <div>
-        <h3 style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.75rem', fontFamily: 'Orbitron, sans-serif', letterSpacing: '0.2em', marginBottom: 12 }}>
+        <h3 style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem', fontFamily: 'var(--font-body), sans-serif', fontWeight: 800, letterSpacing: '0.15em', marginBottom: 12 }}>
           BÀI ĐĂNG GẦN ĐÂY
         </h3>
         <div className="space-y-2">
@@ -157,20 +167,20 @@ export function OverviewTab() {
                 className="flex items-center gap-4 p-3 rounded-lg"
                 style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}
               >
-                <img 
-                  src={p.thumbnailImage || 'https://images.unsplash.com/photo-1760539619529-cfd85a2a9cfd?w=800&q=80'} 
-                  alt={p.title} 
-                  className="w-10 h-10 rounded-lg object-cover flex-shrink-0" 
+                <img
+                  src={p.thumbnailImage || 'https://images.unsplash.com/photo-1760539619529-cfd85a2a9cfd?w=800&q=80'}
+                  alt={p.title}
+                  className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
                 />
                 <div className="flex-1 min-w-0">
-                  <div className="text-white font-exo truncate" style={{ fontSize: '0.83rem', fontWeight: 600 }}>{p.title}</div>
+                  <div className="text-white font-body truncate" style={{ fontSize: '0.85rem', fontWeight: 700 }}>{p.title}</div>
                   <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.7rem', fontFamily: "'Be Vietnam Pro', sans-serif" }}>{p.location} · {p.year}</div>
                 </div>
                 <span
                   className="px-2 py-0.5 rounded-full flex-shrink-0"
-                  style={{ background: `${c}12`, border: `1px solid ${c}25`, color: c, fontSize: '0.6rem', fontFamily: 'Orbitron, sans-serif', letterSpacing: '0.08em' }}
+                  style={{ background: `${c}12`, border: `1px solid ${c}25`, color: c, fontSize: '0.6rem', fontFamily: 'var(--font-body), sans-serif', fontWeight: 800, letterSpacing: '0.05em' }}
                 >
-                  {p.categoryLabel}
+                  {p.categoryLabel.toUpperCase()}
                 </span>
               </div>
             );
