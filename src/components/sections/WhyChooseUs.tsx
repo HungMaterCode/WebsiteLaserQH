@@ -65,12 +65,12 @@ export function WhyChooseUs() {
       <div className="max-w-7xl mx-auto">
         {/* Header Area */}
         <motion.div ref={titleRef} initial={{ opacity: 0, y: 30 }} animate={{ opacity: titleInView ? 1 : 0, y: titleInView ? 0 : 30 }} transition={{ duration: 0.6 }} className="text-center mb-16">
-          <p className="font-orbitron mb-4 font-semibold tracking-widest text-[0.7rem] uppercase" style={{ color: 'var(--neon-green)' }}>
+          <p className="mb-4 font-semibold tracking-widest text-[0.70rem] uppercase font-body" style={{ color: 'var(--neon-green)', letterSpacing: '0.2em' }}>
             — TẠI SAO CHỌN CHÚNG TÔI —
           </p>
-          <h2 className="font-orbitron mb-6" style={{ fontSize: 'clamp(2.2rem, 5vw, 3.5rem)', fontWeight: 800, lineHeight: 1.1 }}>
+          <h2 className="mb-6 font-body" style={{ fontSize: 'clamp(2.2rem, 5vw, 3.5rem)', fontWeight: 800, lineHeight: 1.1 }}>
             <span className="text-white block">Uy Tín Được Xây Dựng</span>
-            <span className="block" style={{ color: 'var(--neon-green)' }}>Từ Mỗi Tia Laser</span>
+            <span className="block" style={{ color: 'var(--neon-green)', padding: '0.1em 0' }}>Từ Mỗi Tia Laser</span>
           </h2>
           <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '1rem', fontFamily: 'var(--font-vietnam)', maxWidth: '650px', margin: '0 auto', lineHeight: 1.8 }}>
             Không phải ngẫu nhiên mà những cái tên lớn nhất showbiz và doanh nghiệp Việt Nam luôn chọn chúng tôi.
@@ -88,10 +88,8 @@ export function WhyChooseUs() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-50px' }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="p-7 rounded-[20px] flex flex-col gap-4 relative overflow-hidden group transition-all duration-300"
+                className="p-7 rounded-[20px] flex flex-col gap-4 relative overflow-hidden group transition-all duration-300 card-laser"
                 style={{ background: '#050912', border: '1px solid rgba(255,255,255,0.06)' }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)' }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)' }}
               >
                 {/* Subtle Background Glow corresponding to color */}
                 <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full blur-[50px] opacity-10 group-hover:opacity-20 transition-opacity duration-500" style={{ background: reason.color }} />
@@ -102,9 +100,9 @@ export function WhyChooseUs() {
                   </div>
                   <div className="flex flex-col">
                     <h3 className="text-white font-bold mb-1" style={{ fontSize: '1.05rem', fontFamily: 'var(--font-vietnam)', lineHeight: 1.3 }}>{reason.title}</h3>
-                    <div className="flex items-center gap-1.5 font-orbitron font-bold" style={{ color: reason.color, fontSize: '1.1rem', letterSpacing: '0.02em' }}>
+                    <div className="flex items-center gap-1.5 font-body font-bold" style={{ color: reason.color, fontSize: '1.1rem', letterSpacing: '0.02em' }}>
                       {reason.valueHighlight}
-                      <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem', fontFamily: 'var(--font-vietnam)', fontWeight: 500, letterSpacing: '0' }}>{reason.valueText}</span>
+                      <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem', fontFamily: 'var(--font-body)', fontWeight: 500, letterSpacing: '0' }}>{reason.valueText}</span>
                     </div>
                   </div>
                 </div>
@@ -127,7 +125,7 @@ export function WhyChooseUs() {
                    boxShadow: '0 0 10px rgba(0, 255, 136, 0.1)' 
                  }} />
 
-            <p className="text-center font-orbitron font-bold tracking-[0.3em] uppercase" style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.2)' }}>
+            <p className="text-center font-body font-bold tracking-[0.3em] uppercase" style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.2)' }}>
               TIN TƯỞNG BỞI
             </p>
           </div>

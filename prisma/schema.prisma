@@ -74,7 +74,6 @@ model Project {
   description     String
   fullDescription String
   equipment       Json
-  gallery         String[]
   highlight       String
   client          String
   duration        String
@@ -83,6 +82,8 @@ model Project {
   published       Boolean  @default(true)
   seoTitle        String?
   seoDesc         String?
+  seoIcon         String?
+  seoImage        String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 

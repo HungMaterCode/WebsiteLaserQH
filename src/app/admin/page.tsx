@@ -67,7 +67,7 @@ export default function AdminPage() {
 
       {/* Mobile tab bar */}
       <div
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 flex"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex"
         style={{
           background: 'rgba(5,5,15,0.98)',
           borderTop: '1px solid rgba(255,255,255,0.08)',
@@ -100,11 +100,10 @@ export default function AdminPage() {
 
       {/* Main content */}
       <main
-        className="flex-1 overflow-auto bg-[#050508]"
-        style={{ padding: '2rem 1.5rem', paddingBottom: '6rem' }}
+        className="flex-1 overflow-auto bg-[#050508] p-4 sm:p-6 md:p-8 pb-24 md:pb-8"
       >
         <div className="max-w-5xl mx-auto text-white">
-          {activeTab === 'overview' && <OverviewTab />}
+          {activeTab === 'overview' && <OverviewTab onNavigate={setActiveTab} />}
           {activeTab === 'posts' && <PostsManager />}
           {activeTab === 'media' && <MediaManager />}
           {activeTab === 'settings' && <SiteSettingsManager />}

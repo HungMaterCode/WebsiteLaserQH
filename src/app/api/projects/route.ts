@@ -43,7 +43,6 @@ export async function POST(request: Request) {
         ...data,
         slug,
         equipment: data.equipment || [],
-        gallery: data.gallery || [],
       },
     });
     
