@@ -172,8 +172,7 @@ export function HeroSection({ siteSettings, mediaSettings }: { siteSettings: Sit
       <LaserBeam style={{ right: '12%', top: 0, height: '75%', opacity: 0.25, background: 'linear-gradient(180deg, transparent, #BF00FF, #00E5FF, transparent)' }} />
       <LaserBeam style={{ right: '32%', top: '25%', height: '45%', opacity: 0.12 }} />
 
-      <div className="absolute left-0 right-0 h-px" style={{ top: '38%', background: 'linear-gradient(90deg, transparent, rgba(0,255,136,0.25), transparent)', animation: 'glowPulse 4s ease-in-out infinite' }} />
-      <div className="absolute left-0 right-0 h-px" style={{ top: '62%', background: 'linear-gradient(90deg, transparent, rgba(0,229,255,0.12), transparent)', animation: 'glowPulse 5s ease-in-out infinite 1s' }} />
+      <LaserBeam style={{ right: '32%', top: '25%', height: '45%', opacity: 0.12 }} />
 
       {/* Hero Content */}
       <div className="relative z-10 text-center px-4 sm:px-6 max-w-5xl mx-auto hero-content-wrapper pt-32 md:pt-40 lg:pt-[160px]">
