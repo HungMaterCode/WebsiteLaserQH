@@ -136,7 +136,6 @@ export function ServicesSection() {
               index={index}
               onClick={() => {
                 setSelectedService(service);
-                document.getElementById('services-title')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
               }}
             />
           ))}
