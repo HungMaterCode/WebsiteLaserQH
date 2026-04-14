@@ -41,7 +41,7 @@ export async function generateMetadata(): Promise<Metadata> {
   } catch (e) {}
 
   return {
-    metadataBase: new URL('https://laserqh.vn'),
+    metadataBase: new URL('https://website-laser-qh.vercel.app'),
     title: {
       default: `${settings.companyName} — Dịch Vụ Laser & Kinetic Hàng Đầu`,
       template: `%s | ${settings.companyName}`,
@@ -60,7 +60,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: 'summary_large_image',
     },
     robots: { index: true, follow: true },
-    alternates: { canonical: 'https://laserqh.vn' },
+    alternates: { canonical: 'https://website-laser-qh.vercel.app' },
     icons: {
       icon: '/logo.jpg',
     },

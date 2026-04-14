@@ -613,7 +613,7 @@ export function PostEditorModal({
                           <div className="min-w-0">
                             <div className="text-[13px] font-medium text-[#202124] leading-none">Laser QH Production</div>
                             <div className="text-[12px] text-[#4d5156] leading-snug truncate">
-                              https://laserqh.vn › du-an › {form.slug || 'slug'}
+                              https://website-laser-qh.vercel.app › du-an › {form.slug || 'slug'}
                             </div>
                           </div>
                         </div>

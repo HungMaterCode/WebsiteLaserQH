@@ -34,17 +34,29 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = project.seoTitle || `${project.title} — Dự Án Laser Show & Kinetic tại ${project.location}`;
   const description = project.seoDesc || project.description;
 
+  const imageUrl = project.seoImage || project.heroImage || project.thumbnailImage;
+  const absoluteImageUrl = imageUrl?.startsWith('http') 
+    ? imageUrl 
+    : `https://website-laser-qh.vercel.app${imageUrl}`;
+
   return {
     title,
     description,
     openGraph: {
       title,
       description,
-      images: [project.seoImage || project.heroImage || project.thumbnailImage],
+      images: [
+        {
+          url: absoluteImageUrl,
+          width: 1200,
+          height: 630,
+          alt: title,
+        }
+      ],
       type: 'article',
     },
     alternates: {
-      canonical: `https://laserqh.vn/du-an/${slug}`,
+      canonical: `https://website-laser-qh.vercel.app/du-an/${slug}`,
     },
   };
 }
@@ -77,7 +89,7 @@ export default async function ProjectPage({ params }: Props) {
     'organizer': {
       '@type': 'Organization',
       'name': 'Laser QH Production',
-      'url': 'https://laserqh.vn'
+      'url': 'https://website-laser-qh.vercel.app'
     }
   };
 
