@@ -20,8 +20,16 @@ export interface PortfolioProject {
 }
 
 export interface Consultant {
+  id?: string;
   name: string;
   phone: string;
+}
+
+export function formatPhoneNumber(phone: string) {
+  if (!phone) return '';
+  const digits = phone.replace(/\D/g, '');
+  if (digits.length !== 10) return phone;
+  return `${digits.slice(0, 4)} ${digits.slice(4, 7)} ${digits.slice(7)}`;
 }
 
 export interface SiteSettings {

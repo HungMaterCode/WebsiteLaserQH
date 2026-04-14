@@ -43,7 +43,7 @@ export async function generateMetadata(): Promise<Metadata> {
       prisma.siteSetting.findUnique({ where: { id: 'global' } }),
       new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 4000))
     ]) as any;
-    
+
     if (data?.data) settings = data.data as any;
   } catch (e) {
     console.error('Metadata fetch failed, using defaults');

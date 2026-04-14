@@ -9,7 +9,7 @@ const Facebook = ({ size = 24, style = {} }) => (
     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
   </svg>
 );
-import { SiteSettings } from '@/lib/data';
+import { SiteSettings, formatPhoneNumber } from '@/lib/data';
 import { Logo } from '@/components/Logo';
 import { smoothScrollTo } from '@/lib/scrollUtils';
 
@@ -148,7 +148,7 @@ export function Navigation({ siteSettings }: { siteSettings: SiteSettings }) {
                         className="group-hover:text-white transition-colors duration-200"
                         style={{ color: 'rgba(255,255,255,0.7)', fontSize: 'clamp(0.64rem, 2vw, 0.72rem)', fontFamily: "var(--font-body), sans-serif", fontWeight: 500 }}
                       >
-                        {consultant.phone}
+                        {formatPhoneNumber(consultant.phone)}
                       </span>
                     </a>
                     {index < consultants.length - 1 && (

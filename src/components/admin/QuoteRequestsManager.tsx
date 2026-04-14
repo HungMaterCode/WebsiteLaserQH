@@ -19,8 +19,10 @@ import {
   Filter,
   ChevronDown,
   AlertCircle,
+  AlertTriangle,
 } from 'lucide-react';
 import { LaserLoader } from '../ui/LaserLoader';
+import { DeleteConfirm } from './DeleteConfirm';
 
 interface QuoteRequest {
   id: string;
@@ -88,10 +90,7 @@ function DetailModal({ quote, onClose, onStatusChange, onDelete }: {
   const sc = STATUS_COLORS[quote.status] || STATUS_COLORS.unread;
 
   const handleDelete = () => {
-    if (confirm(`Xóa yêu cầu từ ${quote.name}? Hành động này không thể hoàn tác.`)) {
-      onDelete(quote.id);
-      onClose();
-    }
+    onDelete(quote.id);
   };
 
   const statuses = Object.entries(STATUS_COLORS);
@@ -267,7 +266,7 @@ function QuoteCard({ quote, onView, onStatusChange, onDelete }: {
   quote: QuoteRequest;
   onView: () => void;
   onStatusChange: (id: string, status: string) => void;
-  onDelete: (id: string) => void;
+  onDelete: () => void;
 }) {
   const sc = STATUS_COLORS[quote.status] || STATUS_COLORS.unread;
   const isUnread = quote.status === 'unread';
@@ -355,9 +354,7 @@ function QuoteCard({ quote, onView, onStatusChange, onDelete }: {
               </button>
             )}
             <button
-              onClick={() => {
-                if (confirm(`Xóa yêu cầu từ ${quote.name}?`)) onDelete(quote.id);
-              }}
+              onClick={onDelete}
               title="Xóa"
               className="w-7 h-7 rounded-md flex items-center justify-center transition-colors"
               style={{ background: 'rgba(255,59,48,0.06)', border: '1px solid rgba(255,59,48,0.12)', color: '#FF3B30', cursor: 'pointer' }}
@@ -377,8 +374,10 @@ export function QuoteRequestsManager() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedQuote, setSelectedQuote] = useState<QuoteRequest | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<QuoteRequest | null>(null);
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [showFilter, setShowFilter] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const fetchQuotes = useCallback(async () => {
     setLoading(true);
@@ -416,12 +415,21 @@ export function QuoteRequestsManager() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDeleteConfirm = async () => {
+    if (!deleteTarget) return;
+    const id = deleteTarget.id;
+    
+    setDeleting(true);
     setQuotes((prev) => prev.filter((q) => q.id !== id));
+    if (selectedQuote?.id === id) setSelectedQuote(null);
+    
     try {
       await fetch(`/api/messages/${id}`, { method: 'DELETE' });
     } catch {
       fetchQuotes();
+    } finally {
+      setDeleting(false);
+      setDeleteTarget(null);
     }
   };
 
@@ -566,7 +574,7 @@ export function QuoteRequestsManager() {
                 if (quote.status === 'unread') handleStatusChange(quote.id, 'read');
               }}
               onStatusChange={handleStatusChange}
-              onDelete={handleDelete}
+              onDelete={() => setDeleteTarget(quote)}
             />
           ))}
         </div>
@@ -578,7 +586,18 @@ export function QuoteRequestsManager() {
           quote={selectedQuote}
           onClose={() => setSelectedQuote(null)}
           onStatusChange={handleStatusChange}
-          onDelete={handleDelete}
+          onDelete={() => setDeleteTarget(selectedQuote)}
+        />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteTarget && (
+        <DeleteConfirm
+          title={deleteTarget.name}
+          message={`Bạn có chắc chắn muốn xóa yêu cầu từ "${deleteTarget.name}"? Dữ liệu này sẽ bị xóa vĩnh viễn và không thể phục hồi.`}
+          onConfirm={handleDeleteConfirm}
+          onCancel={() => setDeleteTarget(null)}
+          loading={deleting}
         />
       )}
     </div>

@@ -1,7 +1,7 @@
 'use client';
 import { Zap, Phone, MapPin, Mail, User, Info, CreditCard } from 'lucide-react';
 import Link from 'next/link';
-import { SiteSettings } from '@/lib/data';
+import { SiteSettings, formatPhoneNumber } from '@/lib/data';
 import { Logo } from '@/components/Logo';
 import { smoothScrollTo } from '@/lib/scrollUtils';
 
@@ -142,12 +142,12 @@ export function Footer({ siteSettings }: { siteSettings: SiteSettings }) {
                     {(siteSettings.consultants && siteSettings.consultants.length > 0) ? (
                       siteSettings.consultants.map((c, i) => (
                         <a key={i} href={`tel:${c.phone.replace(/\s+/g, '')}`} className="text-white hover:text-[var(--neon-green)] font-bold text-[1.1rem] transition-colors">
-                          {c.phone} — {c.name}
+                          {formatPhoneNumber(c.phone)} — {c.name}
                         </a>
                       ))
                     ) : (
                       <a href={`tel:${siteSettings.phone.replace(/\s+/g, '')}`} className="text-white hover:text-[var(--neon-green)] font-bold text-[1.1rem] transition-colors">
-                        {siteSettings.phone} — {siteSettings.consultantName}
+                        {formatPhoneNumber(siteSettings.phone)} — {siteSettings.consultantName}
                       </a>
                     )}
                   </div>
@@ -169,7 +169,7 @@ export function Footer({ siteSettings }: { siteSettings: SiteSettings }) {
 
                 <div>
                   <p className="text-white font-body text-[0.85rem]">
-                    GĐ: <span className="font-bold">{siteSettings.directorPhone}</span>
+                    GĐ: <span className="font-bold">{formatPhoneNumber(siteSettings.directorPhone)}</span>
                   </p>
                 </div>
               </div>
