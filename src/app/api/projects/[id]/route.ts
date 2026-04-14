@@ -47,21 +47,24 @@ export async function DELETE(
   }
 
   try {
-    const result = await prisma.project.deleteMany({
+    // Use delete instead of deleteMany for a direct single-record operation
+    await prisma.project.delete({
       where: { id },
     });
 
-    if (result.count === 0) {
-      return NextResponse.json({ error: 'Không tìm thấy dự án để xóa' }, { status: 404 });
-    }
-
-    // Temporarily disabled revalidation during DELETE to prevent Vercel timeouts
-    // revalidatePath('/');
-    // revalidatePath('/admin');
+    // Revalidate targeted paths so the frontend reflects the deletion
+    revalidatePath('/', 'page');
+    revalidatePath('/admin', 'page');
 
     return NextResponse.json({ message: 'Project deleted successfully' });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error deleting project:', error);
+
+    // Handle Prisma "record not found" error specifically
+    if (error?.code === 'P2025') {
+      return NextResponse.json({ error: 'Không tìm thấy dự án để xóa (ID không tồn tại)' }, { status: 404 });
+    }
+
     return NextResponse.json({ 
       error: 'Lỗi hệ thống khi xóa dự án',
       details: error instanceof Error ? error.message : 'Unknown error'

@@ -111,24 +111,39 @@ export function PostsManager() {
     setSaving(true);
     setError(null);
     try {
+      // Use AbortController to enforce a 15s timeout for the delete request
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+
       const res = await fetch(`/api/projects/${encodeURIComponent(deleteTarget.id)}`, {
         method: 'DELETE',
+        signal: controller.signal,
       });
+      clearTimeout(timeoutId);
 
       if (res.ok) {
-        await fetchProjects();
+        // Delete succeeded — close modal first, then refresh list separately
         setDeleteTarget(null);
+        // Remove the project from local state immediately for instant UI feedback
+        setProjects(prev => prev.filter(p => p.id !== deleteTarget.id));
+        // Refresh list in background (don't block or throw on failure)
+        fetchProjects().catch(() => {/* silent — local state already updated */});
       } else {
         const data = await res.json();
         const detailMsg = data.details ? ` (${data.details})` : '';
         setError(`${data.error || 'Không thể xóa dự án này.'}${detailMsg}`);
+        setDeleteTarget(null);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error deleting project:', error);
-      setError('Lỗi kết nối hoặc hết hạn thời gian xử lý (Timeout). Bài viết có thể đã được xóa, hãy thử tải lại trang.');
+      if (error?.name === 'AbortError') {
+        setError('Yêu cầu xóa bị hết thời gian chờ. Hãy tải lại trang để kiểm tra.');
+      } else {
+        setError('Lỗi kết nối máy chủ. Hãy thử tải lại trang.');
+      }
+      setDeleteTarget(null);
     } finally {
       setSaving(false);
-      setDeleteTarget(null); // Always close modal
     }
   };
 
