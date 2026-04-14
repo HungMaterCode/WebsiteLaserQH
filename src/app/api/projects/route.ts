@@ -53,6 +53,9 @@ export async function POST(request: Request) {
     return NextResponse.json(project);
   } catch (error) {
     console.error('Error creating project:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ 
+      error: 'Không thể tạo dự án', 
+      details: error instanceof Error ? error.message : 'Lỗi không xác định'
+    }, { status: 500 });
   }
 }

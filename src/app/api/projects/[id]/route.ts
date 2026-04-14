@@ -46,9 +46,13 @@ export async function DELETE(
   }
 
   try {
-    await prisma.project.delete({
+    const result = await prisma.project.deleteMany({
       where: { id },
     });
+
+    if (result.count === 0) {
+      return NextResponse.json({ error: 'Không tìm thấy dự án để xóa' }, { status: 404 });
+    }
 
     // Purge cache for the entire site
     revalidatePath('/', 'layout');
@@ -56,6 +60,9 @@ export async function DELETE(
     return NextResponse.json({ message: 'Project deleted successfully' });
   } catch (error) {
     console.error('Error deleting project:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ 
+      error: 'Lỗi hệ thống khi xóa dự án',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 });
   }
 }

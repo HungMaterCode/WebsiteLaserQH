@@ -75,23 +75,32 @@ export function PostsManager() {
 
   const handleSave = async (p: any) => {
     setSaving(true);
+    setError(null);
     try {
       const method = isNewProject ? 'POST' : 'PATCH';
       const url = isNewProject ? '/api/projects' : `/api/projects/${p.id}`;
       
+      // Strip id if creating new to avoid empty string ID collision in Prisma
+      const payload = isNewProject ? { ...p, id: undefined } : p;
+      
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(p),
+        body: JSON.stringify(payload),
       });
 
       if (res.ok) {
         await fetchProjects();
         setEditingProject(null);
         setIsNewProject(false);
+      } else {
+        const data = await res.json();
+        const detailMsg = data.details ? ` (${data.details})` : '';
+        setError(`${data.error || 'Không thể lưu dự án.'}${detailMsg}`);
       }
     } catch (error) {
       console.error('Error saving project:', error);
+      setError('Lỗi kết nối máy chủ khi lưu dự án.');
     } finally {
       setSaving(false);
     }
@@ -100,6 +109,7 @@ export function PostsManager() {
   const handleDelete = async () => {
     if (!deleteTarget) return;
     setSaving(true);
+    setError(null);
     try {
       const res = await fetch(`/api/projects/${deleteTarget.id}`, {
         method: 'DELETE',
@@ -108,11 +118,17 @@ export function PostsManager() {
       if (res.ok) {
         await fetchProjects();
         setDeleteTarget(null);
+      } else {
+        const data = await res.json();
+        const detailMsg = data.details ? ` (${data.details})` : '';
+        setError(`${data.error || 'Không thể xóa dự án này.'}${detailMsg}`);
       }
     } catch (error) {
       console.error('Error deleting project:', error);
+      setError('Lỗi kết nối máy chủ khi xóa dự án.');
     } finally {
       setSaving(false);
+      setDeleteTarget(null); // Always close modal
     }
   };
 

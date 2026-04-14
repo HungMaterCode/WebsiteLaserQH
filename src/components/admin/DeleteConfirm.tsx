@@ -29,8 +29,14 @@ export function DeleteConfirm({
           </p>
         </div>
         <div className="flex flex-col gap-3">
-          <AdminButton variant="danger" loading={loading} onClick={onConfirm} style={{ width: '100%', padding: '0.8rem' }}>
-            XÁC NHẬN XÓA PHÁP
+          <AdminButton 
+            variant="danger" 
+            loading={loading} 
+            loadingText="Đang xóa vĩnh viễn..."
+            onClick={onConfirm} 
+            style={{ width: '100%', padding: '0.8rem' }}
+          >
+            XÁC NHẬN XÓA
           </AdminButton>
           <AdminButton variant="secondary" onClick={onCancel} style={{ width: '100%', padding: '0.8rem' }}>
             HỦY BỎ

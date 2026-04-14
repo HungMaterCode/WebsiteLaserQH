@@ -54,8 +54,15 @@ export function PostEditorModal({
   const removeEquipment = (i: number) => update('equipment', form.equipment.filter((_: any, idx: number) => idx !== i));
 
   const handleSave = () => {
+    // Basic validation
+    if (!form.title || form.title.trim() === '') {
+      alert('Vui lòng nhập tiêu đề dự án');
+      return;
+    }
+
     const cleaned = {
       ...form,
+      year: parseInt(form.year) || new Date().getFullYear(),
       equipment: (form.equipment || []).filter((eq: any) => eq.name.trim() !== ''),
     };
     onSave(cleaned);

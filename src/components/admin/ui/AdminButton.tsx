@@ -5,6 +5,7 @@ import { CheckCircle } from 'lucide-react';
 interface AdminButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
   loading?: boolean;
+  loadingText?: string;
   saved?: boolean;
   icon?: React.ReactNode;
 }
@@ -13,6 +14,7 @@ export function AdminButton({
   children, 
   variant = 'primary', 
   loading, 
+  loadingText = 'Đang lưu...',
   saved, 
   icon, 
   style, 
