@@ -68,11 +68,11 @@ export async function generateMetadata(): Promise<Metadata> {
       description: siteDesc,
       images: [
         {
-          url: `${BASE_URL}/logo-v4.png`,
-          width: 1360,
-          height: 1306,
+          url: `${BASE_URL}/og-image.jpg`,
+          width: 1200,
+          height: 630,
           alt: settings.companyName,
-          type: 'image/png',
+          type: 'image/jpeg',
         }
       ],
     },
@@ -80,7 +80,7 @@ export async function generateMetadata(): Promise<Metadata> {
       card: 'summary_large_image',
       title: siteTitle,
       description: siteDesc,
-      images: [`${BASE_URL}/logo-v4.png`],
+      images: [`${BASE_URL}/og-image.jpg`],
     },
     robots: { index: true, follow: true },
     alternates: { canonical: BASE_URL },
