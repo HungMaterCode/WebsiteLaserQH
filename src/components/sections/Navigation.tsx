@@ -91,6 +91,13 @@ export function Navigation({ siteSettings }: { siteSettings: SiteSettings }) {
     setMobileOpen(false);
   };
 
+  const handleLogoClick = (e: React.MouseEvent) => {
+    if (window.location.pathname === '/') {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
   return (
     <>
       {/* Fixed header: top info bar + main nav */}
@@ -118,20 +125,20 @@ export function Navigation({ siteSettings }: { siteSettings: SiteSettings }) {
                       <Phone size={11} style={{ color: '#00FF88', flexShrink: 0 }} />
                       <span
                         className="group-hover:text-white transition-colors duration-200"
-                        style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.72rem', fontFamily: "var(--font-body), sans-serif", fontWeight: 500 }}
+                        style={{ color: 'rgba(255,255,255,0.7)', fontSize: 'clamp(0.64rem, 2vw, 0.72rem)', fontFamily: "var(--font-body), sans-serif", fontWeight: 500 }}
                       >
                         {consultant.phone}
                       </span>
                     </a>
                     {index < consultants.length - 1 && (
-                      <span style={{ color: 'rgba(255,255,255,0.12)', fontSize: '0.7rem' }}>|</span>
+                      <span style={{ color: 'rgba(255,255,255,0.12)', fontSize: 'clamp(0.6rem, 1.5vw, 0.7rem)' }}>|</span>
                     )}
                   </div>
                 ))}
               </div>
 
               {/* FB and Zalo links */}
-              <div className="flex items-center gap-3 sm:gap-4 flex-shrink-0">
+              <div className="flex items-center gap-2.5 sm:gap-4 flex-shrink-0">
                 <a
                   href={siteSettings.zaloLink}
                   target="_blank"
@@ -187,8 +194,9 @@ export function Navigation({ siteSettings }: { siteSettings: SiteSettings }) {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16 md:h-[96px]">
               {/* Logo */}
-              <Link href="/" className="flex items-center group">
-                <Logo />
+              <Link href="/" className="flex items-center group" onClick={handleLogoClick}>
+                <Logo size="sm" className="md:hidden" />
+                <Logo size="md" className="hidden md:flex" />
               </Link>
 
               {/* Desktop Nav */}

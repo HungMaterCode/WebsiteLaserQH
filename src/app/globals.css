@@ -720,8 +720,8 @@ body {
 
 @media (max-width: 480px) {
   .hero-headline {
-    font-size: clamp(2rem, 12vw, 3rem) !important;
-    line-height: 1.1 !important;
+    font-size: clamp(1.8rem, 11vw, 2.8rem) !important;
+    line-height: 1.05 !important;
   }
 
   .hero-description {
@@ -736,8 +736,8 @@ body {
   }
 
   .hero-content-wrapper {
-    padding-top: 110px !important;
-    padding-bottom: 50px !important;
+    padding-top: 100px !important;
+    padding-bottom: 40px !important;
   }
 
   .hero-headline {
