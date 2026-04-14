@@ -78,7 +78,7 @@ export function PostsManager() {
     setError(null);
     try {
       const method = isNewProject ? 'POST' : 'PATCH';
-      const url = isNewProject ? '/api/projects' : `/api/projects/${p.id}`;
+      const url = isNewProject ? '/api/projects' : `/api/projects/${encodeURIComponent(p.id)}`;
       
       // Strip id if creating new to avoid empty string ID collision in Prisma
       const payload = isNewProject ? { ...p, id: undefined } : p;
@@ -111,7 +111,7 @@ export function PostsManager() {
     setSaving(true);
     setError(null);
     try {
-      const res = await fetch(`/api/projects/${deleteTarget.id}`, {
+      const res = await fetch(`/api/projects/${encodeURIComponent(deleteTarget.id)}`, {
         method: 'DELETE',
       });
 
