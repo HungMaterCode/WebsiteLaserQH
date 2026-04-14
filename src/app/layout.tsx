@@ -68,7 +68,7 @@ export async function generateMetadata(): Promise<Metadata> {
       description: siteDesc,
       images: [
         {
-          url: `${BASE_URL}/logo.jpg`,
+          url: `${BASE_URL}/logo-v4.png`,
           width: 1200,
           height: 630,
           alt: settings.companyName
@@ -79,12 +79,12 @@ export async function generateMetadata(): Promise<Metadata> {
       card: 'summary_large_image',
       title: siteTitle,
       description: siteDesc,
-      images: [`${BASE_URL}/logo.jpg`],
+      images: [`${BASE_URL}/logo-v4.png`],
     },
     robots: { index: true, follow: true },
     alternates: { canonical: BASE_URL },
     icons: {
-      icon: '/logo.jpg',
+      icon: '/logo-v4.png',
     },
   };
 }
