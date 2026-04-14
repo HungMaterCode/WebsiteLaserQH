@@ -1,13 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ExternalLink, FileText, Image as ImageIcon, AlertCircle } from 'lucide-react';
+import { ExternalLink, FileText, Image as ImageIcon, AlertCircle, Inbox } from 'lucide-react';
 import Link from 'next/link';
 import { LaserLoader } from '../ui/LaserLoader';
 import { PortfolioProject, portfolioProjects as mockProjects } from '@/lib/data';
 
 interface OverviewTabProps {
-  onNavigate: (tab: 'posts' | 'media' | 'settings') => void;
+  onNavigate: (tab: 'posts' | 'media' | 'settings' | 'quotes') => void;
 }
 
 export function OverviewTab({ onNavigate }: OverviewTabProps) {
@@ -121,9 +121,10 @@ export function OverviewTab({ onNavigate }: OverviewTabProps) {
         <h3 style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.75rem', fontFamily: 'var(--font-body), sans-serif', fontWeight: 800, letterSpacing: '0.15em', marginBottom: 12 }}>
           TRUY CẬP NHANH
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             { label: 'Xem Landing Page', action: () => window.open('/', '_blank'), icon: ExternalLink, desc: 'Xem trang chủ công khai', color: '#00FF88' },
+            { label: 'Yêu Cầu Báo Giá', action: () => onNavigate('quotes'), icon: Inbox, desc: 'Xem form khách hàng gửi', color: '#FFC800' },
             { label: 'Quản lý Bài Đăng', action: () => onNavigate('posts'), icon: FileText, desc: 'Thêm, sửa, xóa portfolio', color: '#00FF88' },
             { label: 'Quản lý Media', action: () => onNavigate('media'), icon: ImageIcon, desc: 'Thay đổi hình ảnh trang', color: '#00FF88' },
           ].map((a) => (

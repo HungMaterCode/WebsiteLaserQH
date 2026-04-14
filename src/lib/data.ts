@@ -44,8 +44,6 @@ export interface SiteSettings {
 
 export interface MediaSettings {
   heroImageUrl: string;
-  heroVideoUrl: string;
-  heroVideoEnabled: boolean;
 }
 
 export const defaultSiteSettings: SiteSettings = {
@@ -71,8 +69,6 @@ export const defaultSiteSettings: SiteSettings = {
 
 export const defaultMediaSettings: MediaSettings = {
   heroImageUrl: 'https://images.unsplash.com/photo-1760539619529-cfd85a2a9cfd?w=1920&q=80',
-  heroVideoUrl: '/videos/hero.mp4',
-  heroVideoEnabled: false,
 };
 
 export const portfolioProjects: PortfolioProject[] = [];

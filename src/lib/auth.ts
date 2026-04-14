@@ -11,7 +11,7 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         // In a real app, you would verify against a database
         // For now, matching the demo requirement
-        if (credentials?.password === 'laserviet2024') {
+        if (credentials?.password === 'laserqh2026') {
           return {
             id: '1',
             name: 'Admin',

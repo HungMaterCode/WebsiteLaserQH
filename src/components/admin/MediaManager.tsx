@@ -11,8 +11,6 @@ import { AdminButton } from './ui/AdminButton';
 export function MediaManager() {
   const [form, setForm] = useState({
     heroImageUrl: '',
-    heroVideoUrl: '',
-    heroVideoEnabled: false,
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -113,32 +111,6 @@ export function MediaManager() {
               )}
             </div>
 
-            <div className="pt-6 border-t border-white/5">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <Video size={16} className="text-[#00FF88]" />
-                  <span className="text-white text-[0.8rem] font-bold uppercase tracking-wider">Video Nền</span>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    className="sr-only peer"
-                    checked={form.heroVideoEnabled}
-                    onChange={e => setForm({ ...form, heroVideoEnabled: e.target.checked })}
-                  />
-                  <div className="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#00FF88]"></div>
-                </label>
-              </div>
-
-              <div className={form.heroVideoEnabled ? 'opacity-100' : 'opacity-30 pointer-events-none transition-opacity'}>
-                <AdminLabel>Đường dẫn Video (YouTube / MP4)</AdminLabel>
-                <AdminInput
-                  value={form.heroVideoUrl}
-                  onChange={e => setForm({ ...form, heroVideoUrl: e.target.value })}
-                  placeholder="/videos/hero.mp4"
-                />
-              </div>
-            </div>
           </div>
         </div>
 
@@ -149,7 +121,7 @@ export function MediaManager() {
           </div>
           <h4 className="text-white font-body text-[0.85rem] font-black mb-3 uppercase tracking-wider">Mẹo Quản Lý Media</h4>
           <p className="text-white/40 text-[0.75rem] font-vietnam leading-relaxed max-w-[300px]">
-            Ưu tiên hình ảnh có độ phân giải 1920x1080 và video định dạng MP4 đã được nén tối ưu (dưới 10MB) để khách hàng có trải nghiệm mượt mà nhất.
+            Ưu tiên hình ảnh có độ phân giải 1920x1080 đã được tối ưu dung lượng để khách hàng có trải nghiệm mượt mà nhất.
           </p>
         </div>
       </div>
@@ -159,6 +131,6 @@ export function MediaManager() {
           LƯU THAY ĐỔI
         </AdminButton>
       </div>
-    </div>
+    </div >
   );
 }

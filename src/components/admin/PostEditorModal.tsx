@@ -70,10 +70,10 @@ export function PostEditorModal({
 
   return (
     <div
-      className="fixed inset-0 z-[200] flex justify-center items-start overflow-y-auto py-8 sm:py-12 bg-black/85 backdrop-blur-[10px]"
+      className="fixed inset-0 z-[200] flex justify-center items-center overflow-hidden py-4 sm:py-8 bg-black/85 backdrop-blur-[10px]"
     >
       <div
-        className="w-full max-w-5xl flex flex-col rounded-2xl overflow-hidden bg-[#0A0A14] border border-white/10 shadow-2xl animate-in zoom-in-95 duration-200"
+        className="w-full max-w-7xl max-h-[92vh] flex flex-col rounded-2xl overflow-hidden bg-[#0A0A14] border border-white/10 shadow-2xl animate-in zoom-in-95 duration-200"
       >
         {/* Modal Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/7">
@@ -82,9 +82,9 @@ export function PostEditorModal({
           </h2>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 border border-white/10 text-white/50 hover:text-white transition-all"
+            className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 border border-white/10 text-white/50 hover:text-white hover:bg-red-500/20 transition-all"
           >
-            <X size={15} />
+            <X size={18} />
           </button>
         </div>
 
@@ -108,78 +108,81 @@ export function PostEditorModal({
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
           {activeSection === 'home' && (
-            <div className="space-y-5">
-              <div>
-                <AdminLabel>Tiêu đề dự án *</AdminLabel>
-                <AdminInput value={form.title} onChange={e => update('title', e.target.value)} placeholder="VD: Sky Tour Sơn Tùng M-TP" />
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+              {/* Form Column */}
+              <div className="lg:col-span-7 space-y-5">
                 <div>
-                  <AdminLabel>Danh mục *</AdminLabel>
-                  <AdminInput as="select" value={form.category} onChange={e => update('category', e.target.value as any)}>
-                    {CATEGORY_OPTIONS.map(c => (
-                      <option key={c.value} value={c.value} className="bg-[#111]">{c.label}</option>
-                    ))}
-                  </AdminInput>
+                  <AdminLabel>Tiêu đề dự án *</AdminLabel>
+                  <AdminInput value={form.title} onChange={e => update('title', e.target.value)} placeholder="VD: Sky Tour Sơn Tùng M-TP" />
                 </div>
-                <div>
-                  <AdminLabel>Nhãn hiển thị</AdminLabel>
-                  <AdminInput value={form.categoryLabel} onChange={e => update('categoryLabel', e.target.value)} placeholder="VD: Mega Concert" />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <AdminLabel>Năm thực hiện</AdminLabel>
-                  <AdminInput type="number" value={form.year} onChange={e => update('year', e.target.value === '' ? '' : parseInt(e.target.value))} />
-                </div>
-                <div>
-                  <AdminLabel>Màu sắc chủ đạo</AdminLabel>
-                  <div className="flex items-center gap-2 h-[38px]">
-                    {COLOR_PRESETS.map(c => (
-                      <button
-                        key={c}
-                        onClick={() => update('color', c)}
-                        className="w-6 h-6 rounded-full transition-all border-2"
-                        style={{
-                          backgroundColor: c,
-                          borderColor: form.color === c ? '#fff' : 'rgba(255,255,255,0.1)',
-                          boxShadow: form.color === c ? `0 0 10px ${c}80` : 'none',
-                        }}
-                      />
-                    ))}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <AdminLabel>Danh mục *</AdminLabel>
+                    <AdminInput as="select" value={form.category} onChange={e => update('category', e.target.value as any)}>
+                      {CATEGORY_OPTIONS.map(c => (
+                        <option key={c.value} value={c.value} className="bg-[#111]">{c.label}</option>
+                      ))}
+                    </AdminInput>
+                  </div>
+                  <div>
+                    <AdminLabel>Nhãn hiển thị</AdminLabel>
+                    <AdminInput value={form.categoryLabel} onChange={e => update('categoryLabel', e.target.value)} placeholder="VD: Mega Concert" />
                   </div>
                 </div>
-              </div>
 
-              <div>
-                <AdminLabel>Ảnh Thumbnail (Home)</AdminLabel>
-                <div className="space-y-3">
-                  <AdminInput value={form.thumbnailImage} onChange={e => update('thumbnailImage', e.target.value)} placeholder="URL ảnh..." />
-                  <ImageUpload onUploadComplete={(url) => update('thumbnailImage', url)} currentValue={form.thumbnailImage} />
-                  {form.thumbnailImage && (
-                    <div className="rounded-lg overflow-hidden bg-white/5 w-40 h-24">
-                      <img src={form.thumbnailImage} alt="" className="w-full h-full object-cover" />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <AdminLabel>Năm thực hiện</AdminLabel>
+                    <AdminInput type="number" value={form.year} onChange={e => update('year', e.target.value === '' ? '' : parseInt(e.target.value))} />
+                  </div>
+                  <div>
+                    <AdminLabel>Màu sắc chủ đạo</AdminLabel>
+                    <div className="flex items-center gap-2 h-[38px]">
+                      {COLOR_PRESETS.map(c => (
+                        <button
+                          key={c}
+                          onClick={() => update('color', c)}
+                          className="w-6 h-6 rounded-full transition-all border-2"
+                          style={{
+                            backgroundColor: c,
+                            borderColor: form.color === c ? '#fff' : 'rgba(255,255,255,0.1)',
+                            boxShadow: form.color === c ? `0 0 10px ${c}80` : 'none',
+                          }}
+                        />
+                      ))}
                     </div>
-                  )}
+                  </div>
+                </div>
+
+                <div>
+                  <AdminLabel>Ảnh Thumbnail (Home)</AdminLabel>
+                  <div className="space-y-3">
+                    <AdminInput value={form.thumbnailImage} onChange={e => update('thumbnailImage', e.target.value)} placeholder="URL ảnh..." />
+                    <ImageUpload onUploadComplete={(url) => update('thumbnailImage', url)} currentValue={form.thumbnailImage} />
+                    {form.thumbnailImage && (
+                      <div className="rounded-lg overflow-hidden bg-white/5 w-40 h-24">
+                        <img src={form.thumbnailImage} alt="" className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <AdminLabel>Mô tả ngắn (Card)</AdminLabel>
+                  <AdminInput as="textarea" rows={3} value={form.description} onChange={e => update('description', e.target.value)} placeholder="Mô tả tóm tắt..." />
                 </div>
               </div>
 
-              <div>
-                <AdminLabel>Mô tả ngắn (Card)</AdminLabel>
-                <AdminInput as="textarea" rows={3} value={form.description} onChange={e => update('description', e.target.value)} placeholder="Mô tả tóm tắt..." />
-              </div>
-
-              {/* Card Preview Section */}
-              <div className="pt-6 border-t border-white/5 space-y-4">
-                <div className="flex items-center gap-2">
+              {/* Preview Column */}
+              <div className="lg:col-span-5 lg:sticky lg:top-0 self-start space-y-4">
+                <div className="flex items-center gap-2 mb-2">
                   <div className="w-6 h-6 rounded-lg bg-[#00FF88]/10 flex items-center justify-center">
                     <Zap size={12} className="text-[#00FF88]" />
                   </div>
                   <AdminLabel style={{ marginBottom: 0 }}>Xem trước (Card Home)</AdminLabel>
                 </div>
 
-                <div className="flex justify-center p-8 bg-black/40 rounded-2xl border border-white/5 relative overflow-hidden group">
+                <div className="flex justify-center p-6 bg-black/40 rounded-2xl border border-white/5 relative overflow-hidden group">
                   <div className="absolute inset-0 bg-[#00FF88]/1 opacity-[0.03] pointer-events-none" />
 
                   <div
@@ -200,16 +203,11 @@ export function PostEditorModal({
                         </div>
                       )}
 
-                      {/* Category Badge */}
                       <div className="absolute top-4 left-4 px-3 py-1 rounded-full text-[0.6rem] font-bold tracking-wider z-10 backdrop-blur-md"
                         style={{ background: 'rgba(0,0,0,0.6)', border: `1px solid ${form.color}60`, color: form.color }}>
                         {(form.categoryLabel || 'PROJECT').toUpperCase()}
                       </div>
-
-                      {/* Bottom Image Gradient */}
                       <div className="absolute bottom-0 left-0 right-0 h-20" style={{ background: 'linear-gradient(to top, #050912, transparent)' }} />
-
-                      {/* Laser Line Effect */}
                       <div className="absolute bottom-0 left-0 right-0 h-[2px] opacity-80"
                         style={{ background: `linear-gradient(90deg, transparent, ${form.color}, transparent)` }} />
                     </div>
@@ -246,71 +244,72 @@ export function PostEditorModal({
           )}
 
           {activeSection === 'detail' && (
-            <div className="space-y-5">
-              <div>
-                <AdminLabel>Ảnh Hero (Chi tiết)</AdminLabel>
-                <div className="space-y-3">
-                  <AdminInput value={form.heroImage} onChange={e => update('heroImage', e.target.value)} placeholder="URL ảnh nền lớn..." />
-                  <ImageUpload onUploadComplete={(url) => update('heroImage', url)} currentValue={form.heroImage} />
-                  {form.heroImage && (
-                    <div className="rounded-lg overflow-hidden bg-white/5 h-32">
-                      <img src={form.heroImage} alt="" className="w-full h-full object-cover" />
-                    </div>
-                  )}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+              {/* Form Column */}
+              <div className="lg:col-span-6 space-y-5">
+                <div>
+                  <AdminLabel>Ảnh Hero (Chi tiết)</AdminLabel>
+                  <div className="space-y-3">
+                    <AdminInput value={form.heroImage} onChange={e => update('heroImage', e.target.value)} placeholder="URL ảnh nền lớn..." />
+                    <ImageUpload onUploadComplete={(url) => update('heroImage', url)} currentValue={form.heroImage} />
+                    {form.heroImage && (
+                      <div className="rounded-lg overflow-hidden bg-white/5 h-32">
+                        <img src={form.heroImage} alt="" className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <AdminLabel>Loại hình sự kiện</AdminLabel>
+                    <AdminInput value={form.eventType} onChange={e => update('eventType', e.target.value)} placeholder="VD: Live Concert" />
+                  </div>
+                  <div>
+                    <AdminLabel>Địa điểm</AdminLabel>
+                    <AdminInput value={form.location} onChange={e => update('location', e.target.value)} />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <AdminLabel>Quy mô</AdminLabel>
+                    <AdminInput value={form.scale} onChange={e => update('scale', e.target.value)} />
+                  </div>
+                  <div>
+                    <AdminLabel>Khách hàng</AdminLabel>
+                    <AdminInput value={form.client} onChange={e => update('client', e.target.value)} />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <AdminLabel>Thời gian diễn ra</AdminLabel>
+                    <AdminInput value={form.duration} onChange={e => update('duration', e.target.value)} placeholder="VD: 1 đêm biểu diễn" />
+                  </div>
+                  <div>
+                    <AdminLabel>Điểm nổi bật</AdminLabel>
+                    <AdminInput value={form.highlight} onChange={e => update('highlight', e.target.value)} placeholder="VD: Hệ thống Kinetic tối tân" />
+                  </div>
+                </div>
+
+                <div>
+                  <AdminLabel>Nội dung chi tiết (Rich Text)</AdminLabel>
+                  <RichTextEditor value={form.fullDescription} onChange={(val) => update('fullDescription', val)} />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <AdminLabel>Loại hình sự kiện</AdminLabel>
-                  <AdminInput value={form.eventType} onChange={e => update('eventType', e.target.value)} placeholder="VD: Live Concert" />
-                </div>
-                <div>
-                  <AdminLabel>Địa điểm</AdminLabel>
-                  <AdminInput value={form.location} onChange={e => update('location', e.target.value)} />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <AdminLabel>Quy mô</AdminLabel>
-                  <AdminInput value={form.scale} onChange={e => update('scale', e.target.value)} />
-                </div>
-                <div>
-                  <AdminLabel>Khách hàng</AdminLabel>
-                  <AdminInput value={form.client} onChange={e => update('client', e.target.value)} />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <AdminLabel>Thời gian diễn ra</AdminLabel>
-                  <AdminInput value={form.duration} onChange={e => update('duration', e.target.value)} placeholder="VD: 1 đêm biểu diễn" />
-                </div>
-                <div>
-                  <AdminLabel>Điểm nổi bật</AdminLabel>
-                  <AdminInput value={form.highlight} onChange={e => update('highlight', e.target.value)} placeholder="VD: Hệ thống Kinetic tối tân" />
-                </div>
-              </div>
-
-              <div>
-                <AdminLabel>Nội dung chi tiết (Rich Text)</AdminLabel>
-                <RichTextEditor value={form.fullDescription} onChange={(val) => update('fullDescription', val)} />
-              </div>
-
-              {/* Detail Hero Preview Section */}
-              <div className="pt-6 border-t border-white/5 space-y-4">
-                <div className="flex items-center gap-2">
+              {/* Preview Column */}
+              <div className="lg:col-span-6 lg:sticky lg:top-0 self-start space-y-6">
+                <div className="flex items-center gap-2 mb-2">
                   <div className="w-6 h-6 rounded-lg bg-[#00FF88]/10 flex items-center justify-center">
                     <Info size={12} className="text-[#00FF88]" />
                   </div>
                   <AdminLabel style={{ marginBottom: 0 }}>Xem trước (Giao diện chi tiết)</AdminLabel>
                 </div>
 
-                <div className="rounded-3xl overflow-hidden border border-white/10 bg-[#02050A] shadow-2xl">
-                  {/* Hero Section - Seamless with content below */}
-                  <div className="relative h-60 sm:h-72 overflow-hidden">
-                    {/* Hero Background */}
+                <div className="rounded-3xl overflow-hidden border border-white/10 bg-[#02050A] shadow-2xl transform lg:scale-[0.85] origin-top">
+                  <div className="relative h-60 overflow-hidden">
                     <div
                       className="absolute inset-0 bg-cover bg-center transition-transform duration-700 hover:scale-105"
                       style={{ backgroundImage: `url(${form.heroImage || form.thumbnailImage || ''})` }}
@@ -321,15 +320,9 @@ export function PostEditorModal({
                         </div>
                       )}
                     </div>
-
-                    {/* Subtle Grain Overlay */}
                     <div className="absolute inset-0 opacity-[0.02] pointer-events-none" style={{ backgroundImage: 'url("https://www.transparenttextures.com/patterns/stardust.png")' }} />
-
-                    {/* Gradient Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-[#02050A] via-[#02050A]/20 to-transparent" />
-
-                    {/* Content Overlay */}
-                    <div className="absolute inset-0 flex items-end p-6 md:p-10">
+                    <div className="absolute inset-0 flex items-end p-6">
                       <div className="w-full">
                         <div className="flex items-center gap-2 mb-4">
                           <span className="px-3 py-1 rounded-full text-[0.6rem] font-bold tracking-[0.2em] backdrop-blur-md"
@@ -339,145 +332,92 @@ export function PostEditorModal({
                           <div className="h-px w-10 bg-white/20" />
                           <span className="text-white/60 text-[0.6rem] font-header tracking-widest uppercase">{form.eventType || 'Event Type'}</span>
                         </div>
-
-                        <h1 className="text-white text-2xl md:text-3xl font-black mb-8 leading-[1.1] font-header max-w-xl">
+                        <h1 className="text-white text-xl md:text-2xl font-black mb-6 leading-[1.1] font-header max-w-xl">
                           {form.title || 'Tiêu Đề Dự án'}
                         </h1>
-
-                        <div className="flex flex-wrap gap-8 text-white/70">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/5 border border-white/10">
-                              <MapPin size={18} style={{ color: form.color }} />
+                        <div className="flex flex-wrap gap-6 text-white/70">
+                          <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-white/5 border border-white/10">
+                              <MapPin size={14} style={{ color: form.color }} />
                             </div>
-                            <div>
-                              <div className="text-[0.55rem] font-bold text-white/30 uppercase tracking-[0.15em] font-header mb-0.5">Địa điểm</div>
-                              <div className="text-[0.8rem] font-semibold">{form.location || 'Địa điểm'}</div>
-                            </div>
+                            <div className="text-[0.75rem] font-semibold">{form.location || 'Địa điểm'}</div>
                           </div>
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/5 border border-white/10">
-                              <Calendar size={18} style={{ color: form.color }} />
+                          <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-white/5 border border-white/10">
+                              <Calendar size={14} style={{ color: form.color }} />
                             </div>
-                            <div>
-                              <div className="text-[0.55rem] font-bold text-white/30 uppercase tracking-[0.15em] font-header mb-0.5">Thời gian</div>
-                              <div className="text-[0.8rem] font-semibold">Năm {form.year || '2026'}</div>
-                            </div>
+                            <div className="text-[0.75rem] font-semibold">Năm {form.year || '2026'}</div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-
-                  {/* Content Grid - Seamlessly follows Hero (Reduced padding for better fit) */}
-                  <div className="grid grid-cols-12 gap-10 px-6 md:px-8 py-10">
-                    {/* Main Content (8/12) */}
-                    <div className="col-span-8 space-y-12 min-w-0 overflow-hidden">
-                      {/* Overview */}
-                      <div className="space-y-4">
-                        <h2 className="text-white text-2xl font-bold flex items-center gap-3 font-header">
-                          <span className="w-1.5 h-8 rounded-full" style={{ background: form.color }}></span>
-                          Tổng Quan Dự Án
-                        </h2>
-                        {(() => {
-                          const raw = form.fullDescription || '';
-                          if (!raw) return <p className="text-white/50 text-[0.85rem] italic">Nội dung tổng quan dự án sẽ hiển thị ở đây...</p>;
-                          const sanitized = raw
-                            .replace(/&nbsp;/gi, ' ')
-                            .replace(/&#0*160;/g, ' ')
-                            .replace(/&#x0*[Aa]0;/g, ' ')
-                            .replace(/[\u00a0]/g, ' ')
-                            .replace(/[\u00ad\u200b\u200c\u200d\ufeff]/g, '');
-                          const isHtml = sanitized.trim().startsWith('<') || sanitized.includes('</p>') || sanitized.includes('<br') || sanitized.includes('<img');
-                          if (isHtml) {
-                            return (
-                              <div
-                                className="text-white/70 text-[0.95rem] rich-text-content leading-[1.8]"
-                                style={{ fontFamily: 'var(--font-vietnam)', wordBreak: 'normal', overflowWrap: 'break-word' }}
-                                dangerouslySetInnerHTML={{ __html: sanitized }}
-                              />
-                            );
-                          }
-                          return (
-                            <div className="text-white/70 text-[0.95rem] leading-[1.8]" style={{ fontFamily: 'var(--font-vietnam)' }}>
-                              {sanitized.split('\n\n').map((para: string, i: number) => (
-                                <p key={i} className="mb-6">{para}</p>
-                              ))}
-                            </div>
-                          );
-                        })()}
+                  <div className="px-6 py-8 space-y-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                      {/* Left: Overview */}
+                      <div className="lg:col-span-8 space-y-8">
+                        <div className="space-y-4">
+                          <h2 className="text-white text-lg font-bold flex items-center gap-3 font-header">
+                            <span className="w-1 h-6 rounded-full" style={{ background: form.color }}></span>
+                            Tổng Quan Dự Án
+                          </h2>
+                          {(() => {
+                            const raw = form.fullDescription || '';
+                            if (!raw) return <p className="text-white/50 text-[0.7rem] italic">Nội dung sẽ hiển thị ở đây...</p>;
+                            const sanitized = raw.replace(/&nbsp;/gi, ' ').replace(/[\u00a0]/g, ' ');
+                            const isHtml = sanitized.trim().startsWith('<') || sanitized.includes('</p>');
+                            if (isHtml) {
+                              return (
+                                <div
+                                  className="text-white/70 text-[0.8rem] rich-text-content leading-[1.6]"
+                                  style={{ fontFamily: 'var(--font-vietnam)' }}
+                                  dangerouslySetInnerHTML={{ __html: sanitized }}
+                                />
+                              );
+                            }
+                            return <p className="text-white/70 text-[0.8rem] leading-[1.6]">{sanitized}</p>;
+                          })()}
+                        </div>
                       </div>
 
-                      {/* Equipment Section */}
-                      {form.equipment && form.equipment.length > 0 && (
-                        <div className="p-8 rounded-[2rem] border border-white/5 bg-white/[0.015] relative overflow-hidden">
-                          <div className="absolute top-0 right-0 p-10 opacity-[0.03]">
-                            <Wrench size={120} />
-                          </div>
-                          <div className="flex items-center gap-5 mb-10">
-                            <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-white/5 border border-white/10">
-                              <Wrench size={24} style={{ color: form.color }} />
-                            </div>
-                            <div>
-                              <h3 className="text-white text-lg font-bold font-header">Vũ Khí Ánh Sáng</h3>
-                              <p className="text-white/30 text-[0.7rem] font-header tracking-wider uppercase">Phần cứng triển khai</p>
-                            </div>
-                          </div>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                            {form.equipment.map((eq: any, i: number) => (
-                              <div key={i} className="flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] border border-white/5">
-                                <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-black/40 text-white/50 font-header text-[0.75rem]">
-                                  {eq.quantity}
+                      {/* Right: Sidebar Stats + CTA */}
+                      <div className="lg:col-span-4 space-y-6">
+                        {/* Project Details Stats */}
+                        <div className="p-5 rounded-2xl border border-white/10 bg-white/[0.02]">
+                          <h3 className="text-white/40 text-[0.6rem] font-bold tracking-[0.2em] font-header mb-6 uppercase">Chi tiết dự án</h3>
+                          <div className="space-y-4">
+                            {[
+                              { label: 'QUY MÔ', value: form.scale, icon: Users },
+                              { label: 'KHÁCH HÀNG', value: form.client, icon: Briefcase },
+                              { label: 'THỜI GIAN', value: form.duration, icon: Clock },
+                              { label: 'NỔI BẬT', value: form.highlight, icon: Zap },
+                            ].map((stat, i) => (
+                              <div key={i} className="flex items-start gap-3 pb-4 border-b border-white/5 last:border-0 last:pb-0">
+                                <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${form.color}10`, border: `1px solid ${form.color}20` }}>
+                                  <stat.icon size={12} style={{ color: form.color }} />
                                 </div>
-                                <div className="min-w-0">
-                                  <div className="text-white/90 text-sm font-bold truncate">{eq.name || 'Thiết bị'}</div>
-                                  <div className="text-white/30 text-xs truncate">{eq.specs || 'Thông số'}</div>
+                                <div className="min-w-0 flex-1">
+                                  <div className="text-[0.55rem] font-bold text-white/30 tracking-widest font-header mb-0.5">{stat.label}</div>
+                                  <div className="text-white/90 text-[0.7rem] font-bold truncate leading-tight">{stat.value || '...'}</div>
                                 </div>
                               </div>
                             ))}
                           </div>
                         </div>
-                      )}
-                    </div>
 
-                    {/* Sidebar (4/12) */}
-                    <div className="col-span-4 space-y-8 min-w-0">
-                      {/* Project Stats */}
-                      <div className="p-8 rounded-3xl border border-white/10 bg-white/[0.02] backdrop-blur-md">
-                        <h3 className="text-white/40 text-[0.7rem] font-bold tracking-[0.2em] font-header mb-8 uppercase">Chi tiết dự án</h3>
-                        <div className="space-y-6">
-                          {[
-                            { label: 'QUY MÔ', value: form.scale || 'N/A', icon: Users },
-                            { label: 'KHÁCH HÀNG', value: form.client || 'N/A', icon: Briefcase },
-                            { label: 'THỜI GIAN', value: form.duration || 'N/A', icon: Clock },
-                            { label: 'NỔI BẬT', value: form.highlight || 'N/A', icon: Zap },
-                          ].map((stat, i) => (
-                            <div key={i} className="flex items-start gap-4 pb-6 border-b border-white/5 last:border-0 last:pb-0">
-                              <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `${form.color}10`, border: `1px solid ${form.color}20` }}>
-                                <stat.icon size={16} style={{ color: form.color }} />
-                              </div>
-                              <div>
-                                <div className="text-[0.65rem] font-bold text-white/30 tracking-widest font-header mb-1">{stat.label}</div>
-                                <div className="text-white/90 text-[0.9rem] font-bold">{stat.value}</div>
-                              </div>
+                        {/* Booking CTA Card */}
+                        <div className="p-5 rounded-2xl border overflow-hidden relative" style={{ borderColor: `${form.color}40`, background: `${form.color}05` }}>
+                          <div className="absolute top-0 right-0 w-20 h-20 blur-[40px]" style={{ background: form.color, opacity: 0.3 }} />
+                          <div className="relative z-10">
+                            <h4 className="text-white text-[0.9rem] font-bold mb-3 font-header leading-tight">Bạn muốn tổ chức một show tương tự?</h4>
+                            <p className="text-white/60 text-[0.65rem] mb-4 leading-relaxed font-body">
+                              Để Laser QH tư vấn giải pháp ánh sáng & hiệu ứng tối ưu nhất cho sự kiện của bạn tại {(form.location || 'Hà Nội').split(',').pop()?.trim()}.
+                            </p>
+                            <div className="flex items-center justify-center gap-2 py-2.5 rounded-lg text-[0.65rem] font-bold transition-all"
+                              style={{ background: form.color, color: '#000' }}>
+                              <MessageSquare size={12} />
+                              Nhận Tư Vấn & Báo Giá
                             </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Booking Card */}
-                      <div className="p-8 rounded-3xl border-2 overflow-hidden relative" style={{ borderColor: `${form.color}40`, background: `${form.color}05` }}>
-                        <div className="absolute top-0 right-0 w-32 h-32 blur-[60px]" style={{ background: form.color }} />
-                        <div className="relative z-10">
-                          <h4 className="text-white text-xl font-bold mb-4 font-header">Bạn muốn tổ chức một show tương tự?</h4>
-                          <p className="text-white/60 text-sm mb-6 leading-relaxed font-body">
-                            Để Laser QH tư vấn giải pháp ánh sáng & hiệu ứng tối ưu nhất cho sự kiện của bạn tại {form.location?.split(',').pop()?.trim() || form.location || 'địa điểm của bạn'}.
-                          </p>
-                          <div
-                            className="w-full flex items-center justify-center gap-2 py-4 rounded-xl text-sm font-bold font-header transition-all hover:scale-[1.02]"
-                            style={{ background: form.color, color: '#000' }}
-                          >
-                            <MessageSquare size={16} />
-                            Nhận Tư Vấn & Báo Giá
                           </div>
                         </div>
                       </div>
@@ -496,8 +436,12 @@ export function PostEditorModal({
               </div>
               {form.equipment.map((eq: any, i: number) => (
                 <div key={i} className="p-4 rounded-xl bg-white/2 border border-white/5 space-y-3 relative">
-                  <button onClick={() => removeEquipment(i)} className="absolute top-3 right-3 text-white/20 hover:text-red-500 transition-colors">
-                    <X size={14} />
+                  <button 
+                    onClick={() => removeEquipment(i)} 
+                    className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-lg text-white/40 hover:text-white hover:bg-red-500 transition-all shadow-sm"
+                    title="Xóa thiết bị"
+                  >
+                    <X size={18} />
                   </button>
                   <AdminInput value={eq.name} onChange={e => updateEquipment(i, 'name', e.target.value)} placeholder="Tên thiết bị..." />
                   <div className="grid grid-cols-2 gap-3">
@@ -510,7 +454,8 @@ export function PostEditorModal({
           )}
 
           {activeSection === 'seo' && (
-            <div className="space-y-5">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+              <div className="lg:col-span-6 space-y-5">
               <div>
                 <AdminLabel>SEO Title</AdminLabel>
                 <AdminInput value={form.seoTitle} onChange={e => update('seoTitle', e.target.value)} />
@@ -586,9 +531,9 @@ export function PostEditorModal({
                   )}
                 </div>
               </div>
+            </div>
 
-              {/* Previews */}
-              <div className="pt-6 border-t border-white/5 space-y-6">
+            <div className="lg:col-span-6 lg:sticky lg:top-0 self-start space-y-6">
                 {/* Google Search Preview */}
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">

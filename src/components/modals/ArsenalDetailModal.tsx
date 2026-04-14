@@ -1,6 +1,7 @@
 'use client';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Check, ArrowRight, Layers, Zap, Star, MessageSquare } from 'lucide-react';
+import { smoothScrollTo } from '@/lib/scrollUtils';
 
 interface ArsenalDetailModalProps {
   isOpen: boolean;
@@ -134,12 +135,12 @@ export function ArsenalDetailModal({ isOpen, onClose, service }: ArsenalDetailMo
 
                     {/* Floating Tier Label */}
                     <div className="absolute bottom-6 left-6 right-6 pointer-events-none">
-                      <span className="font-header font-black text-[0.6rem] tracking-[0.4em] text-white/40 uppercase mb-2 block">Service Tier</span>
-                      <div className="flex items-end justify-between">
-                        <h4 className="text-white font-header font-black text-2xl tracking-widest uppercase">
-                          Level <span style={{ color: service.color }}>{service.tag || 'PRO'}</span>
-                        </h4>
-                      </div>
+                    <span className="font-header font-black text-[0.6rem] tracking-[0.4em] text-white/40 uppercase mb-2 block">CẤP ĐỘ DỊCH VỤ</span>
+                    <div className="flex items-end justify-between">
+                      <h4 className="text-white font-header font-black text-2xl tracking-widest uppercase">
+                        Cấp độ <span style={{ color: service.color }}>{service.tag || 'PRO'}</span>
+                      </h4>
+                    </div>
                     </div>
                   </div>
 
@@ -197,7 +198,10 @@ export function ArsenalDetailModal({ isOpen, onClose, service }: ArsenalDetailMo
                       ))}
                     </h2>
 
-                    <p className="text-white/50 text-[1.1rem] leading-relaxed font-body max-w-xl transition-colors hover:text-white/70">
+                    <p 
+                      className="text-white/50 text-[1.1rem] leading-relaxed font-body max-w-xl transition-colors hover:text-white/70"
+                      style={{ textAlign: 'justify' }}
+                    >
                       {service.description} Chúng tôi nâng tầm sự kiện của bạn bằng những giải pháp kỹ thuật tinh xảo và ánh sáng đậm chất nghệ thuật.
                     </p>
                   </div>
@@ -233,8 +237,8 @@ export function ArsenalDetailModal({ isOpen, onClose, service }: ArsenalDetailMo
                       className="flex flex-col gap-4"
                     >
                       {[
-                        { icon: Layers, label: 'Scalable', desc: 'Expandable coverage', value: 'High' },
-                        { icon: Zap, label: 'Performance', desc: 'Sync responsiveness', value: '0.01ms' },
+                        { icon: Layers, label: 'Khả năng mở rộng', desc: 'Độ phủ linh hoạt', value: 'Cao' },
+                        { icon: Zap, label: 'Hiệu suất', desc: 'Phản hồi đồng bộ', value: '0.01ms' },
                       ].map((item, i) => (
                         <div key={i} className="flex-1 p-5 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center justify-between hover:bg-white/5 transition-colors">
                           <div className="flex items-center gap-4">
@@ -262,11 +266,13 @@ export function ArsenalDetailModal({ isOpen, onClose, service }: ArsenalDetailMo
                       <button
                         onClick={() => {
                           onClose();
-                          document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+                          setTimeout(() => {
+                            smoothScrollTo('contact', 1200);
+                          }, 100);
                         }}
                         className="w-full lg:w-auto px-10 sm:px-12 py-4 sm:py-5 rounded-full font-header font-black tracking-[0.2em] sm:tracking-[0.3em] text-[0.7rem] sm:text-[0.8rem] transition-all bg-white text-black hover:scale-105 active:scale-95 shadow-[0_20px_40px_rgba(255,255,255,0.15)] flex items-center justify-center gap-3 group"
                       >
-                        CONTACT SALES
+                        LIÊN HỆ TƯ VẤN
                         <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
                       </button>
 
@@ -274,7 +280,7 @@ export function ArsenalDetailModal({ isOpen, onClose, service }: ArsenalDetailMo
                       onClick={onClose}
                       className="flex items-center gap-3 group text-white/30 hover:text-white transition-colors text-[0.7rem] font-bold font-header tracking-[0.3em] uppercase"
                     >
-                      OR BACK TO ARSENAL
+                      HOẶC QUAY LẠI
                     </button>
                   </motion.div>
                 </motion.div>
