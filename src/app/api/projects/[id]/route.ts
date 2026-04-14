@@ -55,9 +55,9 @@ export async function DELETE(
       return NextResponse.json({ error: 'Không tìm thấy dự án để xóa' }, { status: 404 });
     }
 
-    // Purge cache for home and admin
-    revalidatePath('/');
-    revalidatePath('/admin');
+    // Temporarily disabled revalidation during DELETE to prevent Vercel timeouts
+    // revalidatePath('/');
+    // revalidatePath('/admin');
 
     return NextResponse.json({ message: 'Project deleted successfully' });
   } catch (error) {

@@ -15,4 +15,5 @@ const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
 export const prisma = globalForPrisma.prisma || createPrismaClient();
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+// Set the singleton to global to reuse connections in warm serverless lambdas
+globalForPrisma.prisma = prisma;
