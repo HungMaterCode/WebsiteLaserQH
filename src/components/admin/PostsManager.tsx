@@ -125,7 +125,7 @@ export function PostsManager() {
       }
     } catch (error) {
       console.error('Error deleting project:', error);
-      setError('Lỗi kết nối máy chủ khi xóa dự án.');
+      setError('Lỗi kết nối hoặc hết hạn thời gian xử lý (Timeout). Bài viết có thể đã được xóa, hãy thử tải lại trang.');
     } finally {
       setSaving(false);
       setDeleteTarget(null); // Always close modal

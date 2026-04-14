@@ -47,8 +47,9 @@ export async function POST(request: Request) {
       },
     });
     
-    // Purge cache for the entire site to ensure new project appears in lists
-    revalidatePath('/', 'layout');
+    // Purge cache for home and admin to ensure new project appears
+    revalidatePath('/');
+    revalidatePath('/admin');
     
     return NextResponse.json(project);
   } catch (error) {

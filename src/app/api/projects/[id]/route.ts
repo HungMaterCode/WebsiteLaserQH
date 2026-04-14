@@ -23,8 +23,9 @@ export async function PATCH(
       data,
     });
 
-    // Purge cache for the entire site to ensure changes reflect globally
-    revalidatePath('/', 'layout');
+    // Purge cache for home and admin to ensure changes reflect immediately
+    revalidatePath('/');
+    revalidatePath('/admin');
 
     return NextResponse.json(project);
   } catch (error) {
@@ -54,8 +55,9 @@ export async function DELETE(
       return NextResponse.json({ error: 'Không tìm thấy dự án để xóa' }, { status: 404 });
     }
 
-    // Purge cache for the entire site
-    revalidatePath('/', 'layout');
+    // Purge cache for home and admin
+    revalidatePath('/');
+    revalidatePath('/admin');
 
     return NextResponse.json({ message: 'Project deleted successfully' });
   } catch (error) {
