@@ -69,9 +69,10 @@ export async function generateMetadata(): Promise<Metadata> {
       images: [
         {
           url: `${BASE_URL}/logo-v4.png`,
-          width: 1200,
-          height: 630,
-          alt: settings.companyName
+          width: 1360,
+          height: 1306,
+          alt: settings.companyName,
+          type: 'image/png',
         }
       ],
     },
