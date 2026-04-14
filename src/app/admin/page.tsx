@@ -90,8 +90,8 @@ export default function AdminPage() {
               }}
             >
               <Icon size={18} />
-              <span style={{ fontSize: '0.6rem', fontFamily: "'Be Vietnam Pro', sans-serif", fontWeight: active ? 600 : 400 }}>
-                {item.label.split(' ')[0]}
+              <span style={{ fontSize: '0.58rem', fontFamily: "'Be Vietnam Pro', sans-serif", fontWeight: active ? 600 : 400, textAlign: 'center' }}>
+                {item.id === 'media' ? 'Media' : item.label}
               </span>
             </button>
           );

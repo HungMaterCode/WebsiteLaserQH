@@ -175,7 +175,7 @@ export function HeroSection({ siteSettings, mediaSettings }: { siteSettings: Sit
       <LaserBeam style={{ right: '32%', top: '25%', height: '45%', opacity: 0.12 }} />
 
       {/* Hero Content */}
-      <div className="relative z-10 text-center px-4 sm:px-6 max-w-5xl mx-auto hero-content-wrapper pt-32 md:pt-40 lg:pt-[160px]">
+      <div className="relative z-10 text-center px-4 sm:px-6 max-w-5xl mx-auto hero-content-wrapper pt-24 sm:pt-32 md:pt-40 lg:pt-[160px]">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: loaded ? 1 : 0, y: loaded ? 0 : 20 }}
@@ -202,7 +202,7 @@ export function HeroSection({ siteSettings, mediaSettings }: { siteSettings: Sit
           transition={{ duration: 1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
           className="font-body text-white mb-6 hero-headline pointer-events-none"
           style={{
-            fontSize: 'clamp(2.5rem, 9vw, 6.5rem)',
+            fontSize: 'clamp(2.2rem, 8vw, 6.5rem)',
             fontWeight: 900,
             lineHeight: 0.95,
             letterSpacing: '-0.04em',
@@ -215,7 +215,7 @@ export function HeroSection({ siteSettings, mediaSettings }: { siteSettings: Sit
           <span className="text-gradient-chrome block mb-2 py-4 tracking-[-0.05em]">
             MEGA CONCERT
           </span>
-          <span className="block stroke-text" style={{ fontSize: '0.75em', marginTop: '1rem', whiteSpace: 'nowrap' }}>
+          <span className="block stroke-text" style={{ fontSize: '0.75em', marginTop: '1rem' }}>
             CHO MỌI QUY MÔ
           </span>
         </motion.h1>
@@ -243,20 +243,20 @@ export function HeroSection({ siteSettings, mediaSettings }: { siteSettings: Sit
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: loaded ? 1 : 0, y: loaded ? 0 : 20 }}
           transition={{ duration: 0.6, delay: 0.8 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 hero-cta px-4 sm:px-0"
+          className="flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-4 hero-cta px-4 sm:px-0"
         >
           <a
             href={siteSettings.zaloLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl font-header transition-all duration-300 relative overflow-hidden group"
+            className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-xl font-header transition-all duration-300 relative overflow-hidden group"
             style={{
               background: 'linear-gradient(135deg, #0068FF, #0056D2)',
               color: '#fff',
               fontWeight: 700,
               fontSize: '0.88rem',
               boxShadow: '0 0 20px rgba(0,104,255,0.3)',
-              minWidth: '180px',
+              minWidth: '160px',
             }}
           >
             <div className="w-5 h-5 rounded-md flex items-center justify-center bg-white overflow-hidden">
@@ -269,14 +269,14 @@ export function HeroSection({ siteSettings, mediaSettings }: { siteSettings: Sit
             href={siteSettings.facebookLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl font-header transition-all duration-300 relative overflow-hidden group"
+            className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-xl font-header transition-all duration-300 relative overflow-hidden group"
             style={{
               background: 'linear-gradient(135deg, #1877F2, #0C5DC7)',
               color: '#fff',
               fontWeight: 700,
               fontSize: '0.88rem',
               boxShadow: '0 0 20px rgba(24,119,242,0.3)',
-              minWidth: '180px',
+              minWidth: '160px',
             }}
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -291,8 +291,8 @@ export function HeroSection({ siteSettings, mediaSettings }: { siteSettings: Sit
               e.preventDefault();
               document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl font-exo transition-all duration-300 btn-glow-cyan"
-            style={{ fontWeight: 600, fontSize: '0.88rem', minWidth: '180px' }}
+            className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-xl font-exo transition-all duration-300 btn-glow-cyan"
+            style={{ fontWeight: 600, fontSize: '0.88rem', minWidth: '160px' }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -309,7 +309,7 @@ export function HeroSection({ siteSettings, mediaSettings }: { siteSettings: Sit
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: loaded ? 1 : 0, y: loaded ? 0 : 20 }}
           transition={{ duration: 0.6, delay: 1.0 }}
-          className="mt-16 flex flex-wrap items-center justify-center gap-8 sm:gap-12 hero-stats"
+          className="mt-10 sm:mt-16 flex flex-wrap items-center justify-center gap-6 sm:gap-12 hero-stats"
         >
           {[
             { value: '500+', label: 'Sự Kiện Thành Công' },

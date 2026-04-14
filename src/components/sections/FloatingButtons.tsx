@@ -11,7 +11,7 @@ export function FloatingButtons({ siteSettings }: { siteSettings: SiteSettings }
         rel="noopener noreferrer"
         className="floating-btn"
         style={{
-          bottom: 'clamp(80px, 15vh, 100px)',
+          bottom: 'clamp(95px, 16vh, 120px)',
           background: 'linear-gradient(135deg, #00B2FF, #006AFF, #9B33FF, #D633FF, #FF548F)',
           boxShadow: '0 10px 25px rgba(0, 178, 255, 0.3)',
           color: '#fff',
