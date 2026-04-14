@@ -34,33 +34,55 @@ import { prisma } from "@/lib/prisma";
 import { defaultSiteSettings } from "@/lib/data";
 
 export async function generateMetadata(): Promise<Metadata> {
+  const BASE_URL = 'https://website-laser-qh.vercel.app';
   let settings = defaultSiteSettings;
+
   try {
-    const data = await prisma.siteSetting.findUnique({ where: { id: 'global' } });
+    // Thêm timeout để tránh việc treo trang web nếu database không phản hồi
+    const data = await Promise.race([
+      prisma.siteSetting.findUnique({ where: { id: 'global' } }),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 4000))
+    ]) as any;
+    
     if (data?.data) settings = data.data as any;
-  } catch (e) {}
+  } catch (e) {
+    console.error('Metadata fetch failed, using defaults');
+  }
+
+  const siteTitle = `${settings.companyName} — Dịch Vụ Laser & Kinetic Hàng Đầu`;
+  const siteDesc = 'Chuyên cung cấp dịch vụ laser show, kinetic lighting, moving head cho concert, sự kiện. 500+ sự kiện thành công tại Việt Nam.';
 
   return {
-    metadataBase: new URL('https://website-laser-qh.vercel.app'),
+    metadataBase: new URL(BASE_URL),
     title: {
-      default: `${settings.companyName} — Dịch Vụ Laser & Kinetic Hàng Đầu`,
+      default: siteTitle,
       template: `%s | ${settings.companyName}`,
     },
-    description: `Chuyên cung cấp dịch vụ laser show, kinetic lighting, moving head cho concert, sự kiện. 500+ sự kiện thành công, 10+ năm kinh nghiệm tại Việt Nam.`,
+    description: siteDesc,
     keywords: ['laser show', 'laser event vietnam', 'kinetic lighting', 'laser qh', 'dịch vụ laser', 'laser sự kiện', 'concert lighting', 'laser show việt nam', 'thuê laser sự kiện'],
     openGraph: {
       type: 'website',
       locale: 'vi_VN',
       siteName: settings.companyName,
-      title: `${settings.companyName} — Dịch Vụ Laser & Kinetic Hàng Đầu`,
-      description: 'Chất lượng Mega Concert cho mọi quy mô. 500+ sự kiện thành công tại Việt Nam.',
-      images: [{ url: 'https://website-laser-qh.vercel.app/logo.jpg', width: 1200, height: 630 }],
+      title: siteTitle,
+      description: siteDesc,
+      images: [
+        {
+          url: `${BASE_URL}/logo.jpg`,
+          width: 1200,
+          height: 630,
+          alt: settings.companyName
+        }
+      ],
     },
     twitter: {
       card: 'summary_large_image',
+      title: siteTitle,
+      description: siteDesc,
+      images: [`${BASE_URL}/logo.jpg`],
     },
     robots: { index: true, follow: true },
-    alternates: { canonical: 'https://website-laser-qh.vercel.app' },
+    alternates: { canonical: BASE_URL },
     icons: {
       icon: '/logo.jpg',
     },
