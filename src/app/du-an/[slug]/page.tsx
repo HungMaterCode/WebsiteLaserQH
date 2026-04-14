@@ -194,7 +194,7 @@ export default async function ProjectPage({ params }: Props) {
             <ChevronLeft size={10} className="rotate-180 text-white/30" />
             <span className="hidden xs:inline text-white/20">DỰ ÁN</span>
             <ChevronLeft size={10} className="rotate-180 text-white/30 hidden xs:inline" />
-            <span style={{ color: project.color }} className="truncate max-w-[200px] sm:max-w-none">{project.title}</span>
+            <span style={{ color: project.color }}>{project.title}</span>
           </div>
         </div>
 

@@ -202,8 +202,8 @@ export function PostsManager() {
                   </span>
                   <span className="text-white/20 text-[0.7rem] font-bold">{project.year}</span>
                 </div>
-                <h3 className="text-white font-bold text-[0.9rem] truncate">{project.title}</h3>
-                <p className="text-white/40 font-vietnam text-[0.75rem] truncate">{project.location}</p>
+                <h3 className="text-white font-bold text-[0.9rem] leading-snug">{project.title}</h3>
+                <p className="text-white/40 font-vietnam text-[0.75rem] leading-relaxed">{project.location}</p>
               </div>
 
               <div className="flex items-center gap-3 shrink-0">
