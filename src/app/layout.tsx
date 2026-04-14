@@ -54,7 +54,7 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: settings.companyName,
       title: `${settings.companyName} — Dịch Vụ Laser & Kinetic Hàng Đầu`,
       description: 'Chất lượng Mega Concert cho mọi quy mô. 500+ sự kiện thành công tại Việt Nam.',
-      images: [{ url: '/og-image.jpg', width: 1200, height: 630 }],
+      images: [{ url: 'https://website-laser-qh.vercel.app/logo.jpg', width: 1200, height: 630 }],
     },
     twitter: {
       card: 'summary_large_image',
