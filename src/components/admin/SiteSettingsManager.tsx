@@ -103,16 +103,17 @@ export function SiteSettingsManager() {
   };
 
   const addConsultant = () => {
-    setForm({
-      ...form,
-      consultants: [...form.consultants, { id: Date.now().toString(), name: '', phone: '' }]
-    });
+    setForm(prev => ({
+      ...prev,
+      consultants: [...prev.consultants, { id: Date.now().toString(), name: '', phone: '' }]
+    }));
   };
 
   const removeConsultant = (index: number) => {
-    const newConsultants = [...form.consultants];
-    newConsultants.splice(index, 1);
-    setForm({ ...form, consultants: newConsultants });
+    setForm(prev => ({
+      ...prev,
+      consultants: prev.consultants.filter((_, i) => i !== index)
+    }));
   };
 
   const updateConsultant = (id: string, field: keyof Consultant, value: string) => {
