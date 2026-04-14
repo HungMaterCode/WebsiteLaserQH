@@ -208,7 +208,7 @@ export function ShowcaseSection({ projects }: { projects: PortfolioProject[] }) 
 
         {/* View on Facebook bottom button */}
         <div className="mt-16 flex justify-center">
-          <a href="#contact" onClick={(e) => { e.preventDefault(); smoothScrollTo('contact', 0, 0, 'instant'); }} className="inline-flex items-center gap-3 px-8 py-3.5 rounded-xl font-header transition-all duration-300 btn-glow-green" style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--neon-green)', border: '1px solid var(--neon-green)', background: 'rgba(0, 255, 136, 0.03)', fontFamily: 'var(--font-vietnam)', boxShadow: '0 0 15px rgba(0, 255, 136, 0.05)' }}
+          <a href="#contact" onClick={(e) => { e.preventDefault(); smoothScrollTo('contact', 0, 0); }} className="inline-flex items-center gap-3 px-8 py-3.5 rounded-xl font-header transition-all duration-300 btn-glow-green" style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--neon-green)', border: '1px solid var(--neon-green)', background: 'rgba(0, 255, 136, 0.03)', fontFamily: 'var(--font-vietnam)', boxShadow: '0 0 15px rgba(0, 255, 136, 0.05)' }}
             onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--neon-green)'; e.currentTarget.style.color = '#000'; e.currentTarget.style.boxShadow = '0 0 25px rgba(0, 255, 136, 0.4)'; }}
             onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(0, 255, 136, 0.03)'; e.currentTarget.style.color = 'var(--neon-green)'; e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 255, 136, 0.05)'; }}
           >

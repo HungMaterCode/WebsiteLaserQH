@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     }
 
     const bytes = await file.arrayBuffer();
-    let buffer = Buffer.from(bytes);
+    let buffer: any = Buffer.from(bytes);
 
     let finalFilename = `${Date.now()}-${file.name.replace(/\.[^/.]+$/, "").replace(/\s+/g, '-')}`;
     
