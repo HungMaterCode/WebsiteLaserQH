@@ -1,10 +1,15 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
-import { existsSync } from 'fs';
+import { v2 as cloudinary } from 'cloudinary';
 import sharp from 'sharp';
+
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 export async function POST(request: Request) {
   const session = await getServerSession(authOptions);
@@ -26,56 +31,70 @@ export async function POST(request: Request) {
     const bytes = await file.arrayBuffer();
     let buffer: any = Buffer.from(bytes);
 
-    const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
+    let finalFilename = `${Date.now()}-${file.name.replace(/\.[^/.]+$/, "").replace(/\s+/g, '-')}`;
     
-    // Ensure directory exists
-    if (!existsSync(uploadsDir)) {
-      await mkdir(uploadsDir, { recursive: true });
-    }
-
-    let filename = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
-    
-    // Process image based on type
+    // Process image based on type using sharp
     if (type === 'icon') {
-      // Force PNG and 180x180 for SEO Icon
-      filename = filename.replace(/\.[^/.]+$/, "") + ".png";
+      finalFilename += ".png";
       buffer = await sharp(buffer)
         .resize(180, 180, { fit: 'cover' })
         .png()
         .toBuffer();
     } else if (type === 'og') {
-      // Resize to 1200x630 for OG Image
       const isPng = file.type === 'image/png';
       if (isPng) {
-        filename = filename.replace(/\.[^/.]+$/, "") + ".png";
+        finalFilename += ".png";
         buffer = await sharp(buffer)
           .resize(1200, 630, { fit: 'cover' })
           .png({ quality: 90 })
           .toBuffer();
       } else {
-        filename = filename.replace(/\.[^/.]+$/, "") + ".jpg";
+        finalFilename += ".jpg";
         buffer = await sharp(buffer)
           .resize(1200, 630, { fit: 'cover' })
           .jpeg({ quality: 90 })
           .toBuffer();
       }
+    } else {
+      // General upload: just optimize a bit if it's a large image
+      const metadata = await sharp(buffer).metadata();
+      if (metadata.width && metadata.width > 2000) {
+        buffer = await sharp(buffer)
+          .resize(2000, null, { withoutEnlargement: true })
+          .jpeg({ quality: 85 })
+          .toBuffer();
+      }
     }
 
-    const filePath = path.join(uploadsDir, filename);
+    // Upload to Cloudinary using upload_stream
+    const uploadResult = await new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder: 'laserqh_uploads',
+          public_id: finalFilename.replace(/\.[^/.]+$/, ""),
+          resource_type: 'auto',
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      );
+      uploadStream.end(buffer);
+    });
 
-    // Save file
-    await writeFile(filePath, buffer);
-
-    const fileUrl = `/uploads/${filename}`;
+    const result = uploadResult as any;
     
     return NextResponse.json({ 
-      url: fileUrl,
-      name: filename,
-      size: buffer.length
+      url: result.secure_url,
+      name: result.public_id,
+      size: result.bytes
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Upload error:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ 
+      error: 'Upload Failed', 
+      details: error.message || 'Unknown error' 
+    }, { status: 500 });
   }
 }
 

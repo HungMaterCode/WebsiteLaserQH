@@ -115,6 +115,7 @@ model Message {
   date      String?
   notes     String?
   projectId String?
+  ip        String?
   status    String   @default("unread")
   createdAt DateTime @default(now())
 

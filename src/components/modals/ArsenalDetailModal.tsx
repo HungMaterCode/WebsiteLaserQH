@@ -90,16 +90,20 @@ export function ArsenalDetailModal({ isOpen, onClose, service }: ArsenalDetailMo
             className="w-full max-w-7xl relative z-10 flex flex-col md:flex-row items-start justify-start p-5 sm:p-8 md:p-16 lg:p-20 m-auto md:my-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Close Button - Detached Floating */}
-              <motion.button
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                onClick={onClose}
-                className="fixed top-4 right-4 sm:top-6 sm:right-6 md:absolute md:top-8 md:right-8 z-[210] w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center bg-white/10 border border-white/20 text-white hover:text-white hover:bg-white/20 hover:scale-110 transition-all backdrop-blur-2xl group shadow-2xl"
-              >
-                <X size={20} className="sm:size-6 group-hover:rotate-90 transition-transform duration-300" />
-              </motion.button>
+            {/* Close Button Container - Fixed but aligned with content */}
+            <div className="fixed inset-0 z-[210] pointer-events-none flex justify-center px-5 sm:px-8 md:px-16 lg:px-20">
+              <div className="w-full max-w-7xl relative">
+                <motion.button
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.5 }}
+                  onClick={onClose}
+                  className="absolute top-4 right-0 sm:top-6 md:top-8 z-50 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center bg-white/10 border border-white/20 text-white hover:text-white hover:bg-white/20 hover:scale-110 transition-all backdrop-blur-2xl group shadow-2xl pointer-events-auto"
+                >
+                  <X size={20} className="sm:size-6 group-hover:rotate-90 transition-transform duration-300" />
+                </motion.button>
+              </div>
+            </div>
 
             {/* Layout Grid: Asymmetric & Dynamic */}
             <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center lg:items-center">
@@ -135,12 +139,12 @@ export function ArsenalDetailModal({ isOpen, onClose, service }: ArsenalDetailMo
 
                     {/* Floating Tier Label */}
                     <div className="absolute bottom-6 left-6 right-6 pointer-events-none">
-                    <span className="font-header font-black text-[0.6rem] tracking-[0.4em] text-white/40 uppercase mb-2 block">CẤP ĐỘ DỊCH VỤ</span>
-                    <div className="flex items-end justify-between">
-                      <h4 className="text-white font-header font-black text-2xl tracking-widest uppercase">
-                        Cấp độ <span style={{ color: service.color }}>{service.tag || 'PRO'}</span>
-                      </h4>
-                    </div>
+                      <span className="font-header font-black text-[0.6rem] tracking-[0.4em] text-white/40 uppercase mb-2 block">CẤP ĐỘ DỊCH VỤ</span>
+                      <div className="flex items-end justify-between">
+                        <h4 className="text-white font-header font-black text-2xl tracking-widest uppercase">
+                          Cấp độ <span style={{ color: service.color }}>{service.tag || 'PRO'}</span>
+                        </h4>
+                      </div>
                     </div>
                   </div>
 
@@ -174,15 +178,15 @@ export function ArsenalDetailModal({ isOpen, onClose, service }: ArsenalDetailMo
                 >
                   {/* Decorative Laser Accent - Left Side (Always Visible) */}
                   <div className="absolute top-0 left-0 bottom-0 w-[3px] opacity-100"
-                    style={{ 
+                    style={{
                       background: `linear-gradient(180deg, transparent, ${service.color}, transparent)`,
                       boxShadow: `2px 0 15px ${service.color}40`
                     }} />
-                  
+
                   {/* Decorative corner glow */}
                   <div className="absolute -top-24 -right-24 w-48 h-48 rounded-full blur-[80px] opacity-20 pointer-events-none"
                     style={{ background: service.color }} />
-                  
+
                   {/* Header Section */}
                   <div className="relative">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mb-6 font-header">
@@ -198,7 +202,7 @@ export function ArsenalDetailModal({ isOpen, onClose, service }: ArsenalDetailMo
                       ))}
                     </h2>
 
-                    <p 
+                    <p
                       className="text-white/50 text-[1.1rem] leading-relaxed font-body max-w-xl transition-colors hover:text-white/70"
                       style={{ textAlign: 'justify' }}
                     >
@@ -263,18 +267,18 @@ export function ArsenalDetailModal({ isOpen, onClose, service }: ArsenalDetailMo
                     transition={{ delay: 0.6 }}
                     className="mt-4 flex flex-col sm:flex-row items-center gap-6"
                   >
-                      <button
-                        onClick={() => {
-                          onClose();
-                          setTimeout(() => {
-                            smoothScrollTo('contact', 1200);
-                          }, 100);
-                        }}
-                        className="w-full lg:w-auto px-10 sm:px-12 py-4 sm:py-5 rounded-full font-header font-black tracking-[0.2em] sm:tracking-[0.3em] text-[0.7rem] sm:text-[0.8rem] transition-all bg-white text-black hover:scale-105 active:scale-95 shadow-[0_20px_40px_rgba(255,255,255,0.15)] flex items-center justify-center gap-3 group"
-                      >
-                        LIÊN HỆ TƯ VẤN
-                        <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
-                      </button>
+                    <button
+                      onClick={() => {
+                        onClose();
+                        setTimeout(() => {
+                          smoothScrollTo('contact');
+                        }, 100);
+                      }}
+                      className="w-full lg:w-auto px-10 sm:px-12 py-4 sm:py-5 rounded-full font-header font-black tracking-[0.2em] sm:tracking-[0.3em] text-[0.7rem] sm:text-[0.8rem] transition-all bg-white text-black hover:scale-105 active:scale-95 shadow-[0_20px_40px_rgba(255,255,255,0.15)] flex items-center justify-center gap-3 group"
+                    >
+                      LIÊN HỆ TƯ VẤN
+                      <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
+                    </button>
 
                     <button
                       onClick={onClose}
