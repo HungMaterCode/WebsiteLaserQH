@@ -1,13 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { LayoutDashboard, FileText, Image, Settings } from 'lucide-react';
+import { LayoutDashboard, FileText, Image, Settings, Inbox } from 'lucide-react';
 import { PostsManager } from '@/components/admin/PostsManager';
 import { MediaManager } from '@/components/admin/MediaManager';
 import { SiteSettingsManager } from '@/components/admin/SiteSettingsManager';
 import { OverviewTab } from '@/components/admin/OverviewTab';
+import { QuoteRequestsManager } from '@/components/admin/QuoteRequestsManager';
 
-type AdminTab = 'overview' | 'posts' | 'media' | 'settings';
+type AdminTab = 'overview' | 'posts' | 'media' | 'settings' | 'quotes';
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<AdminTab>('overview');
@@ -16,6 +17,7 @@ export default function AdminPage() {
     { id: 'overview', label: 'Tổng Quan', icon: LayoutDashboard, color: '#00FF88' },
     { id: 'posts', label: 'Bài Đăng', icon: FileText, color: '#00FF88' },
     { id: 'media', label: 'Media & Hình Ảnh', icon: Image, color: '#00FF88' },
+    { id: 'quotes', label: 'Yêu Cầu Báo Giá', icon: Inbox, color: '#FFC800' },
     { id: 'settings', label: 'Cài Đặt', icon: Settings, color: '#00FF88' },
   ];
 
@@ -91,7 +93,7 @@ export default function AdminPage() {
             >
               <Icon size={18} />
               <span style={{ fontSize: '0.58rem', fontFamily: "'Be Vietnam Pro', sans-serif", fontWeight: active ? 600 : 400, textAlign: 'center' }}>
-                {item.id === 'media' ? 'Media' : item.label}
+                {item.id === 'media' ? 'Media' : item.id === 'quotes' ? 'Báo Giá' : item.label}
               </span>
             </button>
           );
@@ -106,6 +108,7 @@ export default function AdminPage() {
           {activeTab === 'overview' && <OverviewTab onNavigate={setActiveTab} />}
           {activeTab === 'posts' && <PostsManager />}
           {activeTab === 'media' && <MediaManager />}
+          {activeTab === 'quotes' && <QuoteRequestsManager />}
           {activeTab === 'settings' && <SiteSettingsManager />}
         </div>
       </main>

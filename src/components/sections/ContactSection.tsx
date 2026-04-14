@@ -26,13 +26,28 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
     e.preventDefault();
     setIsSending(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    setSubmitted(true);
-    setIsSending(false);
-    setTimeout(() => setSubmitted(false), 4000);
-    setFormData({ name: '', phone: '', eventType: '', size: '', budget: '', date: '', message: '' });
+    try {
+      const response = await fetch('/api/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send request');
+      }
+      
+      setSubmitted(true);
+      setFormData({ name: '', phone: '', eventType: '', size: '', budget: '', date: '', message: '' });
+      setTimeout(() => setSubmitted(false), 4000);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      alert('Có lỗi xảy ra khi gửi yêu cầu. Vui lòng thử lại sau hoặc gọi trực tiếp.');
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (
@@ -205,15 +220,15 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
                     </div>
                     <div className="space-y-2">
                       <label className="text-gray-400 font-vietnam text-[0.85rem] font-medium block">Số Điện Thoại <span className="text-red-500">*</span></label>
-                      <input type="tel" required placeholder="0907 579 481" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} 
+                      <input type="tel" required pattern="[0-9]{10}" minLength={10} maxLength={10} title="Vui lòng nhập đúng 10 chữ số" placeholder="0907579481" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value.replace(/[^0-9]/g, '') })} 
                              className="w-full bg-[#0A0F1A] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-600 font-vietnam text-[0.9rem] focus:outline-none focus:border-[#00FF88]/50 focus:ring-1 focus:ring-[#00FF88]/50 transition-all" />
                     </div>
                   </div>
 
                   {/* Row 2 */}
                   <div className="space-y-2">
-                    <label className="text-gray-400 font-vietnam text-[0.85rem] font-medium block">Loại Sự Kiện</label>
-                    <select value={formData.eventType} onChange={(e) => setFormData({ ...formData, eventType: e.target.value })} 
+                    <label className="text-gray-400 font-vietnam text-[0.85rem] font-medium block">Loại Sự Kiện <span className="text-red-500">*</span></label>
+                    <select required value={formData.eventType} onChange={(e) => setFormData({ ...formData, eventType: e.target.value })} 
                             className="w-full bg-[#0A0F1A] border border-white/10 rounded-xl px-4 py-3.5 text-white font-vietnam text-[0.9rem] focus:outline-none focus:border-[#00FF88]/50 focus:ring-1 focus:ring-[#00FF88]/50 transition-all appearance-none cursor-pointer">
                       <option value="" disabled hidden>Chọn loại sự kiện...</option>
                       <option value="mega">Mega Concert / Nhạc Hội</option>
@@ -227,8 +242,8 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
                   {/* Row 3 */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                      <label className="text-gray-400 font-vietnam text-[0.85rem] font-medium block">Quy Mô</label>
-                      <select value={formData.size} onChange={(e) => setFormData({ ...formData, size: e.target.value })} 
+                      <label className="text-gray-400 font-vietnam text-[0.85rem] font-medium block">Quy Mô <span className="text-red-500">*</span></label>
+                      <select required value={formData.size} onChange={(e) => setFormData({ ...formData, size: e.target.value })} 
                               className="w-full bg-[#0A0F1A] border border-white/10 rounded-xl px-4 py-3.5 text-white font-vietnam text-[0.9rem] focus:outline-none focus:border-[#00FF88]/50 focus:ring-1 focus:ring-[#00FF88]/50 transition-all appearance-none cursor-pointer">
                         <option value="" disabled hidden>Chọn quy mô...</option>
                         <option value="small">&lt; 500 khách</option>
@@ -238,8 +253,8 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
                       </select>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-gray-400 font-vietnam text-[0.85rem] font-medium block">Ngân Sách</label>
-                      <select value={formData.budget} onChange={(e) => setFormData({ ...formData, budget: e.target.value })} 
+                      <label className="text-gray-400 font-vietnam text-[0.85rem] font-medium block">Ngân Sách <span className="text-red-500">*</span></label>
+                      <select required value={formData.budget} onChange={(e) => setFormData({ ...formData, budget: e.target.value })} 
                               className="w-full bg-[#0A0F1A] border border-white/10 rounded-xl px-4 py-3.5 text-white font-vietnam text-[0.9rem] focus:outline-none focus:border-[#00FF88]/50 focus:ring-1 focus:ring-[#00FF88]/50 transition-all appearance-none cursor-pointer">
                         <option value="" disabled hidden>Chọn ngân sách...</option>
                         <option value="basic">Cơ bản (Dưới 50M)</option>
@@ -252,15 +267,21 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
 
                   {/* Row 4 */}
                   <div className="space-y-2">
-                    <label className="text-gray-400 font-vietnam text-[0.85rem] font-medium block">Ngày Dự Kiến</label>
-                    <input type="date" value={formData.date} onChange={(e) => setFormData({ ...formData, date: e.target.value })} 
-                           className="w-full bg-[#0A0F1A] border border-white/10 rounded-xl px-4 py-3.5 text-white font-vietnam text-[0.9rem] focus:outline-none focus:border-[#00FF88]/50 focus:ring-1 focus:ring-[#00FF88]/50 transition-all [color-scheme:dark]" />
+                    <label className="text-gray-400 font-vietnam text-[0.85rem] font-medium block">Ngày Dự Kiến <span className="text-red-500">*</span></label>
+                    <input 
+                      required
+                      type="date" 
+                      value={formData.date} 
+                      min={new Date().toLocaleDateString('en-CA')}
+                      onChange={(e) => setFormData({ ...formData, date: e.target.value })} 
+                      className="w-full bg-[#0A0F1A] border border-white/10 rounded-xl px-4 py-3.5 text-white font-vietnam text-[0.9rem] focus:outline-none focus:border-[#00FF88]/50 focus:ring-1 focus:ring-[#00FF88]/50 transition-all [color-scheme:dark]" 
+                    />
                   </div>
 
                   {/* Row 5 */}
                   <div className="space-y-2">
-                    <label className="text-gray-400 font-vietnam text-[0.85rem] font-medium block">Mô Tả Thêm</label>
-                    <textarea rows={3} placeholder="Chia sẻ thêm về ý tưởng sự kiện của bạn..." value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })} 
+                    <label className="text-gray-400 font-vietnam text-[0.85rem] font-medium block">Mô Tả Thêm <span className="text-red-500">*</span></label>
+                    <textarea required rows={3} placeholder="Chia sẻ thêm về ý tưởng sự kiện của bạn..." value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })} 
                               className="w-full bg-[#0A0F1A] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-600 font-vietnam text-[0.9rem] focus:outline-none focus:border-[#00FF88]/50 focus:ring-1 focus:ring-[#00FF88]/50 transition-all resize-none" />
                   </div>
 

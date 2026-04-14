@@ -4,6 +4,7 @@ import { motion } from 'motion/react';
 import { ChevronDown } from 'lucide-react';
 import Image from 'next/image';
 import { SiteSettings, MediaSettings } from '@/lib/data';
+import { smoothScrollTo } from '@/lib/scrollUtils';
 
 function LaserBeam({ style }: { style: React.CSSProperties }) {
   return (
@@ -122,8 +123,7 @@ export function HeroSection({ siteSettings, mediaSettings }: { siteSettings: Sit
   }, []);
 
   const scrollToNext = () => {
-    const el = document.getElementById('flexibility');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+    smoothScrollTo('flexibility', 1200);
   };
 
   return (
@@ -133,25 +133,14 @@ export function HeroSection({ siteSettings, mediaSettings }: { siteSettings: Sit
     >
       {/* Video / Image Background */}
       <div className="absolute inset-0 z-0">
-        {mediaSettings.heroVideoEnabled && mediaSettings.heroVideoUrl ? (
-          <video
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{ opacity: 0.35 }}
-            autoPlay muted loop playsInline preload="metadata"
-            poster={mediaSettings.heroImageUrl}
-          >
-            <source src={mediaSettings.heroVideoUrl} type="video/mp4" />
-          </video>
-        ) : (
-          <Image
-            src={mediaSettings.heroImageUrl || 'https://images.unsplash.com/photo-1760539619529-cfd85a2a9cfd?w=1920&q=80'}
-            alt="Concert laser show"
-            fill
-            priority
-            className="object-cover"
-            style={{ opacity: 0.3 }}
-          />
-        )}
+        <Image
+          src={mediaSettings.heroImageUrl || 'https://images.unsplash.com/photo-1760539619529-cfd85a2a9cfd?w=1920&q=80'}
+          alt="Concert laser show"
+          fill
+          priority
+          className="object-cover"
+          style={{ opacity: 0.3 }}
+        />
 
         <div
           className="absolute inset-0"
@@ -289,7 +278,7 @@ export function HeroSection({ siteSettings, mediaSettings }: { siteSettings: Sit
             href="#contact"
             onClick={(e) => {
               e.preventDefault();
-              document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+              smoothScrollTo('contact', 1200);
             }}
             className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-xl font-exo transition-all duration-300 btn-glow-cyan"
             style={{ fontWeight: 600, fontSize: '0.88rem', minWidth: '160px' }}

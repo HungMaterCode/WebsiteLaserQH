@@ -3,6 +3,7 @@ import { Zap, Phone, MapPin, Mail, User, Info, CreditCard } from 'lucide-react';
 import Link from 'next/link';
 import { SiteSettings } from '@/lib/data';
 import { Logo } from '@/components/Logo';
+import { smoothScrollTo } from '@/lib/scrollUtils';
 
 // Custom Social Icons
 const FacebookIcon = ({ size = 18 }) => (
@@ -45,12 +46,12 @@ export function Footer({ siteSettings }: { siteSettings: SiteSettings }) {
 
     if (isHomePage && el) {
       e.preventDefault();
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      smoothScrollTo(id, 1200);
     } else if (isHomePage && !el) {
       const servicesEl = document.getElementById('services');
       if (servicesEl) {
         e.preventDefault();
-        servicesEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        smoothScrollTo('services', 1200);
       }
     }
     // If not on homepage or element not found, standard link behavior takes over
@@ -180,8 +181,9 @@ export function Footer({ siteSettings }: { siteSettings: SiteSettings }) {
           </p>
           <div className="flex gap-6">
             <Link href="/admin" className="text-gray-600 hover:text-[var(--neon-green)] text-[0.75rem] font-body transition-colors">Quản trị</Link>
-            <Link href="/privacy" className="text-gray-600 hover:text-gray-400 text-[0.75rem] font-body transition-colors">Chính sách bảo mật</Link>
-            <Link href="/terms" className="text-gray-600 hover:text-gray-400 text-[0.75rem] font-body transition-colors">Điều khoản dịch vụ</Link>
+            <Link href="/chinh-sach-bao-mat" className="text-gray-600 hover:text-gray-400 text-[0.75rem] font-body transition-colors">Chính sách bảo mật</Link>
+            <Link href="/dieu-khoan-dich-vu" className="text-gray-600 hover:text-gray-400 text-[0.75rem] font-body transition-colors">Điều khoản dịch vụ</Link>
+            <a href="https://www.loops.vn/en" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-white text-[0.75rem] font-body transition-colors">Thiết kế website bởi Loops</a>
           </div>
         </div>
       </div>

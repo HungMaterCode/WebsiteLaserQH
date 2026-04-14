@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Menu, X, Zap, Phone } from 'lucide-react';
 
 const Facebook = ({ size = 24, style = {} }) => (
@@ -10,6 +11,7 @@ const Facebook = ({ size = 24, style = {} }) => (
 );
 import { SiteSettings } from '@/lib/data';
 import { Logo } from '@/components/Logo';
+import { smoothScrollTo } from '@/lib/scrollUtils';
 
 const navLinks = [
   { href: '/#flexibility', label: 'Quy Mô Sự Kiện' },
@@ -18,6 +20,9 @@ const navLinks = [
   { href: '/#why-us', label: 'Tại Sao Chọn Chúng Tôi' },
   { href: '/#contact', label: 'Liên Hệ' },
 ];
+
+// Module-level flag to track the first mount of the SPA session (after hard reload)
+let isInitialSPAVisit = true;
 
 export function Navigation({ siteSettings }: { siteSettings: SiteSettings }) {
   const [scrolled, setScrolled] = useState(false);
@@ -28,39 +33,55 @@ export function Navigation({ siteSettings }: { siteSettings: SiteSettings }) {
     ? siteSettings.consultants
     : [{ name: 'Hotline', phone: siteSettings.phone }];
 
+  const pathname = usePathname();
+
   useEffect(() => {
+    // 0. Disable browser's native scroll restoration to handle it manually
+    if (typeof window !== 'undefined' && 'scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
-      sessionStorage.setItem('lastScrollY', window.scrollY.toString());
+      // Store scroll position specifically for the CURRENT path
+      sessionStorage.setItem(`scrollPos_${window.location.pathname}`, window.scrollY.toString());
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
 
-    // 1. Handle scroll restoration from manual F5 (if no hash)
-    const savedY = sessionStorage.getItem('lastScrollY');
-    const isReload = typeof window !== 'undefined' &&
-      window.performance &&
-      window.performance.getEntriesByType('navigation').length > 0 &&
-      (window.performance.getEntriesByType('navigation')[0] as any).type === 'reload';
+    // 1. Handle Scroll Logic based on navigation type
+    if (isInitialSPAVisit) {
+      // This is the VERY FIRST mount after a hard page load (F5 or direct entry)
+      const savedY = sessionStorage.getItem(`scrollPos_${window.location.pathname}`);
+      const isReload = typeof window !== 'undefined' &&
+        window.performance &&
+        window.performance.getEntriesByType('navigation').length > 0 &&
+        (window.performance.getEntriesByType('navigation')[0] as any).type === 'reload';
 
-    if (savedY && isReload && !window.location.hash) {
-      const targetY = parseInt(savedY, 10);
-      setTimeout(() => {
-        window.scrollTo({ top: targetY, behavior: 'smooth' });
-      }, 100);
+      if (savedY && isReload && !window.location.hash) {
+        const targetY = parseInt(savedY, 10);
+        setTimeout(() => {
+          window.scrollTo({ top: targetY, behavior: 'instant' });
+        }, 50);
+      } else if (!window.location.hash) {
+        window.scrollTo(0, 0);
+      }
+      
+      // Mark that we have handled the initial SPA load
+      isInitialSPAVisit = false;
+    } else if (!window.location.hash) {
+      // This is a client-side navigation (standard Link click)
+      // Always scroll to TOP for new pages
+      window.scrollTo(0, 0);
     }
 
     // 2. Handle cross-page navigation with hash (e.g., from Project detail to #contact)
     if (window.location.hash) {
-      // Increase timeout slightly to ensure DOM is fully ready and images/layout are settled
       const timer = setTimeout(() => {
         const id = window.location.hash.replace('#', '');
         const el = document.getElementById(id);
         if (el) {
-          // Use 'start' with center fallback if needed, or stick to 'center' for reliability
-          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          
-          // Clear hash after scrolling so a subsequent F5 starts at top or stays here
+          smoothScrollTo(id, 1200); // Slower, smoother scroll
           window.history.pushState(null, document.title, window.location.pathname + window.location.search);
         }
       }, 800);
@@ -82,7 +103,7 @@ export function Navigation({ siteSettings }: { siteSettings: SiteSettings }) {
       if (el) {
         e.preventDefault();
         setMobileOpen(false);
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        smoothScrollTo(id, 1200); // Slower, smoother scroll
         return;
       }
     }

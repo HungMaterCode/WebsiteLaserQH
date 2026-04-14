@@ -109,6 +109,9 @@ model Message {
   name      String
   phone     String
   email     String?
+  eventType String?
+  size      String?
+  budget    String?
   date      String?
   notes     String?
   projectId String?

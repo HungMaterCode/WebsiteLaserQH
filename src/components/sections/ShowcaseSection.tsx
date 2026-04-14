@@ -4,6 +4,7 @@ import { motion, useInView, AnimatePresence } from 'motion/react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { PortfolioProject } from '@/lib/data';
+import { smoothScrollTo } from '@/lib/scrollUtils';
 import {
   X,
   MapPin,
@@ -48,10 +49,7 @@ export function ShowcaseSection({ projects }: { projects: PortfolioProject[] }) 
         const isProject = hash.startsWith('project-');
         const isService = hash === 'services';
 
-        el.scrollIntoView({
-          behavior: 'smooth',
-          block: isProject ? 'center' : 'start'
-        });
+        smoothScrollTo(hash, 1200, isProject ? -150 : -80);
       }
     }, 850); // Robust delay for Next.js hydration and layout stability
 
