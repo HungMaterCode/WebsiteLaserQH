@@ -9,7 +9,7 @@ import { smoothScrollTo } from '@/lib/scrollUtils';
 function LaserBeam({ style }: { style: React.CSSProperties }) {
   return (
     <div
-      className="absolute pointer-events-none"
+      className="absolute pointer-events-none hidden md:block"
       style={{
         width: '1px',
         background: 'linear-gradient(180deg, transparent, #00FF88, #00E5FF, transparent)',
@@ -123,7 +123,7 @@ export function HeroSection({ siteSettings, mediaSettings }: { siteSettings: Sit
   }, []);
 
   const scrollToNext = () => {
-    smoothScrollTo('flexibility', 1200);
+    smoothScrollTo('flexibility');
   };
 
   return (
@@ -248,7 +248,7 @@ export function HeroSection({ siteSettings, mediaSettings }: { siteSettings: Sit
               minWidth: '160px',
             }}
           >
-            <div className="w-5 h-5 rounded-md flex items-center justify-center bg-white overflow-hidden">
+            <div className="w-5 h-5 rounded-md flex items-center justify-center bg-white overflow-hidden prevent-dark-mode-inversion">
               <span style={{ fontSize: '0.55rem', color: '#0068FF', fontWeight: 900 }}>Za</span>
             </div>
             <span className="relative z-10">Nhắn tin Zalo</span>
@@ -278,7 +278,7 @@ export function HeroSection({ siteSettings, mediaSettings }: { siteSettings: Sit
             href="#contact"
             onClick={(e) => {
               e.preventDefault();
-              smoothScrollTo('contact', 1200);
+              smoothScrollTo('contact');
             }}
             className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-xl font-exo transition-all duration-300 btn-glow-cyan"
             style={{ fontWeight: 600, fontSize: '0.88rem', minWidth: '160px' }}

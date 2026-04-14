@@ -1,10 +1,14 @@
-export function smoothScrollTo(elementId: string, duration: number = 1000, offset: number = -80) {
+export function smoothScrollTo(elementId: string, duration: number = 0, offset: number = -80) {
   const targetElement = document.getElementById(elementId);
   if (!targetElement) return;
 
-  // Calculate target position with an optional offset (e.g. for fixed headers)
-  // Or handle 'center' alignment if offset is specific.
   const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset + offset;
+
+  if (duration <= 0) {
+    window.scrollTo(0, targetPosition);
+    return;
+  }
+
   const startPosition = window.pageYOffset;
   const distance = targetPosition - startPosition;
   let startTime: number | null = null;

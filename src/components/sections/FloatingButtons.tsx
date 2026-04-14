@@ -23,11 +23,11 @@ export function FloatingButtons({ siteSettings }: { siteSettings: SiteSettings }
         }}
       >
         <span className="pulse-ring" style={{ borderColor: '#FF548F' }} />
-        <svg 
-          width="32" 
-          height="32" 
-          viewBox="0 0 28 28" 
-          fill="white" 
+        <svg
+          width="32"
+          height="32"
+          viewBox="0 0 28 28"
+          fill="white"
           xmlns="http://www.w3.org/2000/svg"
         >
           <path d="M14 2C7.373 2 2 6.941 2 13.04c0 3.473 1.733 6.574 4.453 8.527V26l4.246-2.333c1.066.296 2.197.453 3.301.453 6.627 0 12-4.941 12-11.04C26 6.941 20.627 2 14 2zm1.606 14.974l-3.076-3.28-5.996 3.28 6.59-6.994 3.076 3.28 5.996-3.28-6.59 6.994z" />

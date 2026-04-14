@@ -8,16 +8,16 @@ import { SiteSettings } from '@/lib/data';
 // Icons for social
 const MessengerIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 2C6.477 2 2 6.145 2 11.258C2 14.153 3.497 16.745 5.86 18.423V22L9.176 19.988C10.076 20.354 11.025 20.516 12 20.516C17.523 20.516 22 16.371 22 11.258C22 6.145 17.523 2 12 2ZM12.758 13.921L10.59 11.6L6.37 13.921L11.002 8.98L13.252 11.3L17.5 8.98L12.758 13.921Z" fill="currentColor"/>
+    <path d="M12 2C6.477 2 2 6.145 2 11.258C2 14.153 3.497 16.745 5.86 18.423V22L9.176 19.988C10.076 20.354 11.025 20.516 12 20.516C17.523 20.516 22 16.371 22 11.258C22 6.145 17.523 2 12 2ZM12.758 13.921L10.59 11.6L6.37 13.921L11.002 8.98L13.252 11.3L17.5 8.98L12.758 13.921Z" fill="currentColor" />
   </svg>
 );
 
 export function ContactSection({ siteSettings }: { siteSettings: SiteSettings }) {
   const titleRef = useRef(null);
   const titleInView = useInView(titleRef, { once: true, margin: '-50px' });
-  
-  const [formData, setFormData] = useState({ 
-    name: '', phone: '', eventType: '', size: '', budget: '', date: '', message: '' 
+
+  const [formData, setFormData] = useState({
+    name: '', phone: '', eventType: '', size: '', budget: '', date: '', message: ''
   });
   const [submitted, setSubmitted] = useState(false);
   const [isSending, setIsSending] = useState(false);
@@ -25,7 +25,7 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSending(true);
-    
+
     try {
       const response = await fetch('/api/messages', {
         method: 'POST',
@@ -36,9 +36,13 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
       });
 
       if (!response.ok) {
+        if (response.status === 429) {
+          alert('Bạn đã đạt giới hạn gửi yêu cầu trong ngày (tối đa 5 tin). Vui lòng quay lại sau 24 giờ hoặc liên hệ trực tiếp qua Zalo/Hotline.');
+          return;
+        }
         throw new Error('Failed to send request');
       }
-      
+
       setSubmitted(true);
       setFormData({ name: '', phone: '', eventType: '', size: '', budget: '', date: '', message: '' });
       setTimeout(() => setSubmitted(false), 4000);
@@ -68,10 +72,10 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          
+
           {/* LEFT COLUMN: Info */}
           <div className="space-y-8 p-1 sm:p-2">
-            
+
             {/* Social Chat */}
             <div className="p-6 sm:p-8 rounded-[20px]" style={{ background: '#050912', border: '1px solid rgba(255,255,255,0.06)' }}>
               <h3 className="text-white font-body font-bold text-[1.15rem] mb-2 tracking-wide">
@@ -80,11 +84,11 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
               <p className="mb-6 font-vietnam text-[0.9rem]" style={{ color: 'rgba(255,255,255,0.5)', lineHeight: 1.6 }}>
                 Muốn trao đổi nhanh? Nhắn tin qua Facebook Messenger hoặc Zalo — đội ngũ chúng tôi luôn trực tuyến.
               </p>
-              
+
               <div className="space-y-3">
                 {/* Messenger Button */}
                 <a href={siteSettings.messengerLink} target="_blank" rel="noreferrer" className="group flex items-center justify-between p-4 rounded-xl transition-all duration-300" style={{ background: 'rgba(24, 119, 242, 0.05)', border: '1px solid rgba(24, 119, 242, 0.2)' }}
-                   onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(24, 119, 242, 0.1)'; e.currentTarget.style.borderColor = 'rgba(24, 119, 242, 0.4)'; }}>
+                  onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(24, 119, 242, 0.1)'; e.currentTarget.style.borderColor = 'rgba(24, 119, 242, 0.4)'; }}>
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-[14px] flex items-center justify-center text-white shrink-0 shadow-lg" style={{ background: 'linear-gradient(135deg, #00B2FF, #006AFF)' }}>
                       <MessengerIcon />
@@ -99,7 +103,7 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
 
                 {/* Zalo Button */}
                 <a href={siteSettings.zaloLink} target="_blank" rel="noreferrer" className="group flex items-center justify-between p-4 rounded-xl transition-all duration-300" style={{ background: 'rgba(0, 104, 255, 0.05)', border: '1px solid rgba(0, 104, 255, 0.2)' }}
-                   onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(0, 104, 255, 0.1)'; e.currentTarget.style.borderColor = 'rgba(0, 104, 255, 0.4)'; }}>
+                  onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(0, 104, 255, 0.1)'; e.currentTarget.style.borderColor = 'rgba(0, 104, 255, 0.4)'; }}>
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-[14px] flex items-center justify-center text-white shrink-0 shadow-lg font-bold text-[1.2rem] font-vietnam" style={{ background: 'linear-gradient(135deg, #0088FF, #0068FF)' }}>
                       Za
@@ -165,33 +169,33 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
                 <h4 className="text-[0.75rem] font-body font-bold uppercase tracking-widest" style={{ color: 'var(--neon-cyan)' }}>THÔNG TIN CÔNG TY</h4>
               </div>
               <h3 className="text-white font-bold font-vietnam text-[1.05rem] mb-4">{siteSettings.companyName}</h3>
-              
+
               <div className="grid grid-cols-[100px_1fr] gap-y-3 gap-x-2 font-vietnam text-[0.85rem]">
                 <div className="text-gray-400">Địa chỉ:</div>
                 <div className="text-white leading-relaxed">{siteSettings.address}</div>
-                
+
                 <div className="text-gray-400">Đại diện:</div>
                 <div className="text-white">{siteSettings.directorName}</div>
-                
+
                 <div className="text-gray-400">Chức vụ:</div>
                 <div className="text-white">{siteSettings.directorRole}</div>
-                
+
                 <div className="text-gray-400">Mã số thuế:</div>
                 <div className="text-white">{siteSettings.taxCode}</div>
-                
+
                 <div className="text-gray-400">Email:</div>
                 <div className="text-white">{siteSettings.companyEmail}</div>
-                
+
                 <div className="text-gray-400">ĐT:</div>
                 <div className="text-white">{siteSettings.directorPhone}</div>
-                
+
                 <div className="text-gray-400">Số tài khoản:</div>
                 <div className="text-white leading-relaxed">{siteSettings.bankAccount}</div>
               </div>
             </div>
-            
+
           </div>
-          
+
           {/* RIGHT COLUMN: Form */}
           <div>
             <div className="rounded-[20px] p-8 sm:p-10" style={{ background: '#050912', border: '1px solid rgba(255,255,255,0.06)' }}>
@@ -203,33 +207,33 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
               {submitted ? (
                 <div className="text-center py-16 px-4">
                   <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6" style={{ background: 'rgba(0,255,136,0.1)', border: '2px solid rgba(0,255,136,0.5)' }}>
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--neon-green)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--neon-green)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
                   </div>
                   <h4 className="text-white font-body font-bold text-xl mb-2">Đã Gửi Thành Công!</h4>
                   <p className="text-gray-400 font-vietnam">Cảm ơn bạn. Đội ngũ tư vấn sẽ liên hệ lại qua số điện thoại của bạn trong thời gian sớm nhất.</p>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-6 form-dark">
-                  
+
                   {/* Row 1 */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label className="text-gray-400 font-vietnam text-[0.85rem] font-medium block">Họ & Tên <span className="text-red-500">*</span></label>
-                      <input type="text" required placeholder="Nguyễn Văn A" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} 
-                             className="w-full bg-[#0A0F1A] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-600 font-vietnam text-[0.9rem] focus:outline-none focus:border-[#00FF88]/50 focus:ring-1 focus:ring-[#00FF88]/50 transition-all" />
+                      <input type="text" required placeholder="Nguyễn Văn A" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        className="w-full bg-[#0A0F1A] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-600 font-vietnam text-[0.9rem] focus:outline-none focus:border-[#00FF88]/50 focus:ring-1 focus:ring-[#00FF88]/50 transition-all" />
                     </div>
                     <div className="space-y-2">
                       <label className="text-gray-400 font-vietnam text-[0.85rem] font-medium block">Số Điện Thoại <span className="text-red-500">*</span></label>
-                      <input type="tel" required pattern="[0-9]{10}" minLength={10} maxLength={10} title="Vui lòng nhập đúng 10 chữ số" placeholder="0907579481" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value.replace(/[^0-9]/g, '') })} 
-                             className="w-full bg-[#0A0F1A] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-600 font-vietnam text-[0.9rem] focus:outline-none focus:border-[#00FF88]/50 focus:ring-1 focus:ring-[#00FF88]/50 transition-all" />
+                      <input type="tel" required pattern="[0-9]{10}" minLength={10} maxLength={10} title="Vui lòng nhập đúng 10 chữ số" placeholder="0907579481" value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value.replace(/[^0-9]/g, '') })}
+                        className="w-full bg-[#0A0F1A] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-600 font-vietnam text-[0.9rem] focus:outline-none focus:border-[#00FF88]/50 focus:ring-1 focus:ring-[#00FF88]/50 transition-all" />
                     </div>
                   </div>
 
                   {/* Row 2 */}
                   <div className="space-y-2">
                     <label className="text-gray-400 font-vietnam text-[0.85rem] font-medium block">Loại Sự Kiện <span className="text-red-500">*</span></label>
-                    <select required value={formData.eventType} onChange={(e) => setFormData({ ...formData, eventType: e.target.value })} 
-                            className="w-full bg-[#0A0F1A] border border-white/10 rounded-xl px-4 py-3.5 text-white font-vietnam text-[0.9rem] focus:outline-none focus:border-[#00FF88]/50 focus:ring-1 focus:ring-[#00FF88]/50 transition-all appearance-none cursor-pointer">
+                    <select required value={formData.eventType} onChange={(e) => setFormData({ ...formData, eventType: e.target.value })}
+                      className="w-full bg-[#0A0F1A] border border-white/10 rounded-xl px-4 py-3.5 text-white font-vietnam text-[0.9rem] focus:outline-none focus:border-[#00FF88]/50 focus:ring-1 focus:ring-[#00FF88]/50 transition-all appearance-none cursor-pointer">
                       <option value="" disabled hidden>Chọn loại sự kiện...</option>
                       <option value="mega">Mega Concert / Nhạc Hội</option>
                       <option value="corporate">Gala Doanh Nghiệp</option>
@@ -243,8 +247,8 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label className="text-gray-400 font-vietnam text-[0.85rem] font-medium block">Quy Mô <span className="text-red-500">*</span></label>
-                      <select required value={formData.size} onChange={(e) => setFormData({ ...formData, size: e.target.value })} 
-                              className="w-full bg-[#0A0F1A] border border-white/10 rounded-xl px-4 py-3.5 text-white font-vietnam text-[0.9rem] focus:outline-none focus:border-[#00FF88]/50 focus:ring-1 focus:ring-[#00FF88]/50 transition-all appearance-none cursor-pointer">
+                      <select required value={formData.size} onChange={(e) => setFormData({ ...formData, size: e.target.value })}
+                        className="w-full bg-[#0A0F1A] border border-white/10 rounded-xl px-4 py-3.5 text-white font-vietnam text-[0.9rem] focus:outline-none focus:border-[#00FF88]/50 focus:ring-1 focus:ring-[#00FF88]/50 transition-all appearance-none cursor-pointer">
                         <option value="" disabled hidden>Chọn quy mô...</option>
                         <option value="small">&lt; 500 khách</option>
                         <option value="medium">500 - 2,000 khách</option>
@@ -254,8 +258,8 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
                     </div>
                     <div className="space-y-2">
                       <label className="text-gray-400 font-vietnam text-[0.85rem] font-medium block">Ngân Sách <span className="text-red-500">*</span></label>
-                      <select required value={formData.budget} onChange={(e) => setFormData({ ...formData, budget: e.target.value })} 
-                              className="w-full bg-[#0A0F1A] border border-white/10 rounded-xl px-4 py-3.5 text-white font-vietnam text-[0.9rem] focus:outline-none focus:border-[#00FF88]/50 focus:ring-1 focus:ring-[#00FF88]/50 transition-all appearance-none cursor-pointer">
+                      <select required value={formData.budget} onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
+                        className="w-full bg-[#0A0F1A] border border-white/10 rounded-xl px-4 py-3.5 text-white font-vietnam text-[0.9rem] focus:outline-none focus:border-[#00FF88]/50 focus:ring-1 focus:ring-[#00FF88]/50 transition-all appearance-none cursor-pointer">
                         <option value="" disabled hidden>Chọn ngân sách...</option>
                         <option value="basic">Cơ bản (Dưới 50M)</option>
                         <option value="standard">Tiêu chuẩn (50M - 200M)</option>
@@ -268,53 +272,53 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
                   {/* Row 4 */}
                   <div className="space-y-2">
                     <label className="text-gray-400 font-vietnam text-[0.85rem] font-medium block">Ngày Dự Kiến <span className="text-red-500">*</span></label>
-                    <input 
+                    <input
                       required
-                      type="date" 
-                      value={formData.date} 
+                      type="date"
+                      value={formData.date}
                       min={new Date().toLocaleDateString('en-CA')}
-                      onChange={(e) => setFormData({ ...formData, date: e.target.value })} 
-                      className="w-full bg-[#0A0F1A] border border-white/10 rounded-xl px-4 py-3.5 text-white font-vietnam text-[0.9rem] focus:outline-none focus:border-[#00FF88]/50 focus:ring-1 focus:ring-[#00FF88]/50 transition-all [color-scheme:dark]" 
+                      onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                      className="w-full bg-[#0A0F1A] border border-white/10 rounded-xl px-4 py-3.5 text-white font-vietnam text-[0.9rem] focus:outline-none focus:border-[#00FF88]/50 focus:ring-1 focus:ring-[#00FF88]/50 transition-all [color-scheme:dark]"
                     />
                   </div>
 
                   {/* Row 5 */}
                   <div className="space-y-2">
                     <label className="text-gray-400 font-vietnam text-[0.85rem] font-medium block">Mô Tả Thêm <span className="text-red-500">*</span></label>
-                    <textarea required rows={3} placeholder="Chia sẻ thêm về ý tưởng sự kiện của bạn..." value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })} 
-                              className="w-full bg-[#0A0F1A] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-600 font-vietnam text-[0.9rem] focus:outline-none focus:border-[#00FF88]/50 focus:ring-1 focus:ring-[#00FF88]/50 transition-all resize-none" />
+                    <textarea required rows={3} placeholder="Chia sẻ thêm về ý tưởng sự kiện của bạn..." value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      className="w-full bg-[#0A0F1A] border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder-gray-600 font-vietnam text-[0.9rem] focus:outline-none focus:border-[#00FF88]/50 focus:ring-1 focus:ring-[#00FF88]/50 transition-all resize-none" />
                   </div>
 
                   {/* Submit Button */}
-                  <button 
-                    type="submit" 
+                  <button
+                    type="submit"
                     disabled={isSending}
-                    className="w-full py-4 rounded-xl flex items-center justify-center gap-2.5 transition-all duration-300 font-vietnam group" 
-                    style={{ 
-                      background: isSending ? 'rgba(0, 255, 136, 0.1)' : 'rgba(0, 255, 136, 0.05)', 
-                      border: '1px solid rgba(0, 255, 136, 0.4)', 
-                      color: 'var(--neon-green)', 
-                      fontWeight: 700, 
+                    className="w-full py-4 rounded-xl flex items-center justify-center gap-2.5 transition-all duration-300 font-vietnam group"
+                    style={{
+                      background: isSending ? 'rgba(0, 255, 136, 0.1)' : 'rgba(0, 255, 136, 0.05)',
+                      border: '1px solid rgba(0, 255, 136, 0.4)',
+                      color: 'var(--neon-green)',
+                      fontWeight: 700,
                       fontSize: '0.95rem',
                       cursor: isSending ? 'not-allowed' : 'pointer'
                     }}
-                    onMouseEnter={(e) => { 
+                    onMouseEnter={(e) => {
                       if (!isSending) {
-                        e.currentTarget.style.background = 'var(--neon-green)'; 
-                        e.currentTarget.style.color = '#000'; 
+                        e.currentTarget.style.background = 'var(--neon-green)';
+                        e.currentTarget.style.color = '#000';
                       }
                     }}
-                    onMouseLeave={(e) => { 
+                    onMouseLeave={(e) => {
                       if (!isSending) {
-                        e.currentTarget.style.background = 'rgba(0, 255, 136, 0.05)'; 
-                        e.currentTarget.style.color = 'var(--neon-green)'; 
+                        e.currentTarget.style.background = 'rgba(0, 255, 136, 0.05)';
+                        e.currentTarget.style.color = 'var(--neon-green)';
                       }
                     }}>
                     {isSending ? (
                       <LaserLoader size="sm" color="var(--neon-green)" />
                     ) : (
                       <>
-                        <Send size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" /> 
+                        <Send size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                         Gửi Yêu Cầu Báo Giá
                       </>
                     )}
@@ -322,11 +326,11 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
                 </form>
               )}
             </div>
-            
+
             {/* Ambient Background Element */}
             <div className="fixed right-0 bottom-0 pointer-events-none opacity-30 mix-blend-screen w-[40vw] h-[40vh] blur-[150px] rounded-full z-0" style={{ background: 'radial-gradient(circle, var(--neon-green) 0%, transparent 70%)' }}></div>
           </div>
-          
+
         </div>
       </div>
     </section>

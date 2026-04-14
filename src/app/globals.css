@@ -20,7 +20,8 @@ html {
 }
 
 /* Account for fixed nav (contact bar ~34px + main nav ~68px) */
-section[id], #services-title {
+section[id],
+#services-title {
   scroll-margin-top: 140px;
 }
 
@@ -399,7 +400,7 @@ body {
 @keyframes pulseRing {
   0% {
     transform: scale(1);
-    opacity: 1;
+    opacity: 0.5;
   }
 
   100% {
@@ -570,8 +571,9 @@ body {
   position: absolute;
   inset: -4px;
   border-radius: 50%;
-  border: 2px solid currentColor;
-  animation: pulseRing 2s ease-out infinite;
+  border: 1px solid currentColor;
+  opacity: 0.4;
+  animation: pulseRing 3s ease-out infinite;
 }
 
 /* === PORTFOLIO HOVER EFFECT === */
@@ -786,3 +788,17 @@ body {
     display: none !important;
   }
 }
+
+/* === UTILITIES TO PREVENT FORCED DARK MODE INVERSION ON SPECIFIC BRAND ICONS === */
+.prevent-dark-mode-inversion {
+  color-scheme: light only !important;
+  color-scheme: light !important;
+  forced-color-adjust: none !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+}
+.prevent-dark-mode-inversion * {
+  color-scheme: light only !important;
+  color-scheme: light !important;
+  forced-color-adjust: none !important;
+}

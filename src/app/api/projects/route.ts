@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { revalidatePath } from 'next/cache';
 
 // GET all projects
 export async function GET() {
@@ -45,6 +46,9 @@ export async function POST(request: Request) {
         equipment: data.equipment || [],
       },
     });
+    
+    // Purge cache for the entire site to ensure new project appears in lists
+    revalidatePath('/', 'layout');
     
     return NextResponse.json(project);
   } catch (error) {

@@ -36,28 +36,32 @@ export function DetailInfoModal({ isOpen, onClose, type, data }: ModalProps) {
           style={{ background: 'rgba(0,0,0,0.9)', backdropFilter: 'blur(12px)' }}
           onClick={onClose}
         >
+          {/* Close Button Container - Fixed but aligned with content */}
+          <div className="fixed inset-0 z-[120] pointer-events-none flex justify-center p-4 sm:p-6">
+            <div className="w-full max-w-5xl relative">
+              <button
+                onClick={onClose}
+                className="absolute top-4 right-0 sm:top-6 z-50 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:rotate-90 hover:scale-110 active:scale-95 backdrop-blur-md pointer-events-auto"
+                style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', cursor: 'pointer' }}
+              >
+                <X size={20} className="sm:size-[24px]" />
+              </button>
+            </div>
+          </div>
+
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
             className="w-full max-w-5xl rounded-3xl relative m-auto"
-            style={{ 
-              background: '#050912', 
+            style={{
+              background: '#050912',
               border: `1px solid ${data.color || 'rgba(255,255,255,0.1)'}30`,
               boxShadow: `0 0 50px ${data.color || '#00FF88'}15`
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Close Button */}
-            <button
-              onClick={onClose}
-              className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-300 hover:rotate-90 hover:scale-110 active:scale-95"
-              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', cursor: 'pointer' }}
-            >
-              <X size={18} className="sm:size-[20px]" />
-            </button>
-
             <div className="flex flex-col lg:flex-row">
               {/* Image Section */}
               <div className="lg:w-1/2 p-6 lg:p-8">
@@ -72,7 +76,7 @@ export function DetailInfoModal({ isOpen, onClose, type, data }: ModalProps) {
                     {(data.label || data.categoryLabel || 'INFO').toUpperCase()}
                   </div>
                 </div>
-                
+
                 {/* Secondary Content for Tiers: Features */}
                 {type === 'tier' && data.features && (
                   <div className="grid grid-cols-1 gap-2 mt-6">
@@ -112,7 +116,7 @@ export function DetailInfoModal({ isOpen, onClose, type, data }: ModalProps) {
                   </h2>
                   <div className="flex items-center gap-4 text-white/40 text-sm font-medium">
                     <div className="flex items-center gap-1.5">
-                      {type === 'project' ? <MapPin size={14} className="text-white/20" /> : <Users size={14} className="text-white/20" />} 
+                      {type === 'project' ? <MapPin size={14} className="text-white/20" /> : <Users size={14} className="text-white/20" />}
                       {data.location || data.scale}
                     </div>
                     {data.year && <div className="flex items-center gap-1.5"><Calendar size={14} className="text-white/20" /> {data.year}</div>}
@@ -152,7 +156,7 @@ export function DetailInfoModal({ isOpen, onClose, type, data }: ModalProps) {
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                   {type === 'project' && (
-                    <Link 
+                    <Link
                       href={`/du-an/${data.slug}`}
                       className="flex-1 flex items-center justify-center gap-2 py-4 px-4 rounded-xl text-[0.85rem] font-bold transition-all hover:scale-[1.02] active:scale-[0.98]"
                       style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }}
@@ -161,8 +165,8 @@ export function DetailInfoModal({ isOpen, onClose, type, data }: ModalProps) {
                       Xem Trang SEO
                     </Link>
                   )}
-                  
-                  <Link 
+
+                  <Link
                     href="/#contact"
                     onClick={onClose}
                     className="flex-1 flex items-center justify-center gap-2 py-4 px-4 rounded-xl text-[0.85rem] font-bold transition-all shadow-lg hover:scale-[1.02] active:scale-[0.98]"

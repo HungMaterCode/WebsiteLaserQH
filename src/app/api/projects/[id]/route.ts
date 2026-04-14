@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { revalidatePath } from 'next/cache';
 
 // PATCH update project
 export async function PATCH(
@@ -21,6 +22,10 @@ export async function PATCH(
       where: { id },
       data,
     });
+
+    // Purge cache for the entire site to ensure changes reflect globally
+    revalidatePath('/', 'layout');
+
     return NextResponse.json(project);
   } catch (error) {
     console.error('Error updating project:', error);
@@ -44,6 +49,10 @@ export async function DELETE(
     await prisma.project.delete({
       where: { id },
     });
+
+    // Purge cache for the entire site
+    revalidatePath('/', 'layout');
+
     return NextResponse.json({ message: 'Project deleted successfully' });
   } catch (error) {
     console.error('Error deleting project:', error);

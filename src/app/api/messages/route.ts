@@ -24,6 +24,25 @@ export async function POST(request: Request) {
   try {
     const data = await request.json();
     
+    // Get client IP address
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0] || '127.0.0.1';
+    
+    // Check rate limit: 5 messages per 24 hours per IP
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const recentMessagesCount = await prisma.message.count({
+      where: {
+        ip,
+        createdAt: { gte: twentyFourHoursAgo }
+      }
+    });
+
+    if (recentMessagesCount >= 5) {
+      return NextResponse.json({ 
+        error: 'RATE_LIMIT_EXCEEDED',
+        message: 'Bạn đã đạt giới hạn gửi yêu cầu trong ngày. Vui lòng thử lại sau.' 
+      }, { status: 429 });
+    }
+
     // Basic validation
     if (!data.name || !data.phone) {
       return NextResponse.json({ error: 'Name and phone are required' }, { status: 400 });
@@ -39,7 +58,9 @@ export async function POST(request: Request) {
         budget: data.budget || null,
         date: data.date || null,
         notes: data.message || null, // Map frontend 'message' to DB 'notes'
+        ip,
         status: 'unread',
+        createdAt: new Date(),
       },
     });
 

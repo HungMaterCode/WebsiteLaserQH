@@ -66,7 +66,7 @@ export function Navigation({ siteSettings }: { siteSettings: SiteSettings }) {
       } else if (!window.location.hash) {
         window.scrollTo(0, 0);
       }
-      
+
       // Mark that we have handled the initial SPA load
       isInitialSPAVisit = false;
     } else if (!window.location.hash) {
@@ -81,7 +81,7 @@ export function Navigation({ siteSettings }: { siteSettings: SiteSettings }) {
         const id = window.location.hash.replace('#', '');
         const el = document.getElementById(id);
         if (el) {
-          smoothScrollTo(id, 1200); // Slower, smoother scroll
+          smoothScrollTo(id); // Instant jump
           window.history.pushState(null, document.title, window.location.pathname + window.location.search);
         }
       }, 800);
@@ -95,7 +95,7 @@ export function Navigation({ siteSettings }: { siteSettings: SiteSettings }) {
     // Check if we are navigatings to a section on the CURRENT page
     const isHomePage = window.location.pathname === '/';
     const isHashLink = href.includes('#');
-    
+
     if (isHomePage && isHashLink) {
       const id = href.split('#')[1];
       const el = document.getElementById(id);
@@ -103,11 +103,11 @@ export function Navigation({ siteSettings }: { siteSettings: SiteSettings }) {
       if (el) {
         e.preventDefault();
         setMobileOpen(false);
-        smoothScrollTo(id, 1200); // Slower, smoother scroll
+        smoothScrollTo(id); // Instant jump
         return;
       }
     }
-    
+
     // If NOT on homepage or element not found, let the Link handle the navigation
     setMobileOpen(false);
   };

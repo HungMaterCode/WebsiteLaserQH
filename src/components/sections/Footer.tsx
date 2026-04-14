@@ -46,19 +46,23 @@ export function Footer({ siteSettings }: { siteSettings: SiteSettings }) {
 
     if (isHomePage && el) {
       e.preventDefault();
-      smoothScrollTo(id, 1200);
+      smoothScrollTo(id);
     } else if (isHomePage && !el) {
       const servicesEl = document.getElementById('services');
       if (servicesEl) {
         e.preventDefault();
-        smoothScrollTo('services', 1200);
+        smoothScrollTo('services');
       }
     }
     // If not on homepage or element not found, standard link behavior takes over
   };
 
   return (
-    <footer className="relative pt-20 pb-12 px-4 sm:px-6" style={{ background: '#000', borderTop: '1px solid rgba(0,255,136,0.15)' }}>
+    <footer className="relative pt-16 pb-12 px-4 sm:px-6" style={{ background: '#000' }}>
+      {/* Decorative Top Border - Visible on all screens */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[rgba(0,255,136,0.5)] to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-[1px] bg-[rgba(0,255,136,0.2)]" />
+
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16 mb-16">
 
