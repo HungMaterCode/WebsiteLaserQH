@@ -3,11 +3,13 @@ import { AdminButton } from './ui/AdminButton';
 
 export function DeleteConfirm({
   title,
+  message,
   onConfirm,
   onCancel,
   loading,
 }: {
   title: string;
+  message?: string;
   onConfirm: () => void;
   onCancel: () => void;
   loading?: boolean;
@@ -21,7 +23,9 @@ export function DeleteConfirm({
         <div>
           <h3 className="text-white font-body font-bold text-lg mb-2">Bạn có chắc chắn?</h3>
           <p className="text-white/40 text-[0.8rem] font-vietnam leading-relaxed">
-            Hành động này sẽ xóa vĩnh viễn dự án <span className="text-white font-bold">"{title}"</span>. Không thể hoàn tác dữ liệu này.
+            {message || (
+              <>Hành động này sẽ xóa vĩnh viễn <span className="text-white font-bold">"{title}"</span>. Không thể hoàn tác dữ liệu này.</>
+            )}
           </p>
         </div>
         <div className="flex flex-col gap-3">

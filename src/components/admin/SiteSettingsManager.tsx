@@ -22,13 +22,15 @@ export function SiteSettingsManager() {
     bankAccount: '',
     companyEmail: '',
     consultantName: '',
-    consultants: [] as Consultant[],
+    consultants: [] as (Consultant & { id: string })[],
     directorRole: '',
     youtubeLink: '',
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     fetchSettings();
@@ -42,7 +44,10 @@ export function SiteSettingsManager() {
         setForm(prev => ({
           ...prev,
           ...data,
-          consultants: data.consultants || []
+          consultants: (data.consultants || []).map((c: any, i: number) => ({
+            ...c,
+            id: c.id || `existing-${i}-${Date.now()}`
+          }))
         }));
       }
       setLoading(false);
@@ -51,8 +56,35 @@ export function SiteSettingsManager() {
     }
   }
 
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    const phoneRegex = /^\d{10}$/;
+
+    // Validate Director Phone
+    if (form.directorPhone && !phoneRegex.test(form.directorPhone)) {
+      newErrors['directorPhone'] = 'Số điện thoại phải đúng 10 chữ số';
+    }
+
+    // Validate Consultants
+    form.consultants.forEach((c) => {
+      if (c.phone && !phoneRegex.test(c.phone)) {
+        newErrors[`phone-${c.id}`] = 'Số điện thoại phải đúng 10 chữ số';
+      }
+    });
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSave = async () => {
+    if (!validateForm()) {
+      setError('Vui lòng kiểm tra lại các trường thông tin bị lỗi');
+      setTimeout(() => setError(null), 3000);
+      return;
+    }
+
     setSaving(true);
+
     setSaved(false);
     try {
       const res = await fetch('/api/settings', {
@@ -73,7 +105,7 @@ export function SiteSettingsManager() {
   const addConsultant = () => {
     setForm({
       ...form,
-      consultants: [...form.consultants, { name: '', phone: '' }]
+      consultants: [...form.consultants, { id: Date.now().toString(), name: '', phone: '' }]
     });
   };
 
@@ -83,10 +115,25 @@ export function SiteSettingsManager() {
     setForm({ ...form, consultants: newConsultants });
   };
 
-  const updateConsultant = (index: number, field: keyof Consultant, value: string) => {
-    const newConsultants = [...form.consultants];
-    newConsultants[index] = { ...newConsultants[index], [field]: value };
-    setForm({ ...form, consultants: newConsultants });
+  const updateConsultant = (id: string, field: keyof Consultant, value: string) => {
+    setForm(prev => {
+      const newConsultants = prev.consultants.map(c => {
+        if (c.id === id) {
+          return { ...c, [field]: value };
+        }
+        return c;
+      });
+      return { ...prev, consultants: newConsultants };
+    });
+
+    // Clear error for this field when user starts typing
+    if (field === 'phone') {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[`phone-${id}`];
+        return newErrors;
+      });
+    }
   };
 
   if (loading) return (
@@ -170,7 +217,7 @@ export function SiteSettingsManager() {
 
           <div className="space-y-4">
             {form.consultants.map((consultant, index) => (
-              <div key={index} className="p-5 rounded-2xl bg-black/20 border border-white/5 space-y-4 relative group">
+              <div key={consultant.id} className="p-5 rounded-2xl bg-black/20 border border-white/5 space-y-4 relative group">
                 <button
                   onClick={() => removeConsultant(index)}
                   className="absolute top-3 right-3 p-1.5 rounded-lg text-white/10 hover:text-red-500 hover:bg-red-500/10 transition-all"
@@ -180,11 +227,23 @@ export function SiteSettingsManager() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <AdminLabel>Tên người tư vấn</AdminLabel>
-                    <AdminInput value={consultant.name} onChange={e => updateConsultant(index, 'name', e.target.value)} placeholder="VD: Mr. Hiệp" />
+                    <AdminInput value={consultant.name} onChange={e => updateConsultant(consultant.id, 'name', e.target.value)} placeholder="VD: Mr. Hiệp" />
                   </div>
                   <div>
                     <AdminLabel>Số điện thoại (*)</AdminLabel>
-                    <AdminInput value={consultant.phone} onChange={e => updateConsultant(index, 'phone', e.target.value)} placeholder="090..." />
+                    <AdminInput 
+                      value={consultant.phone} 
+                      onChange={e => updateConsultant(consultant.id, 'phone', e.target.value)} 
+                      placeholder="090..." 
+                      autoComplete="new-password"
+                      name={`field-phone-${consultant.id}-${index}`}
+                      style={{ borderColor: errors[`phone-${consultant.id}`] ? '#ff4d4d' : undefined }}
+                    />
+                    {errors[`phone-${consultant.id}`] && (
+                      <span className="text-[#ff4d4d] text-[0.65rem] mt-1.5 block font-bold uppercase tracking-wider animate-in fade-in duration-300">
+                        {errors[`phone-${consultant.id}`]}
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -225,7 +284,28 @@ export function SiteSettingsManager() {
               </div>
               <div>
                 <AdminLabel>SĐT người đại diện</AdminLabel>
-                <AdminInput value={form.directorPhone} onChange={e => setForm({ ...form, directorPhone: e.target.value })} />
+                <AdminInput 
+                  value={form.directorPhone} 
+                  onChange={e => {
+                    setForm(prev => ({ ...prev, directorPhone: e.target.value }));
+                    if (errors['directorPhone']) {
+                      setErrors(prev => {
+                        const newE = { ...prev };
+                        delete newE['directorPhone'];
+                        return newE;
+                      });
+                    }
+                  }} 
+                  placeholder="090..." 
+                  autoComplete="new-password"
+                  name="field-director-phone-exclusive"
+                  style={{ borderColor: errors['directorPhone'] ? '#ff4d4d' : undefined }}
+                />
+                {errors['directorPhone'] && (
+                  <span className="text-[#ff4d4d] text-[0.65rem] mt-1.5 block font-bold uppercase tracking-wider animate-in fade-in duration-300">
+                    {errors['directorPhone']}
+                  </span>
+                )}
               </div>
               <div>
                 <AdminLabel>Chức vụ</AdminLabel>
@@ -244,6 +324,7 @@ export function SiteSettingsManager() {
       </div>
 
       <div className="flex justify-end pt-4">
+        {error && <p className="text-[#ff4d4d] text-[0.7rem] font-bold uppercase tracking-widest mr-4 self-center">{error}</p>}
         <AdminButton loading={saving} saved={saved} icon={<Save size={18} />} onClick={handleSave} style={{ paddingLeft: '2.5rem', paddingRight: '2.5rem' }}>
           LƯU THAY ĐỔI
         </AdminButton>

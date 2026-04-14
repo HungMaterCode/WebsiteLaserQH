@@ -3,7 +3,7 @@ import { useRef, useState } from 'react';
 import { motion, useInView } from 'motion/react';
 import { Phone, MapPin, Building2, Send } from 'lucide-react';
 import { LaserLoader } from '@/components/ui/LaserLoader';
-import { SiteSettings } from '@/lib/data';
+import { SiteSettings, formatPhoneNumber } from '@/lib/data';
 
 // Icons for social
 const MessengerIcon = () => (
@@ -137,12 +137,12 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
                     {(siteSettings.consultants && siteSettings.consultants.length > 0) ? (
                       siteSettings.consultants.map((c, i) => (
                         <a key={i} href={`tel:${c.phone.replace(/\s+/g, '')}`} className="text-white hover:text-[#00FF88] transition-colors">
-                          <span className="font-bold">{c.phone}</span> <span className="text-gray-500 font-normal">— {c.name}</span>
+                          <span className="font-bold">{formatPhoneNumber(c.phone)}</span> <span className="text-gray-500 font-normal">— {c.name}</span>
                         </a>
                       ))
                     ) : (
                       <a href={`tel:${siteSettings.phone.replace(/\s+/g, '')}`} className="text-white hover:text-[#00FF88] transition-colors">
-                        <span className="font-bold">{siteSettings.phone}</span> <span className="text-gray-500 font-normal">— {siteSettings.consultantName}</span>
+                        <span className="font-bold">{formatPhoneNumber(siteSettings.phone)}</span> <span className="text-gray-500 font-normal">— {siteSettings.consultantName}</span>
                       </a>
                     )}
                   </div>
@@ -187,7 +187,7 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
                 <div className="text-white">{siteSettings.companyEmail}</div>
 
                 <div className="text-gray-400">ĐT:</div>
-                <div className="text-white">{siteSettings.directorPhone}</div>
+                <div className="text-white">{formatPhoneNumber(siteSettings.directorPhone)}</div>
 
                 <div className="text-gray-400">Số tài khoản:</div>
                 <div className="text-white leading-relaxed">{siteSettings.bankAccount}</div>

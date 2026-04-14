@@ -243,6 +243,7 @@ export function PostsManager() {
       {deleteTarget && (
         <DeleteConfirm
           title={deleteTarget.title}
+          message={`Bạn có chắc chắn muốn xóa vĩnh viễn dự án "${deleteTarget.title}"? Mọi dữ liệu liên quan và hình ảnh của dự án này sẽ không thể khôi phục.`}
           onConfirm={handleDelete}
           onCancel={() => setDeleteTarget(null)}
           loading={saving}
