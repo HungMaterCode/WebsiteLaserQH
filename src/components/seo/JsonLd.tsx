@@ -8,7 +8,7 @@ export function JsonLd({ siteSettings: settings }: { siteSettings: SiteSettings 
     name: settings.companyName,
     alternateName: 'Laser QH Production',
     description: 'Chuyên cung cấp dịch vụ laser show, kinetic lighting, moving head cho concert, sự kiện, tiệc cưới tại Việt Nam.',
-    url: 'https://website-laser-qh.vercel.app',
+    url: 'https://laserqh.vn',
     telephone: settings.phone,
     email: settings.companyEmail,
     address: {

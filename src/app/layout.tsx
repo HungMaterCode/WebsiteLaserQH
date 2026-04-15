@@ -34,7 +34,7 @@ import { prisma } from "@/lib/prisma";
 import { defaultSiteSettings } from "@/lib/data";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const BASE_URL = 'https://website-laser-qh.vercel.app';
+  const BASE_URL = 'https://laserqh.vn';
   let settings = defaultSiteSettings;
 
   try {

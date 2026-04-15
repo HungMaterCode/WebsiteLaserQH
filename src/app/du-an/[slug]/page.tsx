@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const imageUrl = project.seoImage || project.heroImage || project.thumbnailImage;
   const absoluteImageUrl = imageUrl?.startsWith('http') 
     ? imageUrl 
-    : `https://website-laser-qh.vercel.app${imageUrl}`;
+    : `https://laserqh.vn${imageUrl}`;
 
   return {
     title,
@@ -56,7 +56,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: 'article',
     },
     alternates: {
-      canonical: `https://website-laser-qh.vercel.app/du-an/${slug}`,
+      canonical: `https://laserqh.vn/du-an/${slug}`,
     },
   };
 }
@@ -89,7 +89,7 @@ export default async function ProjectPage({ params }: Props) {
     'organizer': {
       '@type': 'Organization',
       'name': 'Laser QH Production',
-      'url': 'https://website-laser-qh.vercel.app'
+      'url': 'https://laserqh.vn'
     }
   };
 

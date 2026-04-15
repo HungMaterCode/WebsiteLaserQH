@@ -102,12 +102,25 @@ export function Footer({ siteSettings }: { siteSettings: SiteSettings }) {
                 { icon: YoutubeIcon, link: siteSettings.youtubeLink },
               ].map((social, idx) => (
                 <a key={idx} href={social.link} target="_blank" rel="noopener noreferrer"
-                  className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 hover:bg-[rgba(255,255,255,0.1)] hover:scale-110 hover:text-white"
+                  className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover:text-white"
                   style={{
                     background: 'rgba(255,255,255,0.05)',
                     border: '1px solid rgba(255,255,255,0.08)',
                     color: 'rgba(255,255,255,0.6)'
-                  }}>
+                  }}
+                  onMouseEnter={(e) => {
+                    if (social.icon === ZaloIcon) {
+                      e.currentTarget.style.background = '#0068FF';
+                      e.currentTarget.style.borderColor = '#0068FF';
+                    } else {
+                      e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
+                  }}
+                >
                   <social.icon size={18} />
                 </a>
               ))}

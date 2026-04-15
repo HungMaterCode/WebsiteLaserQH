@@ -12,6 +12,15 @@ const MessengerIcon = () => (
   </svg>
 );
 
+// Helper: get today as YYYY-MM-DD using local timezone
+function getTodayString() {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const d = String(now.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
 export function ContactSection({ siteSettings }: { siteSettings: SiteSettings }) {
   const titleRef = useRef(null);
   const titleInView = useInView(titleRef, { once: true, margin: '-50px' });
@@ -21,9 +30,30 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
   });
   const [submitted, setSubmitted] = useState(false);
   const [isSending, setIsSending] = useState(false);
+  const [dateError, setDateError] = useState('');
+
+  const handleDateChange = (value: string) => {
+    const today = getTodayString();
+    if (value && value < today) {
+      setDateError('Không thể chọn ngày trong quá khứ');
+      setFormData({ ...formData, date: '' });
+      return;
+    }
+    setDateError('');
+    setFormData({ ...formData, date: value });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Safety net: validate date again before submitting
+    const today = getTodayString();
+    if (formData.date && formData.date < today) {
+      setDateError('Không thể chọn ngày trong quá khứ');
+      setFormData({ ...formData, date: '' });
+      return;
+    }
+
     setIsSending(true);
 
     try {
@@ -102,8 +132,8 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
                 </a>
 
                 {/* Zalo Button */}
-                <a href={siteSettings.zaloLink} target="_blank" rel="noreferrer" className="group flex items-center justify-between p-4 rounded-xl transition-all duration-300" style={{ background: 'rgba(0, 104, 255, 0.05)', border: '1px solid rgba(0, 104, 255, 0.2)' }}
-                  onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(0, 104, 255, 0.1)'; e.currentTarget.style.borderColor = 'rgba(0, 104, 255, 0.4)'; }}>
+                <a href={siteSettings.zaloLink} target="_blank" rel="noreferrer" className="group flex items-center justify-between p-4 rounded-xl transition-all duration-300" style={{ background: 'rgba(0, 104, 255, 0.08)', border: '1px solid rgba(0, 104, 255, 0.25)' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(0, 104, 255, 0.15)'; e.currentTarget.style.borderColor = 'rgba(0, 104, 255, 0.5)'; }}>
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-[14px] flex items-center justify-center text-white shrink-0 shadow-lg font-bold text-[1.2rem] font-vietnam" style={{ background: 'linear-gradient(135deg, #0088FF, #0068FF)' }}>
                       Za
@@ -113,7 +143,7 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
                       <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.8rem', fontFamily: 'var(--font-vietnam)' }}>Phổ biến tại Việt Nam · Tiện lợi cho mobile</p>
                     </div>
                   </div>
-                  <span style={{ color: 'rgba(0, 104, 255, 0.5)' }} className="group-hover:translate-x-1 group-hover:text-[#0068FF] transition-all">→</span>
+                  <span style={{ color: 'rgba(0, 104, 255, 0.6)' }} className="group-hover:translate-x-1 group-hover:text-[#0084FF] transition-all">→</span>
                 </a>
               </div>
             </div>
@@ -276,10 +306,19 @@ export function ContactSection({ siteSettings }: { siteSettings: SiteSettings })
                       required
                       type="date"
                       value={formData.date}
-                      min={new Date().toLocaleDateString('en-CA')}
-                      onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                      className="w-full bg-[#0A0F1A] border border-white/10 rounded-xl px-4 py-3.5 text-white font-vietnam text-[0.9rem] focus:outline-none focus:border-[#00FF88]/50 focus:ring-1 focus:ring-[#00FF88]/50 transition-all [color-scheme:dark]"
+                      min={getTodayString()}
+                      onChange={(e) => handleDateChange(e.target.value)}
+                      className={`w-full bg-[#0A0F1A] border rounded-xl px-4 py-3.5 text-white font-vietnam text-[0.9rem] focus:outline-none transition-all [color-scheme:dark] ${
+                        dateError 
+                          ? 'border-red-500/50 focus:border-red-500 focus:ring-1 focus:ring-red-500/50' 
+                          : 'border-white/10 focus:border-[#00FF88]/50 focus:ring-1 focus:ring-[#00FF88]/50'
+                      }`}
                     />
+                    {dateError && (
+                      <p className="text-red-500 text-[0.75rem] font-medium animate-in fade-in slide-in-from-top-1 duration-200">
+                        {dateError}
+                      </p>
+                    )}
                   </div>
 
                   {/* Row 5 */}

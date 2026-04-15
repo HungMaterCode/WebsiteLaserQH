@@ -42,16 +42,16 @@ export function FloatingButtons({ siteSettings }: { siteSettings: SiteSettings }
         className="floating-btn"
         style={{
           bottom: 'clamp(20px, 5vh, 30px)',
-          background: 'linear-gradient(135deg, #00FF88, #00cc66)',
-          boxShadow: '0 0 20px rgba(0,255,136,0.4)',
-          color: '#00FF88',
+          background: 'linear-gradient(135deg, #0084FF, #0068FF)',
+          boxShadow: '0 0 20px rgba(0, 104, 255, 0.4)',
+          color: '#ffffff',
           textDecoration: 'none',
           animationDelay: '1s',
           zIndex: 30,
         }}
       >
         <span className="pulse-ring" />
-        <span style={{ fontSize: '0.85rem', color: '#000', fontWeight: 900, fontFamily: 'Arial' }}>Za</span>
+        <span style={{ fontSize: '0.85rem', color: '#fff', fontWeight: 900, fontFamily: 'Arial' }}>Za</span>
       </a>
     </>
   );
