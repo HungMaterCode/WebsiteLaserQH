@@ -9,7 +9,7 @@ jobs:
   backup:
     runs-on: ubuntu-latest
     container:
-      image: postgres:17 # Sử dụng container có sẵn Postgres 17 Client
+      image: postgres:17
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -27,7 +27,7 @@ jobs:
           TIMESTAMP=$(date +%Y%m%d_%H%M%S)
           FILENAME="backup_${TIMESTAMP}.sql.gz"
           
-          # Thực hiện Dump và nén (Sử dụng pg_dump v17 có sẵn trong container)
+          # Thực hiện Dump và nén
           pg_dump "$DATABASE_URL" | gzip > "$FILENAME"
           
           # Kiểm tra kích thước file
@@ -45,6 +45,8 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: 'auto'
+          AWS_DEFAULT_REGION: auto
         run: |
-          aws s3 cp ${{ env.FILENAME }} s3://${{ secrets.R2_BUCKET_NAME }}/database-backups/ --endpoint-url ${{ secrets.R2_ENDPOINT }}
+          aws s3 cp ${{ env.FILENAME }} s3://${{ secrets.R2_BUCKET_NAME }}/database-backups/ \
+            --endpoint-url ${{ secrets.R2_ENDPOINT }} \
+            --region auto
