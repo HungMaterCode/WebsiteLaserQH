@@ -29,8 +29,8 @@ jobs:
           TIMESTAMP=$(date +%Y%m%d_%H%M%S)
           FILENAME="backup_${TIMESTAMP}.sql.gz"
           
-          # Thực hiện Dump và nén
-          pg_dump "$DATABASE_URL" | gzip > "$FILENAME"
+          # Thực hiện Dump và nén bằng đúng bản pg_dump 17
+          /usr/lib/postgresql/17/bin/pg_dump "$DATABASE_URL" | gzip > "$FILENAME"
           
           # Kiểm tra kích thước file
           FILESIZE=$(stat -c%s "$FILENAME")
