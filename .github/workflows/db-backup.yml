@@ -28,10 +28,8 @@ jobs:
 
       - name: Upload to Cloudflare R2
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.ACCESSKEYID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.ACCESSKEYSECRET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: 'auto'
-          ENDPOINT_URL: ${{ secrets.ENDPOINT }}
-          BUCKET_NAME: ${{ secrets.BUCKET }}
         run: |
-          aws s3 cp ${{ env.FILENAME }} s3://$BUCKET_NAME/database-backups/ --endpoint-url $ENDPOINT_URL
+          aws s3 cp ${{ env.FILENAME }} s3://${{ secrets.R2_BUCKET_NAME }}/database-backups/ --endpoint-url ${{ secrets.R2_ENDPOINT }}
