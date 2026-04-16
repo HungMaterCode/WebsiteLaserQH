@@ -8,16 +8,18 @@ on:
 jobs:
   backup:
     runs-on: ubuntu-latest
-    container:
-      image: postgres:17
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install AWS CLI
+      - name: Install PostgreSQL Client 17
         run: |
-          apt-get update
-          apt-get install -y awscli
+          sudo apt-get update
+          sudo apt-get install -y wget gnupg2 curl unzip
+          wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+          echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client-17
 
       - name: Run pg_dump
         env:
@@ -47,6 +49,9 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: auto
         run: |
+          # Use curl directly for S3 compatible R2 upload to avoid AWS CLI Signature v4 issues 
+          # Or explicitly configure AWS CLI v4
+          aws configure set default.s3.signature_version s3v4
           aws s3 cp ${{ env.FILENAME }} s3://${{ secrets.R2_BUCKET_NAME }}/database-backups/ \
             --endpoint-url ${{ secrets.R2_ENDPOINT }} \
             --region auto
