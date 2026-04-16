@@ -1,0 +1,42 @@
+name: Database Backup (Neon to R2)
+
+on:
+  schedule:
+    - cron: '0 2 * * *' # Chạy vào lúc 2:00 sáng hàng ngày
+  workflow_dispatch: # Cho phép chạy thủ công
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install PostgreSQL Client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Run pg_dump
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+          FILENAME="backup_${TIMESTAMP}.sql.gz"
+          pg_dump $DATABASE_URL | gzip > $FILENAME
+          echo "FILENAME=$FILENAME" >> $GITHUB_ENV
+
+      - name: Upload to Cloudflare R2
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --endpoint-url ${{ secrets.R2_ENDPOINT }}
+        env:
+          AWS_S3_BUCKET: ${{ secrets.R2_BUCKET_NAME }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_REGION: 'auto'
+          SOURCE_DIR: '.'
+          DEST_DIR: 'database-backups'
+          # Chỉ upload file backup vừa tạo
+          EXCLUDE: '*'
+          INCLUDE: "${{ env.FILENAME }}"
