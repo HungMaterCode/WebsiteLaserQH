@@ -82,10 +82,10 @@ model Project {
   published       Boolean  @default(true)
   seoTitle        String?
   seoDesc         String?
-  seoIcon         String?
-  seoImage        String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  seoIcon         String?
+  seoImage        String?
 
   @@map("projects")
 }
@@ -109,15 +109,15 @@ model Message {
   name      String
   phone     String
   email     String?
-  eventType String?
-  size      String?
-  budget    String?
   date      String?
   notes     String?
   projectId String?
-  ip        String?
   status    String   @default("unread")
   createdAt DateTime @default(now())
+  budget    String?
+  eventType String?
+  size      String?
+  ip        String?
 
   @@map("messages")
 }

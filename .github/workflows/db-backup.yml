@@ -12,18 +12,35 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install PostgreSQL Client
+      - name: Install PostgreSQL Client 16
         run: |
           sudo apt-get update
-          sudo apt-get install -y postgresql-client
+          sudo apt-get install -y wget gnupg2
+          wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+          echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client-16
 
       - name: Run pg_dump
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
+          set -o pipefail
           TIMESTAMP=$(date +%Y%m%d_%H%M%S)
           FILENAME="backup_${TIMESTAMP}.sql.gz"
-          pg_dump $DATABASE_URL | gzip > $FILENAME
+          
+          # Thực hiện Dump và nén
+          pg_dump "$DATABASE_URL" | gzip > "$FILENAME"
+          
+          # Kiểm tra kích thước file
+          FILESIZE=$(stat -c%s "$FILENAME")
+          echo "Backup file size: $FILESIZE bytes"
+          
+          if [ $FILESIZE -le 100 ]; then
+            echo "Error: Backup file is too small ($FILESIZE bytes). Something went wrong!"
+            exit 1
+          fi
+          
           echo "FILENAME=$FILENAME" >> $GITHUB_ENV
 
       - name: Upload to Cloudflare R2
