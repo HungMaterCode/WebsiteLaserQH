@@ -27,16 +27,11 @@ jobs:
           echo "FILENAME=$FILENAME" >> $GITHUB_ENV
 
       - name: Upload to Cloudflare R2
-        uses: jakejarvis/s3-sync-action@master
-        with:
-          args: --endpoint-url ${{ secrets.R2_ENDPOINT }}
         env:
-          AWS_S3_BUCKET: ${{ secrets.R2_BUCKET_NAME }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          AWS_REGION: 'auto'
-          SOURCE_DIR: '.'
-          DEST_DIR: 'database-backups'
-          # Chỉ upload file backup vừa tạo
-          EXCLUDE: '*'
-          INCLUDE: "${{ env.FILENAME }}"
+          AWS_ACCESS_KEY_ID: ${{ secrets.ACCESSKEYID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.ACCESSKEYSECRET }}
+          AWS_DEFAULT_REGION: 'auto'
+          ENDPOINT_URL: ${{ secrets.ENDPOINT }}
+          BUCKET_NAME: ${{ secrets.BUCKET }}
+        run: |
+          aws s3 cp ${{ env.FILENAME }} s3://$BUCKET_NAME/database-backups/ --endpoint-url $ENDPOINT_URL
