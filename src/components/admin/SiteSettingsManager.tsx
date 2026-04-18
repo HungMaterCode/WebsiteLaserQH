@@ -25,6 +25,8 @@ export function SiteSettingsManager() {
     consultants: [] as (Consultant & { id: string })[],
     directorRole: '',
     youtubeLink: '',
+    instagramLink: '',
+    tiktokLink: '',
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -200,6 +202,14 @@ export function SiteSettingsManager() {
             <div>
               <AdminLabel>Youtube Link</AdminLabel>
               <AdminInput value={form.youtubeLink} onChange={e => setForm({ ...form, youtubeLink: e.target.value })} />
+            </div>
+            <div>
+              <AdminLabel>Instagram Link</AdminLabel>
+              <AdminInput value={form.instagramLink} onChange={e => setForm({ ...form, instagramLink: e.target.value })} placeholder="https://instagram.com/..." />
+            </div>
+            <div>
+              <AdminLabel>TikTok Link</AdminLabel>
+              <AdminInput value={form.tiktokLink} onChange={e => setForm({ ...form, tiktokLink: e.target.value })} placeholder="https://tiktok.com/@..." />
             </div>
           </div>
         </div>

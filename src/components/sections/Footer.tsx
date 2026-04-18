@@ -18,6 +18,12 @@ const InstagramIcon = ({ size = 18 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
 );
 
+const TiktokIcon = ({ size = 18 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path>
+  </svg>
+);
+
 const MessengerIcon = ({ size = 18 }) => (
   <svg width={size} height={size} viewBox="0 0 28 28" fill="currentColor">
     <path d="M14 2C7.373 2 2 6.941 2 13.04c0 3.473 1.733 6.574 4.453 8.527V26l4.246-2.333c1.066.296 2.197.453 3.301.453 6.627 0 12-4.941 12-11.04C26 6.941 20.627 2 14 2zm1.606 14.974l-3.076-3.28-5.996 3.28 6.59-6.994 3.076 3.28 5.996-3.28-6.59 6.994z"></path>
@@ -100,7 +106,9 @@ export function Footer({ siteSettings }: { siteSettings: SiteSettings }) {
                 { icon: ZaloIcon, link: siteSettings.zaloLink },
                 { icon: MessengerIcon, link: siteSettings.messengerLink },
                 { icon: YoutubeIcon, link: siteSettings.youtubeLink },
-              ].map((social, idx) => (
+                { icon: InstagramIcon, link: siteSettings.instagramLink },
+                { icon: TiktokIcon, link: siteSettings.tiktokLink },
+              ].filter(social => social.link).map((social, idx) => (
                 <a key={idx} href={social.link} target="_blank" rel="noopener noreferrer"
                   className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover:text-white"
                   style={{

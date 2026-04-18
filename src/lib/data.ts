@@ -48,6 +48,8 @@ export interface SiteSettings {
   consultants: Consultant[];
   directorRole: string;
   youtubeLink: string;
+  instagramLink: string;
+  tiktokLink: string;
 }
 
 export interface MediaSettings {
@@ -73,6 +75,8 @@ export const defaultSiteSettings: SiteSettings = {
   ],
   directorRole: 'Giám đốc',
   youtubeLink: '',
+  instagramLink: '',
+  tiktokLink: '',
 };
 
 export const defaultMediaSettings: MediaSettings = {
