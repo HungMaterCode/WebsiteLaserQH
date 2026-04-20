@@ -274,6 +274,28 @@ export function HeroSection({ siteSettings, mediaSettings }: { siteSettings: Sit
             <span className="relative z-10">Facebook</span>
           </a>
 
+          {siteSettings.tiktokLink && (
+            <a
+              href={siteSettings.tiktokLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto flex items-center justify-center gap-2.5 px-4 sm:px-6 py-2.5 sm:py-3.5 rounded-xl font-header transition-all duration-300 relative overflow-hidden group border border-white/5"
+              style={{
+                background: 'linear-gradient(135deg, #1d1d1dff, #1A1A1A)',
+                color: '#fff',
+                fontWeight: 700,
+                fontSize: '0.88rem',
+                boxShadow: '0 0 20px rgba(0,0,0,0.6)',
+                minWidth: '160px',
+              }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className="relative z-10">
+                <path d="M12.536 0H16.44C16.464 1.544 17.04 3.104 18.168 4.192C19.296 5.28 20.88 5.792 22.44 5.96V10C21 9.936 19.536 9.648 18.216 9.032C17.64 8.768 17.112 8.44 16.584 8.096V16.896C16.512 18.296 16.04 19.696 15.232 20.856C13.92 22.776 11.64 24.024 9.312 24.064C7.88 24.144 6.448 23.752 5.232 23.032C3.208 21.848 1.792 19.664 1.568 17.32C1.296 13.328 5.064 9.8 8.976 10.056V14.136C7.696 13.976 6.416 14.232 5.376 14.96C4.328 15.688 3.672 16.864 3.576 18.152C3.448 19.624 4.024 21.088 5.104 22.064C6.184 23.04 7.672 23.512 9.128 23.272C10.608 23.088 11.936 22.28 12.624 20.944C12.976 20.304 13.048 19.552 12.984 18.816V0H12.536Z"></path>
+              </svg>
+              <span className="relative z-10">TikTok</span>
+            </a>
+          )}
+
           <a
             href="#contact"
             onClick={(e) => {
