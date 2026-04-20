@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useRef, useMemo, useEffect, useState } from 'react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 
@@ -9,17 +9,6 @@ interface RichTextEditorProps {
   onChange: (content: string) => void;
   placeholder?: string;
 }
-
-const modules = {
-  toolbar: [
-    [{ 'header': [1, 2, 3, false] }],
-    ['bold', 'italic', 'underline', 'strike'],
-    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-    [{ 'align': [] }],
-    ['link', 'image'],
-    ['clean']
-  ],
-};
 
 const formats = [
   'header',
@@ -30,17 +19,143 @@ const formats = [
 ];
 
 export default function RichTextEditor({ value, onChange, placeholder }: RichTextEditorProps) {
+  const quillRef = useRef<any>(null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const uploadImage = async (file: File, quill: any, cursorIndex: number) => {
+    setIsUploading(true);
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+
+      if (data.url) {
+        // Tìm và xóa hình ảnh base64 nếu có (ảnh preview vừa dán)
+        const contents = quill.getContents();
+        let base64Index = -1;
+        let currentIndex = 0;
+        
+        for (let i = 0; i < contents.ops.length; i++) {
+          const op = contents.ops[i];
+          if (op.insert && typeof op.insert === 'object' && op.insert.image && op.insert.image.startsWith('data:image')) {
+            base64Index = currentIndex;
+            break; // Lấy ảnh base64 đầu tiên tìm thấy
+          }
+           // Tính toán lại index thực tế dựa vào độ dài text hoặc embed
+          currentIndex += typeof op.insert === 'string' ? op.insert.length : 1;
+        }
+
+        if (base64Index !== -1) {
+          // Xóa base64 và chèn ảnh từ cloud vào đúng vị trí cũ
+          quill.deleteText(base64Index, 1);
+          quill.insertEmbed(base64Index, 'image', data.url);
+          quill.setSelection(base64Index + 1);
+        } else {
+          // Xử lý mặc định (chèn ở con trỏ) nếu không chạy flow paste
+          quill.insertEmbed(cursorIndex, 'image', data.url);
+          quill.setSelection(cursorIndex + 1);
+        }
+      } else {
+        alert('Tải ảnh thất bại: ' + (data.error || 'Lỗi không xác định'));
+      }
+    } catch (e) {
+      console.error('Upload error', e);
+      alert('Đã xảy ra lỗi kết nối khi tải ảnh.');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const imageHandler = () => {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+
+    input.onchange = async () => {
+      const file = input.files ? input.files[0] : null;
+      if (file && quillRef.current) {
+        const quill = quillRef.current.getEditor();
+        const range = quill.getSelection(true) || { index: quill.getLength() };
+        uploadImage(file, quill, range.index);
+      }
+    };
+  };
+
+  useEffect(() => {
+    if (!quillRef.current) return;
+    const quill = quillRef.current.getEditor();
+
+    const handlePaste = (e: ClipboardEvent) => {
+      if (e.clipboardData && e.clipboardData.items) {
+        const items = e.clipboardData.items;
+        for (let i = 0; i < items.length; i++) {
+          if (items[i].type.indexOf('image') !== -1) {
+            // Không chặn e.preventDefault() để cho Quill tự dán Base64 làm ảnh preview
+            const file = items[i].getAsFile();
+            if (file) {
+              const range = quill.getSelection(true) || { index: quill.getLength() };
+              uploadImage(file, quill, range.index);
+            }
+            return;
+          }
+        }
+      }
+    };
+
+    // Lắng nghe sự kiện paste ở phase capture để ưu tiên chạy trước
+    const target = quill.root;
+    target.addEventListener('paste', handlePaste, true);
+    return () => {
+      target.removeEventListener('paste', handlePaste, true);
+    };
+  }, []);
+
+  const modules = useMemo(() => ({
+    toolbar: {
+      container: [
+        [{ 'header': [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+        [{ 'align': [] }],
+        ['link', 'image'],
+        ['clean']
+      ],
+      handlers: {
+        image: imageHandler
+      }
+    },
+    clipboard: {
+      matchVisual: false
+    }
+  }), []);
+
   return (
-    <div className="quill-editor-container">
-      <ReactQuill 
+    <div className="quill-editor-container relative">
+      {isUploading && (
+        <div className="absolute inset-0 z-10 bg-black/40 backdrop-blur-[2px] flex items-center justify-center rounded-xl border border-white/5 transition-all">
+          <div className="bg-[#111] border border-[#00FF88]/30 shadow-[0_0_20px_rgba(0,255,136,0.15)] px-5 py-3 rounded-full text-[#00FF88] font-body text-[0.8rem] tracking-wider font-bold uppercase flex items-center gap-3">
+            <div className="w-4 h-4 rounded-full border-2 border-[#00FF88] border-t-transparent animate-spin"></div>
+            Đang xử lý ảnh...
+          </div>
+        </div>
+      )}
+      <ReactQuill
+        ref={quillRef}
         theme="snow"
         value={value}
         onChange={onChange}
         modules={modules}
         formats={formats}
         placeholder={placeholder}
-        style={{ 
-          height: '350px', 
+        style={{
+          height: '350px',
           marginBottom: '20px',
           background: 'rgba(255,255,255,0.01)',
           color: '#fff',
@@ -70,7 +185,6 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
           padding: 15px 20px !important;
           line-height: 1.7;
         }
-        /* Custom scrollbar for editor */
         .quill-editor-container .ql-editor::-webkit-scrollbar {
           width: 4px;
         }
