@@ -464,8 +464,16 @@ export function PostEditorModal({
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
               <div className="lg:col-span-6 space-y-5">
               <div>
+                <AdminLabel>Đường dẫn URL (Slug)</AdminLabel>
+                <AdminInput 
+                  value={form.slug || ''} 
+                  onChange={e => update('slug', e.target.value)} 
+                  placeholder="VD: mega-concert-2026 (Để trống sẽ tự tạo từ Tiêu đề)" 
+                />
+              </div>
+              <div>
                 <AdminLabel>SEO Title</AdminLabel>
-                <AdminInput value={form.seoTitle} onChange={e => update('seoTitle', e.target.value)} />
+                <AdminInput value={form.seoTitle || ''} onChange={e => update('seoTitle', e.target.value)} />
               </div>
               <div>
                 <AdminLabel>SEO Description</AdminLabel>

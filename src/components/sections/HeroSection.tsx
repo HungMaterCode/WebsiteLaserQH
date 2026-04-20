@@ -339,7 +339,6 @@ export function HeroSection({ siteSettings, mediaSettings }: { siteSettings: Sit
           ))}
         </motion.div>
       </div>
-
     </section>
   );
 }
