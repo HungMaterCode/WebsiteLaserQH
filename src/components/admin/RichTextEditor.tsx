@@ -83,24 +83,30 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
     setUploadStatus('video');
 
     try {
-      // Upload qua server của mình (tránh CORS)
-      const formData = new FormData();
-      formData.append('file', file);
+      // 1. Lấy presigned URL từ API (GET)
+      const res = await fetch(`/api/upload/video?fileName=${encodeURIComponent(file.name)}&fileType=${encodeURIComponent(file.type)}`);
+      const { signedUrl, publicUrl, error: apiError } = await res.json();
 
-      const res = await fetch('/api/upload/video', {
-        method: 'POST',
-        body: formData,
+      if (!res.ok) throw new Error(apiError || 'Không thể lấy URL upload');
+
+      // 2. Upload trực tiếp từ trình duyệt lên R2 (PUT)
+      // Sử dụng XMLHttpRequest để theo dõi tiến trình nếu cần, ở đây dùng fetch cho đơn giản
+      const uploadRes = await fetch(signedUrl, {
+        method: 'PUT',
+        body: file,
+        headers: {
+          'Content-Type': file.type,
+        },
       });
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Upload thất bại');
+      if (!uploadRes.ok) throw new Error('Upload trực tiếp lên R2 thất bại');
 
       // Chèn video vào vị trí con trỏ
-      quill.insertEmbed(cursorIndex, 'video', data.url);
+      quill.insertEmbed(cursorIndex, 'video', publicUrl);
       quill.setSelection(cursorIndex + 1);
     } catch (e: any) {
       console.error('Video upload error', e);
-      alert('Lỗi khi tải video: ' + e.message);
+      alert('Lỗi khi tải video: ' + (e.message || 'Lỗi không xác định'));
     } finally {
       setIsUploading(false);
       setUploadStatus(null);
