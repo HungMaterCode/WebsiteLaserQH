@@ -372,8 +372,8 @@ export function PostEditorModal({
                           {(() => {
                             const raw = form.fullDescription || '';
                             if (!raw) return <p className="text-white/50 text-[0.7rem] italic">Nội dung sẽ hiển thị ở đây...</p>;
-                            const sanitized = raw.replace(/&nbsp;/gi, ' ').replace(/[\u00a0]/g, ' ');
-                            const isHtml = sanitized.trim().startsWith('<') || sanitized.includes('</p>');
+                            const sanitized = raw.replace(/&nbsp;/gi, ' ').replace(/[\u00a0]/g, ' ').trim();
+                            const isHtml = /<[a-z][\s\S]*>/i.test(sanitized);
                             if (isHtml) {
                               return (
                                 <div

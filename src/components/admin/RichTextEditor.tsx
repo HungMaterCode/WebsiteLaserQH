@@ -19,7 +19,7 @@ const formats = [
 ];
 
 // Custom Blot for HTML5 Video
-const registerVideoBlot = () => {
+if (typeof window !== 'undefined') {
   const Quill = ReactQuill.Quill;
   const BlockEmbed = Quill.import('blots/block/embed') as any;
   
@@ -32,6 +32,8 @@ const registerVideoBlot = () => {
       node.setAttribute('width', '100%');
       node.setAttribute('style', 'border-radius: 16px; margin: 20px 0; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.3);');
       node.setAttribute('playsinline', 'true');
+      node.setAttribute('webkit-playsinline', 'true');
+      node.setAttribute('preload', 'metadata');
       return node;
     }
 
@@ -41,8 +43,8 @@ const registerVideoBlot = () => {
   }
   VideoBlot.blotName = 'video';
   VideoBlot.tagName = 'video';
-  Quill.register(VideoBlot);
-};
+  Quill.register(VideoBlot, true);
+}
 
 // Lấy tất cả URL ảnh/video từ HTML của editor
 function extractMediaUrls(html: string): Set<string> {
@@ -74,9 +76,6 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
   const [uploadStatus, setUploadStatus] = useState<'ảnh' | 'video' | null>(null);
   const previousUrlsRef = useRef<Set<string>>(new Set());
 
-  useEffect(() => {
-    registerVideoBlot();
-  }, []);
 
   const uploadVideo = async (file: File, quill: any, cursorIndex: number) => {
     setIsUploading(true);
@@ -104,6 +103,13 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
       // Chèn video vào vị trí con trỏ
       quill.insertEmbed(cursorIndex, 'video', publicUrl);
       quill.setSelection(cursorIndex + 1);
+      
+      // Thêm một dòng trống sau video để dễ dàng đặt con trỏ và xóa trên điện thoại
+      quill.insertText(cursorIndex + 1, '\n');
+      quill.setSelection(cursorIndex + 2);
+      
+      // Force update Quill container to ensure HTML is consistent
+      setTimeout(() => quill.update(), 100);
     } catch (e: any) {
       console.error('Video upload error', e);
       alert('Lỗi khi tải video: ' + (e.message || 'Lỗi không xác định'));
@@ -241,6 +247,20 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
     },
     clipboard: {
       matchVisual: false
+    },
+    keyboard: {
+      bindings: {
+        // Ghi đè binding 'list autofill' của Quill 2.0
+        'list autofill': {
+          key: ' ',
+          collapsed: true,
+          prefix: /^\s*(?:\d+\.|\*|-)$/,
+          handler: function(this: any, range: any) {
+            this.quill.insertText(range.index, ' ');
+            return false;
+          }
+        }
+      }
     }
   }), []);
 

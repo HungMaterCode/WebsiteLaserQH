@@ -111,7 +111,7 @@ export default async function ProjectPage({ params }: Props) {
       .replace(/[\u00ad\u200b\u200c\u200d\ufeff]/g, '');       // Remove soft hyphens, zero-width spaces
 
     // Check if it's HTML or plain text
-    const isHtml = sanitizedText.trim().startsWith('<') || sanitizedText.includes('</p>') || sanitizedText.includes('<br') || sanitizedText.includes('<img');
+    const isHtml = /<[a-z][\s\S]*>/i.test(sanitizedText.trim());
 
     if (isHtml) {
       return (
