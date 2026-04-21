@@ -200,7 +200,7 @@ export default async function ProjectPage({ params }: Props) {
         {/* Breadcrumbs */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 border-b border-white/5">
           <div className="flex flex-wrap items-center gap-1.5 sm:gap-3 text-[0.65rem] sm:text-[0.75rem] font-medium text-white/40 uppercase tracking-widest font-header">
-            <Link href={`/#project-${project.slug}`} scroll={false} className="hover:text-white transition-colors">TRANG CHỦ</Link>
+            <Link href="/#showcase" scroll={false} className="hover:text-white transition-colors">TRANG CHỦ</Link>
             <ChevronLeft size={10} className="rotate-180 text-white/30" />
             <span className="hidden xs:inline text-white/20">DỰ ÁN</span>
             <ChevronLeft size={10} className="rotate-180 text-white/30 hidden xs:inline" />

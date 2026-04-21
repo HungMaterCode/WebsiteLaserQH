@@ -29,6 +29,7 @@ const categories = [
 
 export function ShowcaseSection({ projects }: { projects: PortfolioProject[] }) {
   const [activeCategory, setActiveCategory] = useState('all');
+  const [isExpanded, setIsExpanded] = useState(false);
   const [selectedProject, setSelectedProject] = useState<PortfolioProject | null>(null);
   const titleRef = useRef(null);
   const titleInView = useInView(titleRef, { once: true, margin: '-50px' });
@@ -60,6 +61,8 @@ export function ShowcaseSection({ projects }: { projects: PortfolioProject[] }) 
     ? projects
     : projects.filter((p: any) => p.category === activeCategory);
 
+  const displayedProjects = isExpanded ? filteredProjects : filteredProjects.slice(0, 3);
+
   return (
     <section id="showcase" className="relative py-16 sm:py-24 responsive-section" style={{ background: '#02050A' }}>
       <div className="max-w-7xl mx-auto">
@@ -84,7 +87,10 @@ export function ShowcaseSection({ projects }: { projects: PortfolioProject[] }) 
             return (
               <button
                 key={cat.id}
-                onClick={() => setActiveCategory(cat.id)}
+                onClick={() => {
+                  setActiveCategory(cat.id);
+                  setIsExpanded(false); // Reset expansion when changing category
+                }}
                 className={`px-6 py-2.5 rounded-[50px] text-[0.85rem] font-bold transition-all duration-300 border bg-transparent`}
                 style={{
                   fontFamily: 'var(--font-vietnam)',
@@ -101,7 +107,7 @@ export function ShowcaseSection({ projects }: { projects: PortfolioProject[] }) 
 
         {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProjects.map((project, index) => (
+          {displayedProjects.map((project, index) => (
             <Link
               href={`/du-an/${project.slug}`}
               key={project.id}
@@ -205,6 +211,42 @@ export function ShowcaseSection({ projects }: { projects: PortfolioProject[] }) 
             </Link>
           ))}
         </div>
+        
+        {/* Toggle Expansion Button */}
+        {!isExpanded && filteredProjects.length > 3 && (
+          <div className="mt-12 flex justify-center">
+            <button
+              onClick={() => setIsExpanded(true)}
+              className="group flex items-center gap-3 px-8 py-3.5 rounded-xl font-bold transition-all duration-300"
+              style={{
+                fontFamily: 'var(--font-vietnam)',
+                background: 'rgba(0, 255, 136, 0.03)',
+                border: '1px solid var(--neon-green)',
+                color: 'var(--neon-green)',
+                fontSize: '0.9rem',
+                boxShadow: '0 0 15px rgba(0, 255, 136, 0.05)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'var(--neon-green)';
+                e.currentTarget.style.color = '#000';
+                e.currentTarget.style.boxShadow = '0 0 25px rgba(0, 255, 136, 0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(0, 255, 136, 0.03)';
+                e.currentTarget.style.color = 'var(--neon-green)';
+                e.currentTarget.style.boxShadow = '0 0 15px rgba(0, 255, 136, 0.05)';
+              }}
+            >
+              Xem Thêm Dự Án 
+              <motion.span
+                animate={{ y: [0, 4, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              >
+                ↓
+              </motion.span>
+            </button>
+          </div>
+        )}
 
         {/* View on Facebook bottom button */}
         <div className="mt-16 flex justify-center">
