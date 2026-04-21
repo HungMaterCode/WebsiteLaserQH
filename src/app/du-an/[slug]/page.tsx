@@ -180,6 +180,16 @@ export default async function ProjectPage({ params }: Props) {
           border: 1px solid rgba(255,255,255,0.1) !important;
           box-shadow: 0 20px 50px rgba(0,0,0,0.5) !important;
         }
+        .rich-text-content video {
+          max-width: 100% !important;
+          height: auto !important;
+          border-radius: 16px !important;
+          margin: 3rem auto !important;
+          display: block !important;
+          border: 1px solid rgba(255,255,255,0.1) !important;
+          box-shadow: 0 20px 50px rgba(0,0,0,0.5) !important;
+          background: #000;
+        }
         .rich-text-content a {
           color: #00FF88 !important;
           text-decoration: underline !important;

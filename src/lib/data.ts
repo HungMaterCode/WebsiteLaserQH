@@ -17,6 +17,7 @@ export interface PortfolioProject {
   client: string;
   duration: string;
   color: string;
+  overviewVideoUrl?: string;
 }
 
 export interface Consultant {
