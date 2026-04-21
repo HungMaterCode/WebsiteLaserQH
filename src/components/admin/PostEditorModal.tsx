@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { X, MapPin, Calendar, Clock, Zap, MessageSquare, ChevronRight, Globe, Info, Users, Briefcase, Wrench } from 'lucide-react';
 import { ImageUpload } from './ImageUpload';
+import { VideoUploadR2 } from './VideoUploadR2';
 import { AdminInput } from './ui/AdminInput';
 import { AdminLabel } from './ui/AdminLabel';
 import { AdminButton } from './ui/AdminButton';

@@ -36,6 +36,7 @@ const EMPTY_PROJECT = {
   seoDesc: '',
   seoIcon: '',
   seoImage: '',
+  overviewVideoUrl: '',
 };
 
 export function PostsManager() {

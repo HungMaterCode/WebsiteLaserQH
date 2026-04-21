@@ -86,6 +86,7 @@ model Project {
   updatedAt       DateTime @updatedAt
   seoIcon         String?
   seoImage        String?
+  overviewVideoUrl String?
 
   @@map("projects")
 }
@@ -135,6 +136,7 @@ model posts {
   tags        String[]
   createdAt   DateTime   @default(now())
   updatedAt   DateTime
+  overviewVideoUrl String?
 }
 
 enum Role {
