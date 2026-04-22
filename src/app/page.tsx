@@ -64,7 +64,7 @@ export default async function Home() {
       <HeroSection siteSettings={siteSettings} mediaSettings={mediaSettings} />
       <FlexibilitySection />
       <ServicesSection />
-      <ShowcaseSection projects={projects as any} />
+      <ShowcaseSection projects={projects as any} siteSettings={siteSettings} />
       <WhyChooseUs />
       <ContactSection siteSettings={siteSettings} />
       <Footer siteSettings={siteSettings} />
