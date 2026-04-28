@@ -87,6 +87,9 @@ export async function generateMetadata(): Promise<Metadata> {
     icons: {
       icon: '/logo-v4.png',
     },
+    verification: {
+      google: 'd0184ff71ecfafe9',
+    },
   };
 }
 
